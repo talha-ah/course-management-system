@@ -1,24 +1,92 @@
 import React from 'react';
-import logo from './logo.svg';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
+
 import './App.css';
+import logo from './logo.png';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
+    <div className='App'>
+      <div className='navbar'>
+        <a href='/' className='navbar-brand'>
+          <img src={logo} alt='logo' className='navbar-brand-img' />
         </a>
-      </header>
+        <ul className='nav'>
+          <li className='nav-item'>
+            <a href='/' className='nav-link'>
+              <FontAwesomeIcon icon={faDotCircle} />
+              Dashboard
+            </a>
+          </li>
+          <hr className='nav-hr' />
+          <li className='nav-item'>
+            <a href='/' className='nav-link nav-title'>
+              Courses Section
+            </a>
+          </li>
+          <li className='nav-item'>
+            <a href='/' className='nav-link'>
+              <FontAwesomeIcon icon={faDotCircle} />
+              Courses
+            </a>
+          </li>
+          <hr className='nav-hr' />
+          <li className='nav-item'>
+            <a href='/' className='nav-link nav-title'>
+              NCEAC Forms
+            </a>
+          </li>
+          <li className='nav-item'>
+            <a href='/' className='nav-link'>
+              <FontAwesomeIcon icon={faDotCircle} />
+              Course Log
+            </a>
+          </li>
+          <li className='nav-item'>
+            <a href='/' className='nav-link'>
+              <FontAwesomeIcon icon={faDotCircle} />
+              Course Monitoring
+            </a>
+          </li>
+          <li className='nav-item'>
+            <a href='/' className='nav-link'>
+              <FontAwesomeIcon icon={faDotCircle} />
+              Course Description
+            </a>
+          </li>
+          <hr className='nav-hr' />
+          <li className='nav-item'>
+            <a href='/' className='nav-link nav-title'>
+              Materials
+            </a>
+          </li>
+          <li className='nav-item'>
+            <a href='/' className='nav-link'>
+              <FontAwesomeIcon icon={faDotCircle} />
+              Quizzes
+            </a>
+          </li>
+          <li className='nav-item'>
+            <a href='/' className='nav-link'>
+              <FontAwesomeIcon icon={faDotCircle} />
+              Assignments
+            </a>
+          </li>
+          <li className='nav-item'>
+            <a href='/' className='nav-link'>
+              <FontAwesomeIcon icon={faDotCircle} />
+              Papers
+            </a>
+          </li>
+          <li className='nav-item'>
+            <a href='/' className='nav-link'>
+              <FontAwesomeIcon icon={faDotCircle} />
+              Reports
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 }
