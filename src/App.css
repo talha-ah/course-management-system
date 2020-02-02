@@ -132,6 +132,11 @@
 
 .header-nav-item svg {
   font-size: 18px;
+  pointer-events: none;
+}
+
+.header-nav-item-float svg {
+  pointer-events: none;
 }
 
 .header-nav-item-float {
@@ -140,6 +145,89 @@
   cursor: pointer;
   font-size: 18px;
 }
+
+/* DropDown Starts */
+
+.header-dropDown-parent {
+  position: relative;
+}
+
+.header-dropDown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  /*  */
+  /* min-width: 12rem; */
+  /* width: 0px;
+  height: 0px;
+  visibility: hidden;
+  opacity: 0;*/
+  overflow: hidden;
+  /*  */
+
+  padding: 0.5rem 0;
+  color: #525f7f;
+  border: 0 solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.4375rem;
+  background-color: #fff;
+  background-clip: padding-box;
+  box-shadow: 0 50px 100px rgba(50, 50, 93, 0.1),
+    0 15px 35px rgba(50, 50, 93, 0.15), 0 5px 15px rgba(0, 0, 0, 0.1);
+  cursor: auto;
+  /* animation: show-navbar-dropdown 0.25s ease forwards; */
+}
+
+.header-dropDown-ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header-dropDown-title {
+  padding: 8px 16px;
+}
+
+.header-dropDown-title h6 {
+  padding: 0;
+  margin: 0;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.header-dropDown-item {
+  padding: 8px 16px;
+}
+
+.header-dropDown-item a {
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 400;
+  text-align: inherit;
+  white-space: nowrap;
+  color: #212529;
+  cursor: pointer;
+}
+
+.header-dropDown-item a svg {
+  font-size: 1rem;
+  margin-right: 1rem;
+  vertical-align: -14.5%;
+  pointer-events: none;
+}
+
+.header-dropDown-ul hr {
+  overflow: hidden;
+  height: 0;
+  margin: 0.5rem 0;
+  border-top: 1px solid #e9ecef;
+}
+
+/* DropDown Ends */
 
 .header-nav-item-switch {
   font-size: 0.8rem;
@@ -217,3 +305,17 @@
 
 /* Page Ends */
 /* font-size: calc(10px + 2vmin); */
+
+/* @keyframes show-navbar-dropdown {
+  0% {
+    transition: visibility 0.25s, opacity 0.25s,
+     transform 0.25s
+     ;
+    transform: translate(0, 10px) perspective(200px) rotateX(-2deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+} */
