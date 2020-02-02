@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
+import { faDotCircle, faUser, faBell } from '@fortawesome/free-solid-svg-icons';
 
 import './App.css';
 import logo from './logo.png';
@@ -40,7 +40,7 @@ function App() {
           <li className='nav-item'>
             <a href='/' className='nav-link'>
               <FontAwesomeIcon icon={faDotCircle} />
-              Course Log
+              Course Description
             </a>
           </li>
           <li className='nav-item'>
@@ -52,7 +52,7 @@ function App() {
           <li className='nav-item'>
             <a href='/' className='nav-link'>
               <FontAwesomeIcon icon={faDotCircle} />
-              Course Description
+              Course Log
             </a>
           </li>
           <hr className='nav-hr' />
@@ -86,6 +86,25 @@ function App() {
             </a>
           </li>
         </ul>
+      </div>
+      <div className='main-content'>
+        <div className='header-navbar'>
+          <ul className='header-nav'>
+            <li className='header-nav-item-switch'>Switch to Admin</li>
+            <li className='header-nav-item '>
+              <label className='switch'>
+                <input type='checkbox' />
+                <span className='slider round'></span>
+              </label>
+            </li>
+            <li className='header-nav-item-float'>
+              <FontAwesomeIcon icon={faBell} />
+            </li>
+            <li className='header-nav-item'>
+              <FontAwesomeIcon icon={faUser} />
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );
