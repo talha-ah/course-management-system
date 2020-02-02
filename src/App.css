@@ -137,13 +137,13 @@
 
 .header-nav-item-float svg {
   pointer-events: none;
+  font-size: 18px;
 }
 
 .header-nav-item-float {
   margin-right: 20px;
   margin-left: auto;
   cursor: pointer;
-  font-size: 18px;
 }
 
 /* DropDown Starts */

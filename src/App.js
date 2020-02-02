@@ -11,8 +11,28 @@ class App extends Component {
     notificationDropDown: false
   };
 
+  // UNSAFE_componentWillMount() {
+  //   document.addEventListener('click', this.handleClick, false);
+  // }
+  localMthod() {
+    document.addEventListener('click', this.handleClick, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.handleClick, false);
+  }
+
+  handleClick = e => {
+    if (!this.node.contains(e.target)) {
+      this.setState(prevState => ({
+        profileDropDown: false,
+        notificationDropDown: false
+      }));
+    }
+  };
+
   dropDownHandler = e => {
-    console.log(e.target.getAttribute('name'));
+    // console.log(e.target.getAttribute('name'));
     if (e.target.getAttribute('name') === 'profile') {
       this.setState(prevState => ({
         profileDropDown: !prevState.profileDropDown,
@@ -24,10 +44,11 @@ class App extends Component {
         profileDropDown: false
       }));
     }
-    console.log(this.state);
+    // console.log(this.state);
   };
 
   render() {
+    this.localMthod();
     let InvisibleStyles = {
       width: '0px',
       height: '0px',
@@ -143,6 +164,7 @@ class App extends Component {
                       ? visibleStyles
                       : InvisibleStyles
                   }
+                  ref={node => (this.node = node)}
                 >
                   <div className='header-dropDown-title'>
                     <h6>Welcome!</h6>
@@ -193,6 +215,7 @@ class App extends Component {
                   style={
                     this.state.profileDropDown ? visibleStyles : InvisibleStyles
                   }
+                  ref={node => (this.node = node)}
                 >
                   <div className='header-dropDown-title'>
                     <h6>Welcome!</h6>
