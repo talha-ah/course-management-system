@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDotCircle, faUser, faBell } from '@fortawesome/free-solid-svg-icons';
+import {
+  faDotCircle,
+  faUser,
+  faBell,
+  faEnvelope,
+  faCalendarAlt,
+  faAddressBook
+} from '@fortawesome/free-solid-svg-icons';
 
 import './App.css';
 import logo from './logo.png';
@@ -57,6 +64,7 @@ class App extends Component {
     };
     return (
       <div className='App'>
+        {/* SideBar Starts */}
         <div className='navbar'>
           <a href='/' className='navbar-brand'>
             <img src={logo} alt='logo' className='navbar-brand-img' />
@@ -136,7 +144,10 @@ class App extends Component {
             </li>
           </ul>
         </div>
+        {/* Sidebar Ends */}
+        {/* Main Content Starts */}
         <div className='main-content'>
+          {/* Header Navigation Ends*/}
           <div className='header-navbar'>
             <ul className='header-nav'>
               <li className='header-nav-item-switch'>Switch to Admin</li>
@@ -252,6 +263,8 @@ class App extends Component {
               </li>
             </ul>
           </div>
+          {/* Header Navigation Ends */}
+          {/* Page Content Starts */}
           <div className='page-content'>
             <div className='page-content-header'>
               <h3>Profile Page</h3>
@@ -262,32 +275,50 @@ class App extends Component {
             </div>
             <div className='page-content-area'>
               <div className='profile-info-1'>
-                <div>Rana Abdul Rehman</div>
-                <div>Head of Department</div>
+                <h4>Rana Abdul Rehman</h4>
+                <div>Head of Department - Computer Science Department</div>
+                <div>Government College University, Lahore</div>
               </div>
-              <div className='profile-title'>Your Courses</div>
+              <div className='profile-title'>
+                <h4>Your Courses</h4>
+              </div>
               <div className='profile-info-2'>
-                <div>Total Courses</div>
-                <div>5</div>
-                <div>Active Courses</div>
-                <div>3</div>
+                <div className='profile-info-2-card'>
+                  Total Courses
+                  <div>15</div>
+                </div>
+                <div className='profile-info-2-card'>
+                  Active Courses
+                  <div>6</div>
+                </div>
               </div>
-              <div className='profile-title'>Personal Details</div>
+              <div className='profile-title'>
+                <h4>Personal Details</h4>
+              </div>
               <div className='profile-info-3'>
-                <div>Email:</div>
-                <div>rana@gmail.com</div>
-                <div>Date of Birth:</div>
-                <div>19-21-2022</div>
-                <div>Address:</div>
-                <div>Secret Hideout Near Shahi Qila, Lahore</div>
+                <div className='profile-info-3-card'>
+                  <FontAwesomeIcon icon={faEnvelope} />
+                  <div>rana@gmail.com</div>
+                </div>
+                <div className='profile-info-3-card'>
+                  <FontAwesomeIcon icon={faCalendarAlt} />
+                  <div>19-21-2022</div>
+                </div>
+                <div className='profile-info-3-card'>
+                  <FontAwesomeIcon icon={faAddressBook} />
+                  <div>Near Shahi Qila, Lahore</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        {/* Page Content Ends */}
+        {/* Main Content Ends */}
+        {/* Footer Starts */}
         <div className='footer'>
           <ul className='footer-nav'>
             <li className='footer-nav-item'>
-              <a href='/'>Terms of Use</a>
+              <a href='/terms'>Terms of Use</a>
             </li>
             <li className='footer-nav-item'>
               <a href='/support'>Support</a>
@@ -300,6 +331,7 @@ class App extends Component {
             </li>
           </ul>
         </div>
+        {/* Footer Ends */}
       </div>
     );
   }
