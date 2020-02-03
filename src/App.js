@@ -6,7 +6,15 @@ import {
   faBell,
   faEnvelope,
   faCalendarAlt,
-  faAddressBook
+  faAddressBook,
+  faFileMedicalAlt,
+  faClipboardList,
+  faFileAlt,
+  faTachometerAlt,
+  faBookReader,
+  faBookOpen,
+  faClipboard,
+  faPollH
 } from '@fortawesome/free-solid-svg-icons';
 
 import './App.css';
@@ -72,7 +80,7 @@ class App extends Component {
           <ul className='nav'>
             <li className='nav-item'>
               <a href='/' className='nav-link'>
-                <FontAwesomeIcon icon={faDotCircle} />
+                <FontAwesomeIcon icon={faTachometerAlt} />
                 Dashboard
               </a>
             </li>
@@ -84,7 +92,7 @@ class App extends Component {
             </li>
             <li className='nav-item'>
               <a href='/' className='nav-link'>
-                <FontAwesomeIcon icon={faDotCircle} />
+                <FontAwesomeIcon icon={faFileAlt} />
                 Courses
               </a>
             </li>
@@ -96,19 +104,19 @@ class App extends Component {
             </li>
             <li className='nav-item'>
               <a href='/' className='nav-link'>
-                <FontAwesomeIcon icon={faDotCircle} />
+                <FontAwesomeIcon icon={faFileAlt} />
                 Course Description
               </a>
             </li>
             <li className='nav-item'>
               <a href='/' className='nav-link'>
-                <FontAwesomeIcon icon={faDotCircle} />
+                <FontAwesomeIcon icon={faFileMedicalAlt} />
                 Course Monitoring
               </a>
             </li>
             <li className='nav-item'>
               <a href='/' className='nav-link'>
-                <FontAwesomeIcon icon={faDotCircle} />
+                <FontAwesomeIcon icon={faClipboardList} />
                 Course Log
               </a>
             </li>
@@ -120,25 +128,25 @@ class App extends Component {
             </li>
             <li className='nav-item'>
               <a href='/' className='nav-link'>
-                <FontAwesomeIcon icon={faDotCircle} />
+                <FontAwesomeIcon icon={faPollH} />
                 Quizzes
               </a>
             </li>
             <li className='nav-item'>
               <a href='/' className='nav-link'>
-                <FontAwesomeIcon icon={faDotCircle} />
+                <FontAwesomeIcon icon={faBookReader} />
                 Assignments
               </a>
             </li>
             <li className='nav-item'>
               <a href='/' className='nav-link'>
-                <FontAwesomeIcon icon={faDotCircle} />
+                <FontAwesomeIcon icon={faBookOpen} />
                 Papers
               </a>
             </li>
             <li className='nav-item'>
               <a href='/' className='nav-link'>
-                <FontAwesomeIcon icon={faDotCircle} />
+                <FontAwesomeIcon icon={faClipboard} />
                 Reports
               </a>
             </li>
@@ -309,6 +317,9 @@ class App extends Component {
                   <div>Near Shahi Qila, Lahore</div>
                 </div>
               </div>
+            </div>
+            <div className='button-div'>
+              <button href='/'>Edit Profile</button>
             </div>
           </div>
         </div>
