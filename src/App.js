@@ -11,9 +11,6 @@ class App extends Component {
     notificationDropDown: false
   };
 
-  // UNSAFE_componentWillMount() {
-  //   document.addEventListener('click', this.handleClick, false);
-  // }
   localMthod() {
     document.addEventListener('click', this.handleClick, false);
   }
@@ -32,7 +29,6 @@ class App extends Component {
   };
 
   dropDownHandler = e => {
-    // console.log(e.target.getAttribute('name'));
     if (e.target.getAttribute('name') === 'profile') {
       this.setState(prevState => ({
         profileDropDown: !prevState.profileDropDown,
@@ -44,7 +40,6 @@ class App extends Component {
         profileDropDown: false
       }));
     }
-    // console.log(this.state);
   };
 
   render() {
@@ -257,7 +252,53 @@ class App extends Component {
               </li>
             </ul>
           </div>
-          <div className='content'></div>
+          <div className='page-content'>
+            <div className='page-content-header'>
+              <h3>Profile Page</h3>
+              <p>
+                This is your profile page. You can see the progress you've made
+                with your courses and manage your profile
+              </p>
+            </div>
+            <div className='page-content-area'>
+              <div className='profile-info-1'>
+                <div>Rana Abdul Rehman</div>
+                <div>Head of Department</div>
+              </div>
+              <div className='profile-title'>Your Courses</div>
+              <div className='profile-info-2'>
+                <div>Total Courses</div>
+                <div>5</div>
+                <div>Active Courses</div>
+                <div>3</div>
+              </div>
+              <div className='profile-title'>Personal Details</div>
+              <div className='profile-info-3'>
+                <div>Email:</div>
+                <div>rana@gmail.com</div>
+                <div>Date of Birth:</div>
+                <div>19-21-2022</div>
+                <div>Address:</div>
+                <div>Secret Hideout Near Shahi Qila, Lahore</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className='footer'>
+          <ul className='footer-nav'>
+            <li className='footer-nav-item'>
+              <a href='/'>Terms of Use</a>
+            </li>
+            <li className='footer-nav-item'>
+              <a href='/support'>Support</a>
+            </li>
+            <li className='footer-nav-item'>
+              <div>
+                © 2019 <span className='footer-nav-span'>DCS, GCU</span>{' '}
+                <span>All rights reserved</span>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     );
