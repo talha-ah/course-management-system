@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFileMedicalAlt,
@@ -14,103 +15,114 @@ import {
 import classes from './Sidebar.module.css';
 import logo from '../../logo.png';
 
-const Sidebar = () => {
+const TeacherSidebar = () => {
   return (
     <div className={classes.Sidebar}>
-      <a href='/' className={classes.SidebarBrand}>
+      <NavLink exact to='/' className={classes.SidebarBrand}>
         <img src={logo} alt='logo' className={classes.SidebarBrandImg} />
-      </a>
+      </NavLink>
       <ul className={classes.SidebarNav}>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink exact to='/profile' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faTachometerAlt} />
             Dashboard
-          </a>
+          </NavLink>
         </li>
         <hr className={classes.SidebarNavHr} />
         <li className={classes.SidebarNavItem}>
-          <a
-            href='/'
+          <NavLink
+            exact
+            to='/courses'
             className={[classes.SidebarNavLink, classes.SidebarNavTitle].join(
               ' '
             )}
           >
             Courses Section
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink exact to='/courses' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faFileAlt} />
             Courses
-          </a>
+          </NavLink>
         </li>
         <hr className={classes.SidebarNavHr} />
         <li className={classes.SidebarNavItem}>
-          <a
-            href='/'
+          <NavLink
+            exact
+            to='/coursedescription'
             className={[classes.SidebarNavLink, classes.SidebarNavTitle].join(
               ' '
             )}
           >
             NCEAC Forms
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/coursedescription'
+            className={classes.SidebarNavLink}
+          >
             <FontAwesomeIcon icon={faFileAlt} />
             Course Description
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/coursemonitoring'
+            className={classes.SidebarNavLink}
+          >
             <FontAwesomeIcon icon={faFileMedicalAlt} />
             Course Monitoring
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink exact to='/courselog' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faClipboardList} />
             Course Log
-          </a>
+          </NavLink>
         </li>
         <hr className={classes.SidebarNavHr} />
         <li className={classes.SidebarNavItem}>
-          <a
-            href='/'
+          <NavLink
+            exact
+            to='/materials'
             className={[classes.SidebarNavLink, classes.SidebarNavTitle].join(
               ' '
             )}
           >
             Materials
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink exact to='/quizzes' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faPollH} />
             Quizzes
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink exact to='/assignments' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faBookReader} />
             Assignments
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink exact to='/papers' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faBookOpen} />
             Papers
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink exact to='/reports' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faClipboard} />
             Reports
-          </a>
+          </NavLink>
         </li>
       </ul>
     </div>
   );
 };
 
-export default Sidebar;
+export default TeacherSidebar;

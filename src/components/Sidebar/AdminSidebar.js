@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFileMedicalAlt,
@@ -17,79 +18,82 @@ import logo from '../../logo.png';
 const Sidebar = () => {
   return (
     <div className={classes.Sidebar}>
-      <a href='/' className={classes.SidebarBrand}>
+      <NavLink to='/admin' className={classes.SidebarBrand}>
         <img src={logo} alt='logo' className={classes.SidebarBrandImg} />
-      </a>
+      </NavLink>
       <ul className={classes.SidebarNav}>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink to='/admin/profile' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faTachometerAlt} />
             Dashboard
-          </a>
+          </NavLink>
         </li>
         <hr className={classes.SidebarNavHr} />
         <li className={classes.SidebarNavItem}>
-          <a
-            href='/'
+          <NavLink
+            to='/admin/courses'
             className={[classes.SidebarNavLink, classes.SidebarNavTitle].join(
               ' '
             )}
           >
             Courses Section
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink to='/admin/courses' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faFileAlt} />
             Courses
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink to='/admin/addcourse' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faFileMedicalAlt} />
             Add Course
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink to='/admin/disablecourse' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faClipboardList} />
             Disable Course
-          </a>
+          </NavLink>
         </li>
         <hr className={classes.SidebarNavHr} />
         <li className={classes.SidebarNavItem}>
-          <a
-            href='/'
+          <NavLink
+            to='/admin/teachers'
             className={[classes.SidebarNavLink, classes.SidebarNavTitle].join(
               ' '
             )}
           >
             Teachers Section
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink to='/admin/teachers' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faPollH} />
             Teachers
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink to='/admin/addteacher' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faBookReader} />
             Add Teacher
-          </a>
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink
+            to='/admin/deactivateteacher'
+            className={classes.SidebarNavLink}
+          >
             <FontAwesomeIcon icon={faBookOpen} />
-            Delete Teacher
-          </a>
+            Deactivate Teacher
+          </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <a href='/' className={classes.SidebarNavLink}>
+          <NavLink to='/admin/reports' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faClipboard} />
             Reports
-          </a>
+          </NavLink>
         </li>
       </ul>
     </div>

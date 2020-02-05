@@ -12,19 +12,18 @@ class EditProfile extends React.Component {
 
   onFormSubmit(e) {
     e.preventDefault(); // Stop form submit
-    this.fileUpload(this.state.file);
+    const file = this.state.file;
+    const fileName = this.state.fileName;
+    const formData = new FormData();
+    formData.append('file', file);
+    console.log(formData, file, fileName);
   }
+
   onChange(e) {
-    console.log(e.target.files[0].name);
     this.setState({
       file: e.target.files[0],
       fileName: e.target.files[0].name
     });
-  }
-  fileUpload(file) {
-    const formData = new FormData();
-    formData.append('file', file);
-    console.log(formData, file);
   }
 
   render() {

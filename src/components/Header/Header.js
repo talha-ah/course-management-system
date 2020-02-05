@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { NavLink, withRouter } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDotCircle, faUser, faBell } from '@fortawesome/free-solid-svg-icons';
 
@@ -88,35 +89,35 @@ class Header extends Component {
               </div>
               <ul className={classes.headerDropDownUl}>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <NavLink exact to='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     My Profile
-                  </a>
+                  </NavLink>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <NavLink exact to='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Settings
-                  </a>
+                  </NavLink>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <NavLink exact to='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Activity
-                  </a>
+                  </NavLink>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <NavLink exact to='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Support
-                  </a>
+                  </NavLink>
                 </li>
                 <hr />
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <NavLink exact to='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Logout
-                  </a>
+                  </NavLink>
                 </li>
               </ul>
             </div>
@@ -142,35 +143,35 @@ class Header extends Component {
               </div>
               <ul className={classes.headerDropDownUl}>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <NavLink exact to='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     My Profile
-                  </a>
+                  </NavLink>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <NavLink exact to='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Settings
-                  </a>
+                  </NavLink>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <NavLink exact to='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Activity
-                  </a>
+                  </NavLink>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <NavLink exact to='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Support
-                  </a>
+                  </NavLink>
                 </li>
                 <hr />
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <NavLink exact to='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Logout
-                  </a>
+                  </NavLink>
                 </li>
               </ul>
             </div>
@@ -181,4 +182,4 @@ class Header extends Component {
   }
 }
 
-export default Header;
+export default withRouter(Header);
