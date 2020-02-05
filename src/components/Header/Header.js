@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { NavLink, withRouter } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDotCircle, faUser, faBell } from '@fortawesome/free-solid-svg-icons';
 
@@ -11,13 +10,15 @@ class Header extends Component {
     notificationDropDown: false
   };
 
-  localMthod() {
-    document.addEventListener('click', this.handleClick, false);
-  }
+  // localMthod() {
+  //   document.addEventListener('click', this.handleClick);
+  //   console.log('localMthod');
+  // }
 
-  componentWillUnmount() {
-    document.removeEventListener('click', this.handleClick, false);
-  }
+  // componentWillUnmount() {
+  //   document.removeEventListener('click', this.handleClick, false);
+  //   console.log('componentWillUnmount');
+  // }
 
   handleClick = e => {
     if (!this.node.contains(e.target)) {
@@ -41,8 +42,13 @@ class Header extends Component {
       }));
     }
   };
+
+  adminSwitch = e => {
+    console.log('adminSwitch', e.target.checked);
+  };
+
   render() {
-    this.localMthod();
+    // this.localMthod();
     let InvisibleStyles = {
       width: '0px',
       height: '0px',
@@ -54,13 +60,14 @@ class Header extends Component {
       visibility: 'visible',
       opacity: '1'
     };
+
     return (
       <div className={classes.headerNavbar}>
         <ul className={classes.headerNav}>
           <li className={classes.headerNavItemSwitch}>Switch to Admin</li>
           <li className={classes.headerNavItem}>
             <label className={classes.switch}>
-              <input type='checkbox' />
+              <input type='checkbox' onChange={this.adminSwitch} />
               <span
                 className={[classes.slider, classes.round].join(' ')}
               ></span>
@@ -89,35 +96,35 @@ class Header extends Component {
               </div>
               <ul className={classes.headerDropDownUl}>
                 <li className={classes.headerDropDownItem}>
-                  <NavLink exact to='/'>
+                  <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     My Profile
-                  </NavLink>
+                  </a>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <NavLink exact to='/'>
+                  <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Settings
-                  </NavLink>
+                  </a>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <NavLink exact to='/'>
+                  <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Activity
-                  </NavLink>
+                  </a>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <NavLink exact to='/'>
+                  <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Support
-                  </NavLink>
+                  </a>
                 </li>
                 <hr />
                 <li className={classes.headerDropDownItem}>
-                  <NavLink exact to='/'>
+                  <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Logout
-                  </NavLink>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -143,35 +150,35 @@ class Header extends Component {
               </div>
               <ul className={classes.headerDropDownUl}>
                 <li className={classes.headerDropDownItem}>
-                  <NavLink exact to='/'>
+                  <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     My Profile
-                  </NavLink>
+                  </a>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <NavLink exact to='/'>
+                  <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Settings
-                  </NavLink>
+                  </a>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <NavLink exact to='/'>
+                  <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Activity
-                  </NavLink>
+                  </a>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <NavLink exact to='/'>
+                  <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Support
-                  </NavLink>
+                  </a>
                 </li>
                 <hr />
                 <li className={classes.headerDropDownItem}>
-                  <NavLink exact to='/'>
+                  <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Logout
-                  </NavLink>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -182,4 +189,4 @@ class Header extends Component {
   }
 }
 
-export default withRouter(Header);
+export default Header;

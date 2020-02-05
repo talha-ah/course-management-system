@@ -1,8 +1,8 @@
-.Courses {
+.CoursesMonitoring {
   position: relative;
 }
 
-.coursesHeader {
+.coursesMonitoringHeader {
   max-width: 100%;
   font-size: 1rem;
   padding: 1rem 1.5rem;
@@ -10,7 +10,7 @@
   text-align: center;
 }
 
-.coursesArea {
+.coursesMonitoringArea {
   color: #525f7f;
   background-color: #fff;
   max-width: 100%;

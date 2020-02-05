@@ -50,7 +50,7 @@ const TeacherSidebar = () => {
         <li className={classes.SidebarNavItem}>
           <NavLink
             exact
-            to='/coursedescription'
+            to='/coursesdescription'
             className={[classes.SidebarNavLink, classes.SidebarNavTitle].join(
               ' '
             )}
@@ -61,7 +61,7 @@ const TeacherSidebar = () => {
         <li className={classes.SidebarNavItem}>
           <NavLink
             exact
-            to='/coursedescription'
+            to='/coursesdescription'
             className={classes.SidebarNavLink}
           >
             <FontAwesomeIcon icon={faFileAlt} />
@@ -71,7 +71,7 @@ const TeacherSidebar = () => {
         <li className={classes.SidebarNavItem}>
           <NavLink
             exact
-            to='/coursemonitoring'
+            to='/coursesmonitoring'
             className={classes.SidebarNavLink}
           >
             <FontAwesomeIcon icon={faFileMedicalAlt} />
@@ -79,7 +79,7 @@ const TeacherSidebar = () => {
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink exact to='/courselog' className={classes.SidebarNavLink}>
+          <NavLink exact to='/courseslog' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faClipboardList} />
             Course Log
           </NavLink>
@@ -88,7 +88,7 @@ const TeacherSidebar = () => {
         <li className={classes.SidebarNavItem}>
           <NavLink
             exact
-            to='/materials'
+            to='/quizzes'
             className={[classes.SidebarNavLink, classes.SidebarNavTitle].join(
               ' '
             )}
