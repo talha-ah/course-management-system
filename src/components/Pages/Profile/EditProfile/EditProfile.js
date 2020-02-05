@@ -2,6 +2,7 @@ import React from 'react';
 
 import './EditProfile.css';
 import Button from '../../../UI/Button/Button';
+import Input from '../../../UI/Input/Input';
 
 const EditProfile = props => {
   return (
@@ -21,30 +22,15 @@ const EditProfile = props => {
             </div>
             <div className='input-div'>
               <label htmlFor='firstName'>First Name</label>
-              <input
-                type='text'
-                name='firstName'
-                placeholder='First Name'
-                className='input-div-input'
-              />
+              <Input type='text' name='firstName' placeholder='First Name' />
             </div>
             <div className='input-div'>
               <label htmlFor='lastName'>Last Name</label>
-              <input
-                type='text'
-                name='lastName'
-                placeholder='Last Name'
-                className='input-div-input'
-              />
+              <Input type='text' name='lastName' placeholder='Last Name' />
             </div>
             <div className='input-div'>
               <label htmlFor='email'>Email Address</label>
-              <input
-                type='email'
-                name='email'
-                placeholder='Email Address'
-                className='input-div-input'
-              />
+              <Input type='email' name='email' placeholder='Email Address' />
             </div>
             <div className='button-div'>
               <Button onClick={props.editingMode}>Update</Button>
@@ -56,30 +42,15 @@ const EditProfile = props => {
             </div>
             <div className='input-div'>
               <label htmlFor='birthdate'>Birthdate</label>
-              <input
-                type='text'
-                name='birthdate'
-                placeholder='Birthdate'
-                className='input-div-input'
-              />
+              <Input type='text' name='birthdate' placeholder='Birthdate' />
             </div>
             <div className='input-div'>
               <label htmlFor='phone'>Phone Number</label>
-              <input
-                type='number'
-                name='phone'
-                placeholder='Phone Number'
-                className='input-div-input'
-              />
+              <Input type='number' name='phone' placeholder='Phone Number' />
             </div>
             <div className='input-div'>
               <label htmlFor='address'>Address</label>
-              <input
-                type='text'
-                name='address'
-                placeholder='Address'
-                className='input-div-input'
-              />
+              <Input type='text' name='address' placeholder='Address' />
             </div>
             <div className='button-div'>
               <Button onClick={props.editingMode}>Update</Button>
@@ -91,29 +62,26 @@ const EditProfile = props => {
             </div>
             <div className='input-div'>
               <label htmlFor='currentPassword'>Current Password</label>
-              <input
+              <Input
                 type='password'
                 name='currentPassword'
                 placeholder='Current Password'
-                className='input-div-input'
               />
             </div>
             <div className='input-div'>
               <label htmlFor='newPassword'>New Password</label>
-              <input
+              <Input
                 type='password'
                 name='newPassword'
                 placeholder='New Password'
-                className='input-div-input'
               />
             </div>
             <div className='input-div'>
               <label htmlFor='confirmPassword'>Confirm Password</label>
-              <input
+              <Input
                 type='password'
                 name='confirmPassword'
                 placeholder='Confirm Password'
-                className='input-div-input'
               />
             </div>
             <div className='button-div'>
@@ -126,7 +94,7 @@ const EditProfile = props => {
         </div>
         <div className='cvUpload'>
           <form action='' method='POST'>
-            <input type='file' />
+            <Input type='file' />
             <p>Drag your file here or click to select file.</p>
             <div className='button-div'>
               <Button type='submit'>Upload</Button>
