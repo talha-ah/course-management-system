@@ -12,12 +12,12 @@
   transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
 }
 
-.footer-nav-span {
+.footerNavSpan {
   font-weight: bold;
   text-transform: uppercase;
 }
 
-.footer-nav {
+.footerNav {
   list-style: none;
   font-size: 12px;
   color: #777777;
@@ -30,16 +30,16 @@
   justify-content: flex-start; /* horizontally  */
 }
 
-.footer-nav-item {
+.footerNavItem {
   margin: 0 10px;
 }
 
-.footer-nav-item a {
+.footerNavItem a {
   text-decoration: none;
   color: #777777;
 }
 
-.footer-nav-item a:hover,
-.footer-nav-item a:active {
+.footerNavItem a:hover,
+.footerNavItem a:active {
   text-decoration: none;
 }

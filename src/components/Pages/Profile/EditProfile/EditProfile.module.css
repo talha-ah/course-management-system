@@ -56,28 +56,53 @@
 }
 
 .cvUpload form {
-  width: 900px;
-  height: 100px;
+  position: relative;
+  width: 72.5%;
+  height: 62.5%;
+  color: #3b3e66;
+  background-color: #fff;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.5;
+  border: 1px solid #d1d2db;
+  border-radius: 0.29rem;
+  -webkit-transition: border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.cvUpload form:focus {
+  border-color: #9297da;
+  outline: 0;
+  box-shadow: 0 0.313rem 0.719rem rgba(122, 123, 151, 0.1),
+    0 0.156rem 0.125rem rgba(122, 123, 151, 0.06);
+}
+
+.cvUpload form input {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  opacity: 0;
+}
+
+.cvUpload form label {
+  position: absolute;
+  left: 17px;
+  top: 7px;
+  font-weight: bold;
 }
 
 .cvUpload form p {
   position: relative;
-  top: -80px;
-  color: #3b3e66;
-  width: 100%;
+  top: -87px;
   text-align: center;
   pointer-events: none;
 }
 
-.cvUpload form input {
-  width: 100%;
-  height: 100%;
-  outline: none;
-  /* opacity: 0; */
-}
-
 .cvUpload form button {
-  margin-top: -20px;
+  margin-top: -30px;
 }
 
 /* ============================================= */

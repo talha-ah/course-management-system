@@ -6,7 +6,7 @@ import EditProfile from './EditProfile/EditProfile';
 
 class Profile extends Component {
   state = {
-    isProfileEditing: false
+    isProfileEditing: true
   };
 
   handlerEditingMode = () => {
