@@ -9,12 +9,12 @@
   background-color: transparent;
 }
 
-.header-navbar {
+.headerNavbar {
   padding: 1rem 0;
   margin: 0 48px;
 }
 
-.header-nav {
+.headerNav {
   padding: 0;
   width: 100%;
   list-style: none;
@@ -23,25 +23,25 @@
   align-items: center;
 }
 
-.header-nav-item:nth-child(2) {
+.headerNavItem:nth-child(2) {
   margin: 0px 15px;
 }
 
-.header-nav-item {
+.headerNavItem {
   cursor: pointer;
 }
 
-.header-nav-item svg {
+.headerNavItem svg {
   font-size: 18px;
   pointer-events: none;
 }
 
-.header-nav-item-float svg {
+.headerNavItemFloat svg {
   pointer-events: none;
   font-size: 18px;
 }
 
-.header-nav-item-float {
+.headerNavItemFloat {
   margin-right: 35px;
   margin-left: auto;
   cursor: pointer;
@@ -49,11 +49,11 @@
 
 /* DropDown Starts */
 
-.header-dropDown-parent {
+.headerDropDownParent {
   position: relative;
 }
 
-.header-dropDown {
+.headerDropDown {
   position: absolute;
   top: 120%;
   right: 0;
@@ -79,17 +79,17 @@
   /* animation: show-navbar-dropdown 0.25s ease forwards; */
 }
 
-.header-dropDown-ul {
+.headerDropDownUl {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.header-dropDown-title {
+.headerDropDownTitle {
   padding: 8px 16px;
 }
 
-.header-dropDown-title h6 {
+.headerDropDownTitle h6 {
   padding: 0;
   margin: 0;
   font-size: 0.625rem;
@@ -101,11 +101,11 @@
   white-space: nowrap;
 }
 
-.header-dropDown-item {
+.headerDropDownItem {
   padding: 8px 16px;
 }
 
-.header-dropDown-item a {
+.headerDropDownItem a {
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 400;
@@ -115,14 +115,14 @@
   cursor: pointer;
 }
 
-.header-dropDown-item a svg {
+.headerDropDownItem a svg {
   font-size: 1rem;
   margin-right: 1rem;
   vertical-align: -14.5%;
   pointer-events: none;
 }
 
-.header-dropDown-ul hr {
+.headerDropDownUl hr {
   overflow: hidden;
   height: 0;
   margin: 0.5rem 0;
@@ -131,7 +131,7 @@
 
 /* DropDown Ends */
 
-.header-nav-item-switch {
+.headerNavItemSwitch {
   font-size: 0.8rem;
   color: floralwhite;
   text-transform: uppercase;

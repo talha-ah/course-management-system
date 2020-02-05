@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDotCircle, faUser, faBell } from '@fortawesome/free-solid-svg-icons';
 
-import './Header.css';
+import classes from './Header.module.css';
 
 class Header extends Component {
   state = {
@@ -54,23 +54,28 @@ class Header extends Component {
       opacity: '1'
     };
     return (
-      <div className='header-navbar'>
-        <ul className='header-nav'>
-          <li className='header-nav-item-switch'>Switch to Admin</li>
-          <li className='header-nav-item '>
-            <label className='switch'>
+      <div className={classes.headerNavbar}>
+        <ul className={classes.headerNav}>
+          <li className={classes.headerNavItemSwitch}>Switch to Admin</li>
+          <li className={classes.headerNavItem}>
+            <label className={classes.switch}>
               <input type='checkbox' />
-              <span className='slider round'></span>
+              <span
+                className={[classes.slider, classes.round].join(' ')}
+              ></span>
             </label>
           </li>
           <li
-            className='header-nav-item-float header-dropDown-parent'
+            className={[
+              classes.headerNavItemFloat,
+              classes.headerDropDownParent
+            ].join(' ')}
             name='bell'
             onClick={event => this.dropDownHandler(event)}
           >
             <FontAwesomeIcon icon={faBell} />
             <div
-              className='header-dropDown'
+              className={classes.headerDropDown}
               style={
                 this.state.notificationDropDown
                   ? visibleStyles
@@ -78,36 +83,36 @@ class Header extends Component {
               }
               ref={node => (this.node = node)}
             >
-              <div className='header-dropDown-title'>
+              <div className={classes.headerDropDownTitle}>
                 <h6>Welcome!</h6>
               </div>
-              <ul className='header-dropDown-ul'>
-                <li className='header-dropDown-item'>
+              <ul className={classes.headerDropDownUl}>
+                <li className={classes.headerDropDownItem}>
                   <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     My Profile
                   </a>
                 </li>
-                <li className='header-dropDown-item'>
+                <li className={classes.headerDropDownItem}>
                   <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Settings
                   </a>
                 </li>
-                <li className='header-dropDown-item'>
+                <li className={classes.headerDropDownItem}>
                   <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Activity
                   </a>
                 </li>
-                <li className='header-dropDown-item'>
+                <li className={classes.headerDropDownItem}>
                   <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Support
                   </a>
                 </li>
                 <hr />
-                <li className='header-dropDown-item'>
+                <li className={classes.headerDropDownItem}>
                   <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Logout
@@ -117,48 +122,51 @@ class Header extends Component {
             </div>
           </li>
           <li
-            className='header-nav-item header-dropDown-parent'
+            className={[
+              classes.headerNavItem,
+              classes.headerDropDownParent
+            ].join(' ')}
             name='profile'
             onClick={event => this.dropDownHandler(event)}
           >
             <FontAwesomeIcon icon={faUser} />
             <div
-              className='header-dropDown'
+              className={classes.headerDropDown}
               style={
                 this.state.profileDropDown ? visibleStyles : InvisibleStyles
               }
               ref={node => (this.node = node)}
             >
-              <div className='header-dropDown-title'>
+              <div className={classes.headerDropDownTitle}>
                 <h6>Welcome!</h6>
               </div>
-              <ul className='header-dropDown-ul'>
-                <li className='header-dropDown-item'>
+              <ul className={classes.headerDropDownUl}>
+                <li className={classes.headerDropDownItem}>
                   <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     My Profile
                   </a>
                 </li>
-                <li className='header-dropDown-item'>
+                <li className={classes.headerDropDownItem}>
                   <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Settings
                   </a>
                 </li>
-                <li className='header-dropDown-item'>
+                <li className={classes.headerDropDownItem}>
                   <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Activity
                   </a>
                 </li>
-                <li className='header-dropDown-item'>
+                <li className={classes.headerDropDownItem}>
                   <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Support
                   </a>
                 </li>
                 <hr />
-                <li className='header-dropDown-item'>
+                <li className={classes.headerDropDownItem}>
                   <a href='/'>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Logout

@@ -14,7 +14,7 @@
   box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15);
 }
 
-.Sidebar-brand {
+.SidebarBrand {
   display: block;
   font-size: 1.25rem;
   color: rgba(0, 0, 0, 0.9);
@@ -24,21 +24,21 @@
   text-align: center;
 }
 
-.Sidebar .Sidebar-brand-img,
-.Sidebar .Sidebar-brand > img {
+.Sidebar .SidebarBrandImg,
+.Sidebar .SidebarBrand > img {
   max-width: 100%;
   max-height: 2.5rem;
   border-style: none;
 }
 
-.Sidebar-nav {
+.SidebarNav {
   list-style: none;
   padding: 0;
   margin: 0;
   margin-top: 26px;
 }
 
-.Sidebar-nav-link {
+.SidebarNavLink {
   text-decoration: none;
   font-size: 1rem;
   color: rgba(0, 0, 0, 0.5);
@@ -49,11 +49,11 @@
   align-items: center;
 }
 
-.Sidebar-nav-link:hover {
+.SidebarNavLink:hover {
   color: rgba(0, 0, 0, 0.7);
 }
 
-.Sidebar-nav-link svg {
+.SidebarNavLink svg {
   margin-right: 16px;
   color: #5e72e4;
   min-height: 15.5px;
@@ -62,7 +62,7 @@
   max-width: 15.5px;
 }
 
-.Sidebar-nav-title {
+.SidebarNavTitle {
   font-size: 0.75rem;
   color: #8898aa;
   margin: 0px 0px 8px;
@@ -75,7 +75,7 @@
   pointer-events: none;
 }
 
-.Sidebar-nav-hr {
+.SidebarNavHr {
   margin-top: 1rem;
   border: 0;
   border-top: 1px solid rgba(0, 0, 0, 0.1);

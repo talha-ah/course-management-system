@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 
-import './Profile.css';
+import classes from './Profile.module.css';
 import ProfilePage from './ProfilePage/ProfilePage';
 import EditProfile from './EditProfile/EditProfile';
 
 class Profile extends Component {
   state = {
-    isProfileEditing: true
+    isProfileEditing: false
   };
 
   handlerEditingMode = () => {
@@ -15,7 +15,7 @@ class Profile extends Component {
 
   render() {
     return (
-      <div>
+      <div className={classes.Profile}>
         {this.state.isProfileEditing ? (
           <EditProfile editingMode={this.handlerEditingMode} />
         ) : (

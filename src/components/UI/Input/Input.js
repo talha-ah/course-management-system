@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './Input.css';
+import classes from './Input.module.css';
 
 const Input = props => {
   return (
@@ -8,7 +8,7 @@ const Input = props => {
       type={props.type}
       name={props.name}
       placeholder={props.placeholder}
-      className='input'
+      className={classes.input}
     />
   );
 };
