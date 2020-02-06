@@ -8,6 +8,11 @@ const Button = props => {
       className={classes.button}
       type={props.type}
       onClick={props.onClick}
+      style={
+        props.color
+          ? { backgroundColor: props.color }
+          : { backgroundColor: '#5e72e4' }
+      }
     >
       {props.children}
     </button>

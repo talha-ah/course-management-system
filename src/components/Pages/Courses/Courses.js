@@ -1,20 +1,28 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import classes from './Courses.module.css';
+import CoursesList from './CoursesList/CoursesList';
+import AddCourse from './AddCourse/AddCourse';
 
-const Courses = () => {
-  return (
-    <div className={classes.Courses}>
-      <div className={classes.coursesHeader}>
-        <h3>Courses Page</h3>
-        <p>
-          This is your Courses page. You can see the progress you've made with
-          your courses here and manage them
-        </p>
+class Courses extends Component {
+  state = {
+    addCourse: false
+  };
+
+  addCoursePageHandler = () => {
+    this.setState(prevState => ({ addCourse: !prevState.addCourse }));
+  };
+  render() {
+    return (
+      <div className={classes.Courses}>
+        {this.state.addCourse ? (
+          <AddCourse addCoursePageHandler={this.addCoursePageHandler} />
+        ) : (
+          <CoursesList addCoursePageHandler={this.addCoursePageHandler} />
+        )}
       </div>
-      <div className={classes.coursesArea}></div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 export default Courses;

@@ -1,12 +1,12 @@
 .button {
   display: inline-block;
   color: #fff;
-  background-color: #5e72e4;
+  /* background-color: #5e72e4; */
   padding: 0.53rem 1.3rem;
   font-size: 0.95rem;
   line-height: 1.5;
   border: 2px solid transparent;
-  border-color: #5e72e4;
+  /* border-color: #5e72e4; */
   border-radius: 0.2rem;
   outline: none;
   cursor: pointer;
