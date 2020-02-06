@@ -1,18 +1,24 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import classes from './CMS.module.css';
-import Sidebar from '../../components/Sidebar/TeacherSidebar';
+import TeacherSidebar from '../../components/Sidebar/TeacherSidebar';
+import AdminSidebar from '../../components/Sidebar/AdminSidebar';
 import MainContent from '../../components/MainContent/MainContent';
 import Footer from '../../components/Footer/Footer';
 
-const CMS = () => {
+const CMS = props => {
   return (
     <div className={classes.CMS}>
-      <Sidebar />
+      {props.isAdminSidebar ? <AdminSidebar /> : <TeacherSidebar />}
       <MainContent />
       <Footer />
     </div>
   );
 };
 
-export default CMS;
+const mapStateToProps = state => {
+  return { isAdminSidebar: state.adminSidebar };
+};
+
+export default connect(mapStateToProps)(CMS);

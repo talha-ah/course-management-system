@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDotCircle, faUser, faBell } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './Header.module.css';
+import * as actionTypes from '../../store/actions';
 
 class Header extends Component {
   state = {
@@ -43,10 +45,6 @@ class Header extends Component {
     }
   };
 
-  adminSwitch = e => {
-    console.log('adminSwitch', e.target.checked);
-  };
-
   render() {
     // this.localMthod();
     let InvisibleStyles = {
@@ -67,7 +65,7 @@ class Header extends Component {
           <li className={classes.headerNavItemSwitch}>Switch to Admin</li>
           <li className={classes.headerNavItem}>
             <label className={classes.switch}>
-              <input type='checkbox' onChange={this.adminSwitch} />
+              <input type='checkbox' onChange={this.props.switchSidebar} />
               <span
                 className={[classes.slider, classes.round].join(' ')}
               ></span>
@@ -189,4 +187,10 @@ class Header extends Component {
   }
 }
 
-export default Header;
+const mapDispatchToProps = dispatch => {
+  return {
+    switchSidebar: () => dispatch({ type: actionTypes.SWITCH_SIDEBAR })
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Header);

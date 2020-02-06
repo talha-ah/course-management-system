@@ -13,7 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './Sidebar.module.css';
-import logo from '../../logo.png';
+import logo from '../../assets/Logo/logo.png';
 
 const TeacherSidebar = () => {
   return (
