@@ -1,0 +1,43 @@
+.TextArea {
+  display: inline-block;
+  color: #3b3e66;
+  background-color: #fff;
+  width: 100%;
+  font-size: 0.95rem;
+  font-weight: 400;
+  padding: 1.6rem 0;
+  margin-top: 0;
+  border: 0;
+  text-align: center;
+  resize: none;
+  vertical-align: center;
+}
+
+.TextArea:focus {
+  outline: 0;
+  -webkit-box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.75);
+  box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.75);
+}
+
+.Textarea::-webkit-input-placeholder {
+  color: #0bf;
+}
+
+.Textarea:-moz-placeholder {
+  /* Firefox 18- */
+  color: #0bf;
+}
+
+.Textarea::-moz-placeholder {
+  /* Firefox 19+ */
+  color: #0bf;
+}
+
+.Textarea:-ms-input-placeholder {
+  color: #0bf;
+}
+
+.Textarea::placeholder {
+  color: #0bf;
+}

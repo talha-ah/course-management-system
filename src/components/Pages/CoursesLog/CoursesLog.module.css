@@ -1,8 +1,9 @@
 .CoursesLog {
   position: relative;
+  text-align: center;
 }
 
-.coursesLogHeader {
+.CoursesLogHeader {
   max-width: 100%;
   font-size: 1rem;
   padding: 1rem 1.5rem;
@@ -10,12 +11,70 @@
   text-align: center;
 }
 
-.coursesLogArea {
+.CoursesLogArea {
   color: #525f7f;
   background-color: #fff;
   max-width: 100%;
-  padding: 1rem 1.5rem 2.5rem 1.5rem;
-  margin: 0 3rem;
+  margin: 1rem 3rem 3rem 3rem;
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 0.375rem;
+}
+
+/* Table Starts */
+
+.CoursesLogArea table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.CoursesLogArea caption {
+  text-align: start;
+  padding: 20px;
+}
+
+.CoursesLogArea table thead {
+  border-top: 2px solid rgba(7, 9, 25, 0.125);
+  border-bottom: 2px solid rgba(7, 9, 25, 0.125);
+  background-color: #f4f5fd;
+}
+
+.CoursesLogArea table tbody tr {
+  border-bottom: 1px solid rgba(7, 9, 25, 0.125);
+}
+
+.CoursesLogArea table tbody .CoursesLogTableRow:hover {
+  background-color: #f4f5fd;
+}
+
+.CoursesLogArea table tbody tr td {
+  padding: 0;
+}
+
+.CoursesLogArea table tbody tr td:nth-child(3) {
+  text-align: left;
+}
+
+.CoursesLogArea table tbody tr td p {
+  margin: 0;
+}
+
+.CoursesLogArea table tbody button:nth-child(1) {
+  margin-right: 15px;
+}
+
+.CoursesLogArea th,
+.CoursesLogArea td {
+  padding: 20px;
+}
+
+.CoursesLogArea table tfoot {
+  border-bottom: 2px solid rgba(7, 9, 25, 0.125);
+}
+
+/* Table Ends */
+
+.buttonDiv {
+  margin-bottom: 25px;
 }

@@ -1,12 +1,10 @@
 .button {
   display: inline-block;
   color: #fff;
-  /* background-color: #5e72e4; */
   padding: 0.53rem 1.3rem;
   font-size: 0.95rem;
   line-height: 1.5;
   border: 2px solid transparent;
-  /* border-color: #5e72e4; */
   border-radius: 0.2rem;
   outline: none;
   cursor: pointer;
@@ -18,4 +16,10 @@
   transform: translateY(-2px);
   box-shadow: 0 0.22rem 0.525rem rgba(60, 68, 177, 0.4),
     0 0.0625rem 0.385rem rgba(60, 68, 177, 0.54);
+}
+
+.button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  pointer-events: none;
 }
