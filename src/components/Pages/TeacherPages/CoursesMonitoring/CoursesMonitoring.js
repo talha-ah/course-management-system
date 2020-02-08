@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
 import classes from './CoursesMonitoring.module.css';
-import Button from '../../UI/Button/Button';
-import TextArea from '../../UI/TextArea/TextArea';
+import Button from '../../../UI/Button/Button';
+import TextArea from '../../../UI/TextArea/TextArea';
 
 class CoursesMonitoring extends Component {
   state = {

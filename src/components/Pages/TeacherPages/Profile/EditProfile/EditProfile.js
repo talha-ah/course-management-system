@@ -1,30 +1,61 @@
 import React from 'react';
 
 import classes from './EditProfile.module.css';
-import Button from '../../../UI/Button/Button';
-import Input from '../../../UI/Input/Input';
+import Button from '../../../../UI/Button/Button';
+import Input from '../../../../UI/Input/Input';
 
 class EditProfile extends React.Component {
   state = {
     file: null,
-    fileName: ''
+    fileName: null,
+    firstName: '',
+    lastName: '',
+    email: '',
+    birthdate: '',
+    phone: '',
+    address: '',
+    password: '',
+    newPassword: '',
+    confirmPassword: ''
   };
 
-  onFormSubmit(e) {
+  onFormSubmit = e => {
     e.preventDefault(); // Stop form submit
-    const file = this.state.file;
-    const fileName = this.state.fileName;
-    const formData = new FormData();
-    formData.append('file', file);
-    console.log(formData, file, fileName);
-  }
+    if (this.state.file) {
+      const file = this.state.file;
+      const fileName = this.state.fileName;
+      const formData = new FormData();
+      formData.append('file', file);
+      console.log(
+        'File uploaded!',
+        formData,
+        file,
+        file.size,
+        file.type,
+        fileName
+      );
+    } else {
+      console.log('Form submitted.');
+    }
+    this.props.editingMode();
+  };
 
-  onChange(e) {
-    this.setState({
-      file: e.target.files[0],
-      fileName: e.target.files[0].name
-    });
-  }
+  onChange = e => {
+    if (e.target.type === 'file') {
+      console.log(e.target.type);
+      this.setState({
+        file: e.target.files[0],
+        fileName: e.target.files[0].name
+      });
+    } else {
+      console.log(e.target.name);
+      const name = e.target.name;
+      const value = e.target.value;
+      this.setState({
+        [name]: value
+      });
+    }
+  };
 
   render() {
     return (
@@ -44,15 +75,30 @@ class EditProfile extends React.Component {
               </div>
               <div className={classes.inputDiv}>
                 <label htmlFor='firstName'>First Name</label>
-                <Input type='text' name='firstName' placeholder='First Name' />
+                <Input
+                  type='text'
+                  name='firstName'
+                  placeholder='First Name'
+                  onChange={this.onChange}
+                />
               </div>
               <div className={classes.inputDiv}>
                 <label htmlFor='lastName'>Last Name</label>
-                <Input type='text' name='lastName' placeholder='Last Name' />
+                <Input
+                  type='text'
+                  name='lastName'
+                  placeholder='Last Name'
+                  onChange={this.onChange}
+                />
               </div>
               <div className={classes.inputDiv}>
                 <label htmlFor='email'>Email Address</label>
-                <Input type='email' name='email' placeholder='Email Address' />
+                <Input
+                  type='email'
+                  name='email'
+                  placeholder='Email Address'
+                  onChange={this.onChange}
+                />
               </div>
               <div className={classes.buttonDiv}>
                 <Button onClick={this.props.editingMode}>Update</Button>
@@ -64,15 +110,31 @@ class EditProfile extends React.Component {
               </div>
               <div className={classes.inputDiv}>
                 <label htmlFor='birthdate'>Birthdate</label>
-                <Input type='text' name='birthdate' placeholder='Birthdate' />
+                <Input
+                  type='date'
+                  name='birthdate'
+                  placeholder='Birthdate'
+                  value='1980-01-01'
+                  onChange={this.onChange}
+                />
               </div>
               <div className={classes.inputDiv}>
                 <label htmlFor='phone'>Phone Number</label>
-                <Input type='number' name='phone' placeholder='Phone Number' />
+                <Input
+                  type='number'
+                  name='phone'
+                  placeholder='Phone Number'
+                  onChange={this.onChange}
+                />
               </div>
               <div className={classes.inputDiv}>
                 <label htmlFor='address'>Address</label>
-                <Input type='text' name='address' placeholder='Address' />
+                <Input
+                  type='text'
+                  name='address'
+                  placeholder='Address'
+                  onChange={this.onChange}
+                />
               </div>
               <div className={classes.buttonDiv}>
                 <Button onClick={this.props.editingMode}>Update</Button>
@@ -88,6 +150,7 @@ class EditProfile extends React.Component {
                   type='password'
                   name='currentPassword'
                   placeholder='Current Password'
+                  onChange={this.onChange}
                 />
               </div>
               <div className={classes.inputDiv}>
@@ -96,6 +159,7 @@ class EditProfile extends React.Component {
                   type='password'
                   name='newPassword'
                   placeholder='New Password'
+                  onChange={this.onChange}
                 />
               </div>
               <div className={classes.inputDiv}>
@@ -104,6 +168,7 @@ class EditProfile extends React.Component {
                   type='password'
                   name='confirmPassword'
                   placeholder='Confirm Password'
+                  onChange={this.onChange}
                 />
               </div>
               <div className={classes.buttonDiv}>

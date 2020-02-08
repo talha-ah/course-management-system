@@ -7,7 +7,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './ProfilePage.module.css';
-import Button from '../../../UI/Button/Button';
+import Button from '../../../../UI/Button/Button';
 
 const ProfilePage = props => {
   return (

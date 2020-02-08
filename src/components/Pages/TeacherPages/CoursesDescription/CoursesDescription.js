@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
 import classes from './CoursesDescription.module.css';
-import Button from '../../UI/Button/Button';
-import TextArea from '../../UI/TextArea/TextArea';
+import Button from '../../../UI/Button/Button';
+import TextArea from '../../../UI/TextArea/TextArea';
 
 class CoursesDescription extends Component {
   state = {

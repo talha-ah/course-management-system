@@ -1,8 +1,8 @@
 import React from 'react';
 
 import classes from './CoursesList.module.css';
-import Button from '../../../UI/Button/Button';
-import TableButton from '../../../UI/TableButton/TableButton';
+import Button from '../../../../UI/Button/Button';
+import TableButton from '../../../../UI/TableButton/TableButton';
 
 const CoursesList = props => {
   return (

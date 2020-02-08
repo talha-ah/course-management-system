@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 
 import classes from './CoursesLog.module.css';
-import Button from '../../UI/Button/Button';
-import TableButton from '../../UI/TableButton/TableButton';
-import TableInput from '../../UI/TableInput/TableInput';
-import TextArea from '../../UI/TextArea/TextArea';
+import Button from '../../../UI/Button/Button';
+import TableButton from '../../../UI/TableButton/TableButton';
+import TableInput from '../../../UI/TableInput/TableInput';
+import TextArea from '../../../UI/TextArea/TextArea';
 
 class CoursesLog extends Component {
   state = {
