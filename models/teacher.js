@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-const Scheme = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-const teacherModel = new Scheme(
+const teacherModel = new Schema(
   {
     firstName: {
       type: String
@@ -26,9 +26,20 @@ const teacherModel = new Scheme(
       type: String,
       required: true
     },
-    courses: {
-      type: String
-    }
+    courses: [
+      {
+        courseId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Course'
+        },
+        sections: {
+          type: String
+        },
+        session: {
+          type: String
+        }
+      }
+    ]
   },
   { timestamps: true }
 );

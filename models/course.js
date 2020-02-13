@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-const Scheme = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-const course = new Scheme(
+const courseModel = new Schema(
   {
     title: {
       type: String,

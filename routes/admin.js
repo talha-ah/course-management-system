@@ -38,10 +38,57 @@ router.post(
 
 router.post(
   '/createteacher',
-  [body('email').isEmail(), body('code')],
+  [
+    body('email')
+      .isEmail()
+      .withMessage('Invalid Email!')
+      .custom(async (value, { req }) => {
+        const teacherDoc = await Teacher.findOne({ email: value });
+        if (teacherDoc) {
+          return Promise.reject('E-Mail address already exists!');
+        }
+      })
+      .normalizeEmail(),
+    body('code')
+      .trim()
+      .not()
+      .isEmpty()
+  ],
   adminController.createTeacher
 );
 
 router.get('/deactiveteacher/:teacherid', adminController.deactivateTeacher);
+
+router.post(
+  '/createcourse',
+  [
+    body('title')
+      .trim()
+      .not()
+      .isEmpty(),
+    body('code')
+      .trim()
+      .not()
+      .isEmpty()
+  ],
+  adminController.createCourse
+);
+
+router.put(
+  '/editcourse',
+  [
+    body('title')
+      .trim()
+      .not()
+      .isEmpty(),
+    body('code')
+      .trim()
+      .not()
+      .isEmpty()
+  ],
+  adminController.updateCourse
+);
+
+router.delete('/deletecourse/:courseId', adminController.deleteCourse);
 
 module.exports = router;
