@@ -26,6 +26,9 @@ const teacherModel = new Schema(
       type: String,
       required: true
     },
+    cvUrl: {
+      type: String
+    },
     courses: [
       {
         courseId: {
@@ -37,7 +40,22 @@ const teacherModel = new Schema(
         },
         session: {
           type: String
-        }
+        },
+        courseLog: {
+          type: Schema.Types.ObjectId,
+          ref: 'Courselog'
+        },
+        courseMonitoring: {
+          type: Schema.Types.ObjectId,
+          ref: 'Courselonitoring'
+        },
+        courseDescription: {
+          type: Schema.Types.ObjectId,
+          ref: 'Coursedescription'
+        },
+        quizzes: [{ type: Schema.Types.ObjectId, ref: 'Quizzes' }],
+        assignments: [{ type: Schema.Types.ObjectId, ref: 'Assignments' }],
+        papers: [{ type: Schema.Types.ObjectId, ref: 'Papers' }]
       }
     ]
   },

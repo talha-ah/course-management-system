@@ -82,7 +82,7 @@ const PORT = process.env.PORT || 3000;
 mongoose
   .connect(
     'mongodb+srv://betarid:xtHucKuf9wzRJ6An@node-5ioaz.mongodb.net/cms?retryWrites=true&w=majority',
-    { useNewUrlParser: true, useUnifiedTopology: true }
+    { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }
   )
   .then(result => {
     app.listen(PORT, () => console.log(`App listening at ${PORT}`));

@@ -6,6 +6,7 @@ const router = express.Router();
 const Teacher = require('../models/teacher');
 const adminController = require('../controllers/admin');
 
+// /admin/
 router.post(
   '/signup',
   [
@@ -36,6 +37,7 @@ router.post(
   adminController.adminSignup
 );
 
+// /admin/
 router.post(
   '/createteacher',
   [
@@ -57,8 +59,10 @@ router.post(
   adminController.createTeacher
 );
 
+// /admin/
 router.get('/deactiveteacher/:teacherid', adminController.deactivateTeacher);
 
+// /admin/
 router.post(
   '/createcourse',
   [
@@ -74,6 +78,7 @@ router.post(
   adminController.createCourse
 );
 
+// /admin/
 router.put(
   '/editcourse',
   [
@@ -89,6 +94,7 @@ router.put(
   adminController.updateCourse
 );
 
+// /admin/
 router.delete('/deletecourse/:courseId', adminController.deleteCourse);
 
 module.exports = router;
