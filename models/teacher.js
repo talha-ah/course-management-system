@@ -22,11 +22,18 @@ const teacherModel = new Schema(
       type: String,
       required: true
     },
+    role: {
+      type: String,
+      required: true
+    },
     status: {
       type: String,
       required: true
     },
     cvUrl: {
+      type: String
+    },
+    dpURL: {
       type: String
     },
     courses: [
@@ -53,9 +60,18 @@ const teacherModel = new Schema(
           type: Schema.Types.ObjectId,
           ref: 'Coursedescription'
         },
-        quizzes: [{ type: Schema.Types.ObjectId, ref: 'Quizzes' }],
-        assignments: [{ type: Schema.Types.ObjectId, ref: 'Assignments' }],
-        papers: [{ type: Schema.Types.ObjectId, ref: 'Papers' }]
+        quizzes: {
+          type: Schema.Types.ObjectId,
+          ref: 'Quizzes'
+        },
+        assignments: {
+          type: Schema.Types.ObjectId,
+          ref: 'Assignments'
+        },
+        papers: {
+          type: Schema.Types.ObjectId,
+          ref: 'Papers'
+        }
       }
     ]
   },

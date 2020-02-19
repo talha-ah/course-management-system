@@ -11,7 +11,13 @@ const courseMonitoring = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Teacher'
   },
-  data: []
+  data: {
+    howFar: { type: String },
+    fullCover: { type: String },
+    relevantProblems: { type: String },
+    assessStandard: { type: String },
+    emergeApplication: { type: String }
+  }
 });
 
 module.exports = mongoose.model('Coursemonitoring', courseMonitoring);

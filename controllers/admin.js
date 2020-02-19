@@ -1,21 +1,22 @@
+const bcrypt = require('bcryptjs');
+
 const Teacher = require('../models/teacher');
 const Admin = require('../models/admin');
 const Course = require('../models/course');
 
-exports.adminSignup = (req, res, next) => {
+exports.adminSignup = async (req, res, next) => {
   const firstName = req.body.firstname;
   const lastName = req.body.lastname;
   const email = req.body.email;
-
   const password = req.body.password;
 
-  // crypt password
+  const hashedPassword = await bcrypt.hash(password, 12);
 
   const admin = new Admin({
     firstName: firstName,
     lastName: lastName,
     email: email,
-    password: password
+    password: hashedPassword
   });
   admin
     .save()
@@ -28,26 +29,35 @@ exports.adminSignup = (req, res, next) => {
       res.send({ admin: admin });
     })
     .catch(err => {
-      console.log('[AdminSignup.Admin]', err);
+      if (err.status) {
+        err.status = 500;
+      }
+      console.log('AdminSignup', err);
     });
 };
 
 // ================================================= Teachers Section ================================================
 
-exports.createTeacher = (req, res, next) => {
+exports.createTeacher = async (req, res, next) => {
   const teacherEmail = req.body.email;
   const teacherCode = req.body.code;
+  const role = req.body.role;
 
   const password = 'DefaultPassword';
   const status = 'Active';
+  const dpURL = 'undefined';
+  const cvUrl = 'undefined';
 
-  // cryptPassword
+  const hashedPassword = await bcrypt.hash(password, 12);
 
   const teacher = new Teacher({
     email: teacherEmail,
     code: teacherCode,
-    password: password,
-    status: status
+    password: hashedPassword,
+    status: status,
+    role: role,
+    dpURL: dpURL,
+    cvUrl: cvUrl
   });
 
   teacher
@@ -61,7 +71,10 @@ exports.createTeacher = (req, res, next) => {
       res.send({ teacher: teacher });
     })
     .catch(err => {
-      console.log('[CreateTeacher.Admin]', err);
+      if (!err.status) {
+        err.status = 500;
+      }
+      next(err);
     });
 };
 
@@ -78,16 +91,48 @@ exports.deactivateTeacher = (req, res, next) => {
       teacher.status = 'Inactive';
       return teacher.save();
     })
-    .then(saveResult => {
-      if (!saveResult) {
+    .then(updatedTeacher => {
+      if (!updatedTeacher) {
         const error = new Error('Error in saving the teacher!');
         error.code = 404;
         throw new error();
       }
-      res.send({ teacher: teacher });
+      res.send({ teacher: updatedTeacher });
     })
     .catch(err => {
-      console.log('[DeactivateTeacher.Admin]', err);
+      if (err.status) {
+        err.status = 500;
+      }
+      next(err);
+    });
+};
+
+exports.reactivateTeacher = (req, res, next) => {
+  const teacherId = req.params.teacherid;
+
+  Teacher.findById(teacherId)
+    .then(teacher => {
+      if (!teacher) {
+        const error = new Error('Error in finding the teacher!');
+        error.code = 404;
+        throw new error();
+      }
+      teacher.status = 'Active';
+      return teacher.save();
+    })
+    .then(updatedTeacher => {
+      if (!updatedTeacher) {
+        const error = new Error('Error in saving the teacher!');
+        error.code = 404;
+        throw new error();
+      }
+      res.send({ teacher: updatedTeacher });
+    })
+    .catch(err => {
+      if (err.status) {
+        err.status = 500;
+      }
+      next(err);
     });
 };
 
@@ -96,10 +141,12 @@ exports.deactivateTeacher = (req, res, next) => {
 exports.createCourse = (req, res, next) => {
   const courseTitle = req.body.title;
   const courseCode = req.body.code;
+  const credits = req.body.credits;
 
   const course = new Course({
     title: courseTitle,
-    code: courseCode
+    code: courseCode,
+    credits: credits
   });
 
   course
@@ -113,14 +160,18 @@ exports.createCourse = (req, res, next) => {
       res.send({ course: courseData });
     })
     .catch(err => {
-      console.log('[CreateCourse.Admin]', err);
+      if (!err.status) {
+        err.status = 500;
+      }
+      next(err);
     });
 };
 
 exports.updateCourse = (req, res, next) => {
+  const courseId = req.body.courseId;
   const courseTitle = req.body.title;
   const courseCode = req.body.code;
-  const courseId = req.body.courseId;
+  const credits = req.body.credits;
 
   Course.findById(courseId)
     .then(course => {
@@ -131,6 +182,7 @@ exports.updateCourse = (req, res, next) => {
       }
       course.title = courseTitle;
       course.code = courseCode;
+      course.credits = credits;
       return course.save();
     })
     .then(courseData => {
@@ -142,12 +194,17 @@ exports.updateCourse = (req, res, next) => {
       res.send({ course: courseData });
     })
     .catch(err => {
-      console.log('[UpdateCourse.Admin]', err);
+      if (!err.status) {
+        err.status = 500;
+      }
+      next(err);
     });
 };
 
 exports.deleteCourse = (req, res, next) => {
   const courseId = req.params.courseId;
+
+  // Delete from all places
 
   Course.findByIdAndDelete(courseId)
     .then(course => {
@@ -159,6 +216,9 @@ exports.deleteCourse = (req, res, next) => {
       res.send({ course: course });
     })
     .catch(err => {
-      console.log('[deleteCourse.Admin]', err);
+      if (!err.status) {
+        err.status = 500;
+      }
+      next(err);
     });
 };

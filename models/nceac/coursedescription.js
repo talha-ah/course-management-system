@@ -11,7 +11,31 @@ const courseDescription = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Teacher'
   },
-  data: []
+  data: {
+    prerequisites: { type: String },
+    assessmentInstruments: {
+      assignments: { type: String },
+      quizzes: { type: String },
+      mid: { type: String },
+      final: { type: String }
+    },
+    courseCoordinator: { type: String },
+    url: { type: String },
+    currentCatalogue: { type: String },
+    textBook: { type: String },
+    referenceMaterial: [{ type: String }],
+    courseGoals: { type: String },
+    topicsCovered: { type: String },
+    labProjects: { type: String },
+    progAssignments: { type: String },
+    classTimeSpent: {
+      theory: { type: String },
+      problemAnalysis: { type: String },
+      solutionDesign: { type: String },
+      socialAndEthicalIssues: { type: String }
+    },
+    oralAndWritten: { type: String }
+  }
 });
 
 module.exports = mongoose.model('Coursedescription', courseDescription);
