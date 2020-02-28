@@ -36,6 +36,15 @@ const teacherModel = new Schema(
     dpURL: {
       type: String
     },
+    dob: {
+      type: String
+    },
+    address: {
+      type: String
+    },
+    phone: {
+      type: String
+    },
     courses: [
       {
         courseId: {
@@ -47,6 +56,10 @@ const teacherModel = new Schema(
         },
         session: {
           type: String
+        },
+        status: {
+          type: String,
+          required: true
         },
         courseLog: {
           type: Schema.Types.ObjectId,

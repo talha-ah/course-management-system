@@ -1,6 +1,7 @@
-const deleteFile = require('../utils/deleteFile');
+const { clearFile } = require('../utils/clearFile');
 
 const Teacher = require('../models/teacher');
+const Course = require('../models/course');
 const CourseLog = require('../models/nceac/courselog');
 const CourseMonitoring = require('../models/nceac/coursemonitoring');
 const CourseDescription = require('../models/nceac/coursedescription');
@@ -10,13 +11,56 @@ const Paper = require('../models/materials/papers');
 
 // =========================================================== Profile ================================================
 
+exports.getTeacher = async (req, res, next) => {
+  const teacherId = req.params.teacherId;
+
+  try {
+    const teacher = await Teacher.findById(teacherId);
+
+    if (!teacher) {
+      const err = new Error('Unable to fetch the teacher.');
+      err.status = 422;
+      throw err;
+    }
+    const totalCourses = teacher.courses.length;
+    var activeCourses = 0;
+    teacher.courses.map(course => {
+      if (course.status === 'Active') {
+        activeCourses++;
+      }
+    });
+    res.status(200).send({
+      message: 'Teacher fetched.',
+      teacher: {
+        firstName: teacher.firstName,
+        lastName: teacher.lastName,
+        role: teacher.role,
+        totalCourses: totalCourses,
+        activeCourses: activeCourses,
+        email: teacher.email,
+        dob: teacher.dob,
+        address: teacher.address,
+        phone: teacher.phone
+      }
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
 exports.editProfile = async (req, res, next) => {
-  const teacherId = req.body.teacherId;
+  const teacherId = req.params.teacherId;
+
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
   const email = req.body.email;
-  const password = req.body.password;
+  const dob = req.body.dob;
+  const phone = req.body.phone;
   const address = req.body.address;
+
   try {
     const teacher = await Teacher.findById(teacherId);
 
@@ -26,24 +70,27 @@ exports.editProfile = async (req, res, next) => {
       throw err;
     }
 
-    if (req.file) {
-      var dpURL = req.file.path;
-      dpURL = dpURL.replace(/\\/g, '/');
-      if (dpURL !== teacher.dpURL) {
-        deleteFile(teacher.dpURL);
-        teacher.dpURL = dpURL;
-      }
-    }
+    // if (req.file) {
+    //   var dpURL = req.file.path;
+    //   dpURL = dpURL.replace(/\\/g, '/');
+    //   if (dpURL !== teacher.dpURL) {
+    //     clearFile(teacher.dpURL);
+    //     teacher.dpURL = dpURL;
+    //   }
+    // }
 
     teacher.firstName = firstName;
     teacher.lastName = lastName;
     teacher.email = email;
-    teacher.password = password;
+    teacher.dob = dob;
+    teacher.phone = phone;
     teacher.address = address;
 
     const updatedTeacher = await teacher.save();
 
-    res.send({ message: 'Profile Updated', teacher: updatedTeacher });
+    res
+      .status(201)
+      .send({ message: 'Profile Updated', teacher: updatedTeacher });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -53,21 +100,29 @@ exports.editProfile = async (req, res, next) => {
 };
 
 exports.editCV = async (req, res, next) => {
-  const teacherId = req.body.teacherId;
-  if (!req.file) {
-    const err = new Error('No file provided.');
-    err.status = 422;
-    throw err;
-  }
-  const cvPath = req.file.path;
-  if (!cvPath) {
-    const err = new Error('File not provided.');
-    err.status = 422;
-    throw err;
-  }
-  cvPath = cvPath.replace(/\\/g, '/');
+  const teacherId = req.params.teacherId;
 
   try {
+    if (req.file.mimetype !== 'application/pdf') {
+      var error = new Error('File type not PDF!.');
+      error.status = 400;
+      throw error;
+    }
+
+    if (!req.file) {
+      const err = new Error('No file provided.');
+      err.status = 422;
+      throw err;
+    }
+
+    var cvPath = req.file.path;
+    if (!cvPath) {
+      const err = new Error('File not provided.');
+      err.status = 422;
+      throw err;
+    }
+    cvPath = cvPath.replace(/\\/g, '/');
+
     const teacher = await Teacher.findById(teacherId);
 
     if (!teacher) {
@@ -75,10 +130,9 @@ exports.editCV = async (req, res, next) => {
       err.status = 422;
       throw err;
     }
-    if (cvPath === teacher.cvUrl) {
-      const err = new Error('File already exists.');
-      err.status = 422;
-      throw err;
+
+    if (teacher.cvUrl !== 'undefined' || !teacher.cvUrl) {
+      clearFile(teacher.cvUrl);
     }
 
     teacher.cvUrl = cvPath;
@@ -96,13 +150,77 @@ exports.editCV = async (req, res, next) => {
 
 // =========================================================== Courses ================================================
 
+exports.getCourses = async (req, res, next) => {
+  try {
+    const courses = await Course.find().select('title');
+    // const courses = await Course.find({ status: 'Active' }).select(
+    //   'title -_id'
+    // );
+    // OR .find({}).select({ "name": 1, "_id": 0});
+
+    if (!courses) {
+      var error = new Error('Unable to fetch the courses');
+      error.status = 400;
+      throw error;
+    }
+
+    res.status(200).json({ message: 'Courses fetched!', courses: courses });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getTeacherCourses = async (req, res, next) => {
+  const teacherId = req.params.teacherId;
+
+  try {
+    const teacher = await Teacher.findById(teacherId)
+      .populate('courses.courseId')
+      .exec();
+
+    if (!teacher) {
+      const error = new Error('Error in fetching the teacher!');
+      error.code = 404;
+      throw new error();
+    }
+
+    const totalCourses = teacher.courses.length;
+
+    res.status(200).send({
+      message: 'Courses fetched',
+      courses: teacher.courses,
+      totalCourses: totalCourses
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
 exports.takeCourse = async (req, res, next) => {
+  const teacherId = req.params.teacherId;
+
   const courseId = req.body.courseId;
   const sections = req.body.sections;
   const session = req.body.session;
-  const teacherId = req.body.teacherId;
 
   try {
+    const course = await Teacher.find({
+      _id: teacherId,
+      'courses.courseId': courseId
+    });
+
+    if (course.length > 0) {
+      const error = new Error('Course already taken.');
+      error.status = 400;
+      throw error;
+    }
+
     const courseLog = new CourseLog({
       courseId: courseId,
       teacherId: teacherId
@@ -149,6 +267,7 @@ exports.takeCourse = async (req, res, next) => {
       courseId: courseId,
       sections: sections,
       session: session,
+      status: 'Active',
       courseLog: courseLogDoc._id,
       courseDescription: courseDescriptionDoc._id,
       courseMonitoring: courseMonitoringDoc._id,
@@ -163,7 +282,7 @@ exports.takeCourse = async (req, res, next) => {
       error.code = 404;
       throw new error();
     }
-    res.send({ teacher: teacherData });
+    res.status(201).send({ teacher: teacherData });
   } catch (err) {
     if (!err.status) {
       err.status = 500;

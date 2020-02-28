@@ -15,6 +15,10 @@ const courseModel = new Schema(
     credits: {
       type: String,
       required: true
+    },
+    status: {
+      type: String,
+      required: true
     }
   },
   { timestamps: true }

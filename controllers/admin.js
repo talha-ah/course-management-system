@@ -4,6 +4,62 @@ const Teacher = require('../models/teacher');
 const Admin = require('../models/admin');
 const Course = require('../models/course');
 
+exports.getAdmin = async (req, res, next) => {
+  const adminId = req.params.adminId;
+
+  try {
+    const admin = await Admin.findById(adminId).select('-password');
+
+    if (!admin) {
+      var error = new Error('Admin not found!');
+      error.status = 400;
+      throw error;
+    }
+
+    res.status(200).json({ message: 'Admin Fetched!', admin: admin });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.editAdmin = async (req, res, next) => {
+  const adminId = req.params.adminId;
+
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  const email = req.body.email;
+
+  try {
+    const admin = await Admin.findById(adminId);
+    if (!admin) {
+      const error = new Error('Admin could not be found!');
+      error.status = 400;
+      throw error;
+    }
+
+    admin.firstName = firstName;
+    admin.lastName = lastName;
+    admin.email = email;
+    const updateAdmin = await admin.save();
+
+    if (!updateAdmin) {
+      const error = new Error('Admin could not be saved!');
+      error.status = 400;
+      throw error;
+    }
+
+    res.status(201).json({ message: 'Admin saved!', admin: updatedAdmin });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
 exports.adminSignup = async (req, res, next) => {
   const firstName = req.body.firstname;
   const lastName = req.body.lastname;
@@ -44,7 +100,7 @@ exports.createTeacher = async (req, res, next) => {
   const role = req.body.role;
 
   const password = 'DefaultPassword';
-  const status = 'Active';
+  const status = 'Pending';
   const dpURL = 'undefined';
   const cvUrl = 'undefined';
 
@@ -142,11 +198,13 @@ exports.createCourse = (req, res, next) => {
   const courseTitle = req.body.title;
   const courseCode = req.body.code;
   const credits = req.body.credits;
+  const status = 'Active';
 
   const course = new Course({
     title: courseTitle,
     code: courseCode,
-    credits: credits
+    credits: credits,
+    status: status
   });
 
   course
