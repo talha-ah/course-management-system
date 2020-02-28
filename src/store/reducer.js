@@ -1,7 +1,7 @@
 import * as actionTypes from './actions';
 
 const initialState = {
-  adminSidebar: false
+  adminSidebar: true
 };
 
 const reducer = (state = initialState, action) => {

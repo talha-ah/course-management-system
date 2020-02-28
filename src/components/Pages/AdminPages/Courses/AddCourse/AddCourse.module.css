@@ -28,14 +28,8 @@
   justify-content: center;
 }
 
-.AddCourseArea .form .inputGroup:first-child {
-  margin-left: 33px;
-}
-
 .inputGroup {
-  /* width: calc(100% * (1 / 2) - 20px); */
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin: 20px;
 }
 
 .buttonDiv {

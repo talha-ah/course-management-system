@@ -5,7 +5,7 @@ import {
   faFileMedicalAlt,
   faClipboardList,
   faFileAlt,
-  faTachometerAlt,
+  faUser,
   faBookReader,
   faBookOpen,
   faClipboard,
@@ -24,8 +24,8 @@ const TeacherSidebar = () => {
       <ul className={classes.SidebarNav}>
         <li className={classes.SidebarNavItem}>
           <NavLink exact to='/profile' className={classes.SidebarNavLink}>
-            <FontAwesomeIcon icon={faTachometerAlt} />
-            Dashboard
+            <FontAwesomeIcon icon={faUser} />
+            Profile
           </NavLink>
         </li>
         <hr className={classes.SidebarNavHr} />

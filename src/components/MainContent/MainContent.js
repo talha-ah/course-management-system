@@ -6,11 +6,16 @@ import classes from './MainContent.module.css';
 import Header from '../Header/Header';
 
 // Admin Imports
-import AdminProfile from '../Pages/AdminPages/Profile/Profile';
+import AdminProfile from '../Pages/AdminPages/Profile/ProfilePage/ProfilePage';
+import AdminEditProfile from '../Pages/AdminPages/Profile/EditProfile/EditProfile';
+import AdminCoursesList from '../Pages/AdminPages/Courses/CoursesList/CoursesList';
+import AdminAddCourse from '../Pages/AdminPages/Courses/AddCourse/AddCourse';
 
 // Teacher Imports
-import ProfilePage from '../Pages/TeacherPages/Profile/Profile';
-import Courses from '../Pages/TeacherPages/Courses/Courses';
+import ProfilePage from '../Pages/TeacherPages/Profile/ProfilePage/ProfilePage';
+import EditProfilePage from '../Pages/TeacherPages/Profile/EditProfile/EditProfile';
+import Courses from '../Pages/TeacherPages/Courses/CoursesList/CoursesList';
+import TakeCourse from '../Pages/TeacherPages/Courses/AddCourse/AddCourse';
 import CoursesDescription from '../Pages/TeacherPages/CoursesDescription/CoursesDescription';
 import CoursesLog from '../Pages/TeacherPages/CoursesLog/CoursesLog';
 import CoursesMonitoring from '../Pages/TeacherPages/CoursesMonitoring/CoursesMonitoring';
@@ -27,12 +32,17 @@ const MainContent = props => {
         <Switch>
           <Route exact path='/' component={AdminProfile} />
           <Route exact path='/profile' component={AdminProfile} />
+          <Route exact path='/editprofile' component={AdminEditProfile} />
+          <Route exact path='/courses' component={AdminCoursesList} />
+          <Route exact path='/addcourse' component={AdminAddCourse} />
         </Switch>
       ) : (
         <Switch>
           <Route exact path='/' component={ProfilePage} />
           <Route exact path='/profile' component={ProfilePage} />
+          <Route exact path='/editprofile' component={EditProfilePage} />
           <Route exact path='/courses' component={Courses} />
+          <Route exact path='/takecourse' component={TakeCourse} />
           <Route
             exact
             path='/coursesdescription'

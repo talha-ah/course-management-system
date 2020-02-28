@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDotCircle, faUser, faBell } from '@fortawesome/free-solid-svg-icons';
@@ -45,6 +46,11 @@ class Header extends Component {
     }
   };
 
+  switchSidebarHandler = e => {
+    this.props.history.push('/');
+    this.props.switchSidebar();
+  };
+
   render() {
     // this.localMthod();
     let InvisibleStyles = {
@@ -65,7 +71,8 @@ class Header extends Component {
           <li className={classes.headerNavItemSwitch}>Switch to Admin</li>
           <li className={classes.headerNavItem}>
             <label className={classes.switch}>
-              <input type='checkbox' onChange={this.props.switchSidebar} />
+              {/* <input type='checkbox' onChange={this.props.switchSidebar} /> */}
+              <input type='checkbox' onChange={this.switchSidebarHandler} />
               <span
                 className={[classes.slider, classes.round].join(' ')}
               ></span>
@@ -193,4 +200,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(Header);
+export default connect(null, mapDispatchToProps)(withRouter(Header));

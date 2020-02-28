@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFileMedicalAlt,
   faFileAlt,
-  faTachometerAlt,
+  faUser,
   faBookReader,
   faClipboard,
   faPollH
@@ -22,8 +22,8 @@ const Sidebar = () => {
       <ul className={classes.SidebarNav}>
         <li className={classes.SidebarNavItem}>
           <NavLink to='/profile' className={classes.SidebarNavLink}>
-            <FontAwesomeIcon icon={faTachometerAlt} />
-            Dashboard
+            <FontAwesomeIcon icon={faUser} />
+            Profile
           </NavLink>
         </li>
         <hr className={classes.SidebarNavHr} />

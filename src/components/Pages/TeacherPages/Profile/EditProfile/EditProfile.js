@@ -6,8 +6,9 @@ import Input from '../../../../UI/Input/Input';
 
 class EditProfile extends React.Component {
   state = {
+    isLoading: true,
     file: null,
-    fileName: null,
+    fileName: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -19,36 +20,38 @@ class EditProfile extends React.Component {
     confirmPassword: ''
   };
 
-  onFormSubmit = e => {
-    e.preventDefault(); // Stop form submit
-    if (this.state.file) {
-      const file = this.state.file;
-      const fileName = this.state.fileName;
-      const formData = new FormData();
-      formData.append('file', file);
-      console.log(
-        'File uploaded!',
-        formData,
-        file,
-        file.size,
-        file.type,
-        fileName
-      );
-    } else {
-      console.log('Form submitted.');
-    }
-    this.props.editingMode();
-  };
+  componentDidMount() {
+    const teacherId = '5e4cc7a4781ba62684fe3892';
+    fetch(`http://localhost:8080/teacher/getteacher/${teacherId}`)
+      .then(res => {
+        if (res.status !== 200) {
+          throw new Error('Unable to fetch the teacher');
+        }
+        return res.json();
+      })
+      .then(resData => {
+        this.setState({
+          isLoading: false,
+          firstName: resData.teacher.firstName,
+          lastName: resData.teacher.lastName,
+          email: resData.teacher.email,
+          birthdate: resData.teacher.dob,
+          phone: resData.teacher.phone,
+          address: resData.teacher.address
+        });
+      })
+      .catch(err => {
+        console.log('EditProfile', err);
+      });
+  }
 
   onChange = e => {
-    if (e.target.type === 'file') {
-      console.log(e.target.type);
+    if (e.target.type === 'file' && e.target.files[0].name) {
       this.setState({
         file: e.target.files[0],
         fileName: e.target.files[0].name
       });
     } else {
-      console.log(e.target.name);
       const name = e.target.name;
       const value = e.target.value;
       this.setState({
@@ -57,8 +60,81 @@ class EditProfile extends React.Component {
     }
   };
 
+  onFormSubmit = e => {
+    e.preventDefault();
+    this.setState({ isLoading: true });
+
+    const formData = new FormData();
+    formData.append('firstName', this.state.firstName);
+    formData.append('lastName', this.state.lastName);
+    formData.append('email', this.state.email);
+    formData.append('dob', this.state.birthdate);
+    formData.append('phone', this.state.phone);
+    formData.append('address', this.state.address);
+
+    const teacherId = '5e4cc7a4781ba62684fe3892';
+    fetch(`http://localhost:8080/teacher/editteacher/${teacherId}`, {
+      method: 'POST',
+      body: formData
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(resData => {
+        this.setState({ isLoading: false });
+        console.log('Profile Updated Successfully!');
+        console.log(resData);
+      })
+      .catch(err => {
+        this.setState({ isLoading: false });
+        console.log('EditPageError', err);
+      });
+  };
+
+  onCVSubmit = e => {
+    e.preventDefault(); // Stop form submit
+    this.setState({ isLoading: false });
+
+    if (this.state.file !== null && this.state.fileName !== '') {
+      const file = this.state.file;
+      const fileName = this.state.fileName;
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('fileName', fileName);
+
+      if (file.size < 5000000) {
+        const teacherId = '5e4cc7a4781ba62684fe3892';
+        fetch(`http://localhost:8080/teacher/editcv/${teacherId}`, {
+          method: 'POST',
+          body: formData
+        })
+          .then(res => {
+            // if (res.status !== 200 || res.status !== 201) {
+            //   var error = new Error(res.json());
+            //   error.status = 500;
+            //   throw error;
+            // }
+            return res.json();
+          })
+          .then(resData => {
+            console.log('CV Submitted.');
+            console.log(resData);
+          })
+          .catch(err => {
+            console.log('onCVSubmitError', err);
+          });
+      } else {
+        console.log('File too big!');
+      }
+    } else {
+      console.log('No File attached');
+    }
+  };
+
   render() {
-    return (
+    const page = this.state.isLoading ? (
+      ''
+    ) : (
       <div className={classes.editProfile}>
         <div className={classes.editProfileHeader}>
           <h3>Profile Page</h3>
@@ -79,6 +155,7 @@ class EditProfile extends React.Component {
                   type='text'
                   name='firstName'
                   placeholder='First Name'
+                  value={this.state.firstName}
                   onChange={this.onChange}
                 />
               </div>
@@ -88,6 +165,7 @@ class EditProfile extends React.Component {
                   type='text'
                   name='lastName'
                   placeholder='Last Name'
+                  value={this.state.lastName}
                   onChange={this.onChange}
                 />
               </div>
@@ -97,11 +175,12 @@ class EditProfile extends React.Component {
                   type='email'
                   name='email'
                   placeholder='Email Address'
+                  value={this.state.email}
                   onChange={this.onChange}
                 />
               </div>
               <div className={classes.buttonDiv}>
-                <Button onClick={this.props.editingMode}>Update</Button>
+                <Button onClick={this.onFormSubmit}>Update</Button>
               </div>
             </div>
             <div className={classes.editProfileArea2}>
@@ -114,7 +193,7 @@ class EditProfile extends React.Component {
                   type='date'
                   name='birthdate'
                   placeholder='Birthdate'
-                  value='1980-01-01'
+                  value={this.state.birthdate}
                   onChange={this.onChange}
                 />
               </div>
@@ -124,6 +203,7 @@ class EditProfile extends React.Component {
                   type='number'
                   name='phone'
                   placeholder='Phone Number'
+                  value={this.state.phone}
                   onChange={this.onChange}
                 />
               </div>
@@ -133,11 +213,12 @@ class EditProfile extends React.Component {
                   type='text'
                   name='address'
                   placeholder='Address'
+                  value={this.state.address}
                   onChange={this.onChange}
                 />
               </div>
               <div className={classes.buttonDiv}>
-                <Button onClick={this.props.editingMode}>Update</Button>
+                <Button onClick={this.onFormSubmit}>Update</Button>
               </div>
             </div>
             <div className={classes.editProfileArea3}>
@@ -172,7 +253,7 @@ class EditProfile extends React.Component {
                 />
               </div>
               <div className={classes.buttonDiv}>
-                <Button onClick={this.props.editingMode}>Update</Button>
+                <Button onClick={this.onFormSubmit}>Update</Button>
               </div>
             </div>
           </div>
@@ -180,7 +261,11 @@ class EditProfile extends React.Component {
             <h4>Upload your CV</h4>
           </div>
           <div className={classes.cvUpload}>
-            <form onSubmit={this.onFormSubmit}>
+            <form
+              onSubmit={this.onCVSubmit}
+              // enctype='multipart/form-data'
+              // method='post'
+            >
               <Input type='file' onChange={this.onChange} />
               <label htmlFor='file'>{this.state.fileName}</label>
               <p>Drag your file here or click to select file.</p>
@@ -192,6 +277,7 @@ class EditProfile extends React.Component {
         </div>
       </div>
     );
+    return page;
   }
 }
 

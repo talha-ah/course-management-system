@@ -1,0 +1,34 @@
+.SelectInput {
+  display: block;
+  color: #3b3e66;
+  background-color: #fff;
+  width: 260px;
+  font-size: 0.95rem;
+  color: #dedfe5;
+  font-weight: bold;
+  padding: 0.53rem 0.8rem;
+  border: 1px solid #d1d2db;
+  border-radius: 0.29rem;
+  -webkit-transition: border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.SelectInput:focus {
+  border-color: #9297da;
+  outline: 0;
+  box-shadow: 0 0.313rem 0.719rem rgba(122, 123, 151, 0.1),
+    0 0.156rem 0.125rem rgba(164, 165, 190, 0.06);
+}
+
+.SelectInput::-ms-expand {
+  display: none;
+}
+
+.SelectInput option {
+  color: #3b3e66;
+}
+
+/* .select-css:hover {
+  border-color: #888;
+} */
