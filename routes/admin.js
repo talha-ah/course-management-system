@@ -3,9 +3,10 @@ const express = require('express');
 const router = express.Router();
 
 const adminController = require('../controllers/admin');
+const isAuth = require('../utils/isAuth');
 
 // /admin
-router.get('/getadmin/:adminId', adminController.getAdmin);
+router.get('/getadmin', isAuth, adminController.getAdmin);
 router.post('/editadmin/:adminId', adminController.editAdmin);
 router.post('/signup', adminController.adminSignup);
 

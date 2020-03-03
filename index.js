@@ -13,7 +13,7 @@ const teacherRoutes = require('./routes/teacher');
 // App Intializer
 const app = express();
 
-// Mongoose Debugger
+// Debuggers
 mongoose.set('debug', true);
 app.use(logger('dev'));
 

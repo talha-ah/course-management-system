@@ -1,55 +1,12 @@
 const express = require('express');
 
 const router = express.Router();
+const isAuth = require('../utils/isAuth');
 
-const Admin = require('../models/admin');
-const Teacher = require('../models/teacher');
+const loginController = require('../controllers/login');
 
-router.post('/', (req, res, next) => {
-  const email = req.body.email;
-  const password = req.body.password;
-
-  res.send(`google, ${email}, ${password} ggoe`);
-
-  //   const authenticated = false;
-
-  //   // Admin
-  //   Admin.find({ email: email })
-  //     .then(user => {
-  //       if (!user) {
-  //         return;
-  //       }
-  //       if (user.password !== password) {
-  //         return;
-  //       }
-  //       authenticated = true;
-  //     })
-  //     .catch(err => {
-  //       console.log('[Admin.Login]', err);
-  //     });
-  //   // Teacher
-  //   if (!authenticated) {
-  //     Teacher.find({ email: email })
-  //       .then(user => {
-  //         if (!user) {
-  //           return;
-  //         }
-  //         if (user.password !== password) {
-  //           return;
-  //         }
-  //         authenticated = true;
-  //       })
-  //       .catch(err => {
-  //         console.log('[Teacher.Login]', err);
-  //       });
-  //   }
-  //   if (authenticated) {
-  //     // Authenticate
-  //   } else {
-  //     var error = new Error('Something wrong with your credentials!');
-  //     error.code = 400;
-  //     throw error;
-  //   }
-});
+// /login/
+router.post('/', loginController.login);
+router.get('/logintoken', isAuth);
 
 module.exports = router;

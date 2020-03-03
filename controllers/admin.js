@@ -5,18 +5,25 @@ const Admin = require('../models/admin');
 const Course = require('../models/course');
 
 exports.getAdmin = async (req, res, next) => {
-  const adminId = req.params.adminId;
+  const adminId = req.userId;
+  const isAdmin = req.isAdmin;
 
   try {
-    const admin = await Admin.findById(adminId).select('-password');
-
-    if (!admin) {
-      var error = new Error('Admin not found!');
+    if (!isAdmin) {
+      var error = new Error('Not Authorized!');
       error.status = 400;
       throw error;
     }
 
-    res.status(200).json({ message: 'Admin Fetched!', admin: admin });
+    const admin = await Admin.findById(adminId).select('-password');
+
+    if (!admin) {
+      var error = new Error('User not found!');
+      error.status = 400;
+      throw error;
+    }
+
+    res.status(200).json({ message: 'User Fetched!', user: admin });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -35,7 +42,7 @@ exports.editAdmin = async (req, res, next) => {
   try {
     const admin = await Admin.findById(adminId);
     if (!admin) {
-      const error = new Error('Admin could not be found!');
+      const error = new Error('User could not be found!');
       error.status = 400;
       throw error;
     }
@@ -46,12 +53,12 @@ exports.editAdmin = async (req, res, next) => {
     const updateAdmin = await admin.save();
 
     if (!updateAdmin) {
-      const error = new Error('Admin could not be saved!');
+      const error = new Error('User could not be saved!');
       error.status = 400;
       throw error;
     }
 
-    res.status(201).json({ message: 'Admin saved!', admin: updatedAdmin });
+    res.status(201).json({ message: 'User saved!', user: updatedAdmin });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -78,17 +85,17 @@ exports.adminSignup = async (req, res, next) => {
     .save()
     .then(admin => {
       if (!admin) {
-        const err = new Error('Admin creation failed!');
+        const err = new Error('User creation failed!');
         err.code = 404;
         throw err;
       }
-      res.send({ admin: admin });
+      res.send({ user: admin });
     })
     .catch(err => {
       if (err.status) {
         err.status = 500;
       }
-      console.log('AdminSignup', err);
+      next(err);
     });
 };
 
@@ -120,7 +127,7 @@ exports.createTeacher = async (req, res, next) => {
     .save()
     .then(teacher => {
       if (!teacher) {
-        const err = new Error('Teacher creation failed!');
+        const err = new Error('User creation failed!');
         err.code = 404;
         throw err;
       }
@@ -140,7 +147,7 @@ exports.deactivateTeacher = (req, res, next) => {
   Teacher.findById(teacherId)
     .then(teacher => {
       if (!teacher) {
-        const error = new Error('Error in finding the teacher!');
+        const error = new Error('Error in finding the user!');
         error.code = 404;
         throw new error();
       }
@@ -149,11 +156,11 @@ exports.deactivateTeacher = (req, res, next) => {
     })
     .then(updatedTeacher => {
       if (!updatedTeacher) {
-        const error = new Error('Error in saving the teacher!');
+        const error = new Error('Error in saving the user!');
         error.code = 404;
         throw new error();
       }
-      res.send({ teacher: updatedTeacher });
+      res.send({ user: updatedTeacher });
     })
     .catch(err => {
       if (err.status) {
@@ -169,7 +176,7 @@ exports.reactivateTeacher = (req, res, next) => {
   Teacher.findById(teacherId)
     .then(teacher => {
       if (!teacher) {
-        const error = new Error('Error in finding the teacher!');
+        const error = new Error('Error in finding the user!');
         error.code = 404;
         throw new error();
       }
@@ -178,11 +185,11 @@ exports.reactivateTeacher = (req, res, next) => {
     })
     .then(updatedTeacher => {
       if (!updatedTeacher) {
-        const error = new Error('Error in saving the teacher!');
+        const error = new Error('Error in saving the user!');
         error.code = 404;
         throw new error();
       }
-      res.send({ teacher: updatedTeacher });
+      res.send({ user: updatedTeacher });
     })
     .catch(err => {
       if (err.status) {
