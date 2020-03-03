@@ -68,16 +68,23 @@ class Header extends Component {
     return (
       <div className={classes.headerNavbar}>
         <ul className={classes.headerNav}>
-          <li className={classes.headerNavItemSwitch}>Switch to Admin</li>
-          <li className={classes.headerNavItem}>
-            <label className={classes.switch}>
-              {/* <input type='checkbox' onChange={this.props.switchSidebar} /> */}
-              <input type='checkbox' onChange={this.switchSidebarHandler} />
-              <span
-                className={[classes.slider, classes.round].join(' ')}
-              ></span>
-            </label>
-          </li>
+          {this.props.isAdmin ? (
+            <>
+              <li className={classes.headerNavItemSwitch}>Switch to Admin</li>
+              <li className={classes.headerNavItem}>
+                <label className={classes.switch}>
+                  {/* <input type='checkbox' onChange={this.props.switchSidebar} /> */}
+                  <input type='checkbox' onChange={this.switchSidebarHandler} />
+                  <span
+                    className={[classes.slider, classes.round].join(' ')}
+                  ></span>
+                </label>
+              </li>
+            </>
+          ) : (
+            ''
+          )}
+
           <li
             className={[
               classes.headerNavItemFloat,
@@ -101,35 +108,30 @@ class Header extends Component {
               </div>
               <ul className={classes.headerDropDownUl}>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
-                    <FontAwesomeIcon icon={faDotCircle} />
-                    My Profile
-                  </a>
+                  <div>
+                    <FontAwesomeIcon icon={faDotCircle} />1
+                  </div>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
-                    <FontAwesomeIcon icon={faDotCircle} />
-                    Settings
-                  </a>
+                  <div>
+                    <FontAwesomeIcon icon={faDotCircle} />2
+                  </div>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
-                    <FontAwesomeIcon icon={faDotCircle} />
-                    Activity
-                  </a>
+                  <div>
+                    <FontAwesomeIcon icon={faDotCircle} />3
+                  </div>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
-                    <FontAwesomeIcon icon={faDotCircle} />
-                    Support
-                  </a>
+                  <div>
+                    <FontAwesomeIcon icon={faDotCircle} />4
+                  </div>
                 </li>
                 <hr />
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
-                    <FontAwesomeIcon icon={faDotCircle} />
-                    Logout
-                  </a>
+                  <div>
+                    <FontAwesomeIcon icon={faDotCircle} />5
+                  </div>
                 </li>
               </ul>
             </div>
@@ -155,35 +157,38 @@ class Header extends Component {
               </div>
               <ul className={classes.headerDropDownUl}>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <div>
                     <FontAwesomeIcon icon={faDotCircle} />
                     My Profile
-                  </a>
+                  </div>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <div>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Settings
-                  </a>
+                  </div>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <div>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Activity
-                  </a>
+                  </div>
                 </li>
                 <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                  <div>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Support
-                  </a>
+                  </div>
                 </li>
                 <hr />
-                <li className={classes.headerDropDownItem}>
-                  <a href='/'>
+                <li
+                  className={classes.headerDropDownItem}
+                  onClick={this.props.logoutHandler}
+                >
+                  <div>
                     <FontAwesomeIcon icon={faDotCircle} />
                     Logout
-                  </a>
+                  </div>
                 </li>
               </ul>
             </div>

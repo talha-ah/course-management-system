@@ -105,7 +105,7 @@
   padding: 8px 16px;
 }
 
-.headerDropDownItem a {
+.headerDropDownItem div {
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 400;
@@ -115,7 +115,7 @@
   cursor: pointer;
 }
 
-.headerDropDownItem a svg {
+.headerDropDownItem div svg {
   font-size: 1rem;
   margin-right: 1rem;
   vertical-align: -14.5%;

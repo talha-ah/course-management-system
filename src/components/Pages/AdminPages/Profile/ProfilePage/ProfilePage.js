@@ -16,8 +16,12 @@ class ProfilePage extends Component {
   };
 
   componentDidMount() {
-    const adminId = '5e4cc4d495df8118f0583582';
-    fetch(`http://localhost:8080/admin/getadmin/${adminId}`)
+    fetch('http://localhost:8080/admin/getadmin', {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + this.props.token
+      }
+    })
       .then(res => {
         if (res.status !== 200) {
           throw new Error(res.error);
@@ -25,7 +29,7 @@ class ProfilePage extends Component {
         return res.json();
       })
       .then(resData => {
-        this.setState({ admin: resData.admin, isLoading: false });
+        this.setState({ admin: resData.user, isLoading: false });
       })
       .catch(err => {
         console.log('AdminProfile', err);

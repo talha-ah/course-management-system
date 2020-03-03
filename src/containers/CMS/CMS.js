@@ -1,24 +1,120 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { Component } from 'react';
+import { Switch, Route, Redirect } from 'react-router-dom';
 
-import classes from './CMS.module.css';
-import TeacherSidebar from '../../components/Sidebar/TeacherSidebar';
-import AdminSidebar from '../../components/Sidebar/AdminSidebar';
 import MainContent from '../../components/MainContent/MainContent';
-import Footer from '../../components/Footer/Footer';
+import Login from '../../components/Pages/loginPage/loginPage';
 
-const CMS = props => {
-  return (
-    <div className={classes.CMS}>
-      {props.isAdminSidebar ? <AdminSidebar /> : <TeacherSidebar />}
-      <MainContent />
-      <Footer />
-    </div>
-  );
-};
+class CMS extends Component {
+  state = {
+    isLoading: false,
+    pageLoading: true,
+    isAuth: false,
+    token: '',
+    userId: false,
+    isAdmin: false
+  };
 
-const mapStateToProps = state => {
-  return { isAdminSidebar: state.adminSidebar };
-};
+  componentDidMount() {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    if (!token || !userId) {
+      this.setState({ pageLoading: false });
+      return;
+    }
+    var isAdmin = false;
+    const check = token.split(' ')[1];
+    if (check === 'yes') {
+      isAdmin = true;
+    }
+    this.setState({
+      isAuth: true,
+      token: token,
+      userId: userId,
+      isAdmin: isAdmin,
+      pageLoading: false
+    });
+  }
 
-export default connect(mapStateToProps)(CMS);
+  loginHandler = (event, authData) => {
+    event.preventDefault();
+    this.setState({ isLoading: true });
+
+    fetch('http://localhost:8080/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: authData.email,
+        password: authData.password
+      })
+    })
+      .then(res => {
+        if (!res.ok) throw res;
+        return res.json();
+      })
+      .then(result => {
+        localStorage.setItem('userId', result.userId);
+        localStorage.setItem('token', result.token);
+        window.location.reload();
+      })
+      .catch(error => {
+        this.setState({ isLoading: false });
+        try {
+          error.json().then(body => {
+            console.log(body);
+            console.log('message = ' + body.message);
+          });
+        } catch (e) {
+          console.log('Error parsing promise');
+          console.log(error);
+        }
+      });
+  };
+
+  logoutHandler = () => {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    this.setState({
+      isLoading: false,
+      isAuth: false,
+      token: '',
+      userId: false,
+      isAdmin: false
+    });
+  };
+
+  render() {
+    var route;
+    if (this.state.pageLoading) {
+      route = 'Loading...';
+    } else {
+      route = this.state.isAuth ? (
+        <MainContent
+          authData={{
+            isAdmin: this.state.isAdmin,
+            token: this.state.token,
+            userId: this.state.userId
+          }}
+          logoutHandler={this.logoutHandler}
+        />
+      ) : (
+        <Switch>
+          <Route
+            path='/'
+            exact
+            render={props => (
+              <Login
+                {...props}
+                loginHandler={this.loginHandler}
+                isLoading={this.state.isLoading}
+              />
+            )}
+          />
+          <Redirect to='/' />
+        </Switch>
+      );
+    }
+    return route;
+  }
+}
+
+export default CMS;
