@@ -1,14 +1,14 @@
 .SelectInput {
   display: block;
+  box-sizing: border-box;
   color: #3b3e66;
-  background-color: #fff;
-  width: 260px;
+  background-color: rgb(255, 255, 255);
+  width: 100%;
   font-size: 0.95rem;
-  color: #dedfe5;
-  font-weight: bold;
+  font-weight: 400;
   padding: 0.53rem 0.8rem;
-  border: 1px solid #d1d2db;
-  border-radius: 0.29rem;
+  border: 1px solid rgb(208, 220, 221);
+  border-radius: 3px;
   -webkit-transition: border-color 0.15s ease-in-out,
     box-shadow 0.15s ease-in-out;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -28,7 +28,3 @@
 .SelectInput option {
   color: #3b3e66;
 }
-
-/* .select-css:hover {
-  border-color: #888;
-} */

@@ -9,13 +9,18 @@ const SelectInput = props => {
       onChange={props.onChange}
       className={classes.SelectInput}
     >
-      <option
-        disabled={props.disabled}
-        defaultValue={props.defaultValue}
-        className={classes.Placeholder}
-      >
-        {props.placeholder}
-      </option>
+      {props.defaultValue !== '' ? (
+        ''
+      ) : (
+        <option
+          disabled={props.disabled}
+          defaultValue={props.defaultValue}
+          className={classes.Placeholder}
+        >
+          {props.placeholder}
+        </option>
+      )}
+
       {props.children.map(child => {
         return (
           <option value={child} key={child}>

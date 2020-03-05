@@ -104,7 +104,7 @@ class Header extends Component {
               ref={node => (this.node = node)}
             >
               <div className={classes.headerDropDownTitle}>
-                <h6>Welcome!</h6>
+                <h6>Notifications</h6>
               </div>
               <ul className={classes.headerDropDownUl}>
                 <li className={classes.headerDropDownItem}>
@@ -127,7 +127,6 @@ class Header extends Component {
                     <FontAwesomeIcon icon={faDotCircle} />4
                   </div>
                 </li>
-                <hr />
                 <li className={classes.headerDropDownItem}>
                   <div>
                     <FontAwesomeIcon icon={faDotCircle} />5
@@ -156,30 +155,16 @@ class Header extends Component {
                 <h6>Welcome!</h6>
               </div>
               <ul className={classes.headerDropDownUl}>
-                <li className={classes.headerDropDownItem}>
+                <li
+                  className={classes.headerDropDownItem}
+                  onClick={() => this.props.history.push('/profile')}
+                >
                   <div>
                     <FontAwesomeIcon icon={faDotCircle} />
                     My Profile
                   </div>
                 </li>
-                <li className={classes.headerDropDownItem}>
-                  <div>
-                    <FontAwesomeIcon icon={faDotCircle} />
-                    Settings
-                  </div>
-                </li>
-                <li className={classes.headerDropDownItem}>
-                  <div>
-                    <FontAwesomeIcon icon={faDotCircle} />
-                    Activity
-                  </div>
-                </li>
-                <li className={classes.headerDropDownItem}>
-                  <div>
-                    <FontAwesomeIcon icon={faDotCircle} />
-                    Support
-                  </div>
-                </li>
+
                 <hr />
                 <li
                   className={classes.headerDropDownItem}

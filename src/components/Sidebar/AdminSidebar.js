@@ -29,7 +29,7 @@ const Sidebar = () => {
         <hr className={classes.SidebarNavHr} />
         <li className={classes.SidebarNavItem}>
           <NavLink
-            to='/courses'
+            to='/'
             className={[classes.SidebarNavLink, classes.SidebarNavTitle].join(
               ' '
             )}
@@ -38,7 +38,7 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink to='/courses' className={classes.SidebarNavLink}>
+          <NavLink to='/' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faFileAlt} />
             Courses
           </NavLink>

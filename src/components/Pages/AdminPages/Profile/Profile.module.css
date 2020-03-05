@@ -1,4 +1,4 @@
-.AddCourse {
+.Profile {
   padding: 32px 40px;
   margin: 1rem 3rem 3rem 3rem;
   color: #525f7f;
@@ -47,8 +47,4 @@
   align-items: center;
   justify-content: center;
   margin: 25px 0 12px 0;
-}
-
-.ButtonDiv button:nth-child(1) {
-  margin-right: 40px;
 }

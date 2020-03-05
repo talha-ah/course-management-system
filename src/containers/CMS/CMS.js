@@ -16,11 +16,17 @@ class CMS extends Component {
 
   componentDidMount() {
     const token = localStorage.getItem('token');
+    const expiry = localStorage.getItem('expiry');
     const userId = localStorage.getItem('userId');
-    if (!token || !userId) {
+    if (!token || !userId || !expiry) {
       this.setState({ pageLoading: false });
       return;
     }
+    if (new Date(expiry) <= new Date()) {
+      this.logoutHandler();
+      return;
+    }
+
     var isAdmin = false;
     const check = token.split(' ')[1];
     if (check === 'yes') {
@@ -33,6 +39,9 @@ class CMS extends Component {
       isAdmin: isAdmin,
       pageLoading: false
     });
+    const remainingMilliseconds =
+      new Date(expiry).getTime() - new Date().getTime();
+    this.autoLogoutHandler(remainingMilliseconds);
   }
 
   loginHandler = (event, authData) => {
@@ -52,9 +61,25 @@ class CMS extends Component {
         return res.json();
       })
       .then(result => {
+        var isAdmin = false;
+        const check = result.token.split(' ')[1];
+        if (check === 'yes') {
+          isAdmin = true;
+        }
+        this.setState({
+          isAuth: true,
+          token: result.token,
+          userId: result.userId,
+          isAdmin: isAdmin,
+          isLoading: false
+        });
         localStorage.setItem('userId', result.userId);
         localStorage.setItem('token', result.token);
-        window.location.reload();
+        const expiry = 3600000;
+        const expiryDate = new Date(new Date().getTime() + expiry);
+        localStorage.setItem('expiry', expiryDate.toISOString());
+        this.autoLogoutHandler(expiry);
+        // window.location.reload();
       })
       .catch(error => {
         this.setState({ isLoading: false });
@@ -70,9 +95,13 @@ class CMS extends Component {
       });
   };
 
+  autoLogoutHandler = expiry => {
+    setTimeout(() => {
+      this.logoutHandler();
+    }, expiry);
+  };
+
   logoutHandler = () => {
-    localStorage.removeItem('userId');
-    localStorage.removeItem('token');
     this.setState({
       isLoading: false,
       isAuth: false,
@@ -80,6 +109,9 @@ class CMS extends Component {
       userId: false,
       isAdmin: false
     });
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('expiry');
   };
 
   render() {

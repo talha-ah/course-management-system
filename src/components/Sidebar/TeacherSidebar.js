@@ -32,7 +32,7 @@ const TeacherSidebar = () => {
         <li className={classes.SidebarNavItem}>
           <NavLink
             exact
-            to='/courses'
+            to='/'
             className={[classes.SidebarNavLink, classes.SidebarNavTitle].join(
               ' '
             )}
@@ -41,7 +41,7 @@ const TeacherSidebar = () => {
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink exact to='/courses' className={classes.SidebarNavLink}>
+          <NavLink exact to='/' className={classes.SidebarNavLink}>
             <FontAwesomeIcon icon={faFileAlt} />
             Courses
           </NavLink>

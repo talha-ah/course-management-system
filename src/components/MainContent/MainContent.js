@@ -11,14 +11,12 @@ import Footer from '../../components/Footer/Footer';
 import Error404 from '../../components/Pages/404/404';
 
 // Admin Imports
-import AdminProfile from '../Pages/AdminPages/Profile/ProfilePage/ProfilePage';
-import AdminEditProfile from '../Pages/AdminPages/Profile/EditProfile/EditProfile';
+import AdminProfile from '../Pages/AdminPages/Profile/Profile';
 import AdminCoursesList from '../Pages/AdminPages/Courses/CoursesList/CoursesList';
 import AdminAddCourse from '../Pages/AdminPages/Courses/AddCourse/AddCourse';
 
 // Teacher Imports
-import ProfilePage from '../Pages/TeacherPages/Profile/ProfilePage/ProfilePage';
-import EditProfilePage from '../Pages/TeacherPages/Profile/EditProfile/EditProfile';
+import ProfilePage from '../Pages/TeacherPages/Profile/EditProfile/EditProfile';
 import Courses from '../Pages/TeacherPages/Courses/CoursesList/CoursesList';
 import TakeCourse from '../Pages/TeacherPages/Courses/AddCourse/AddCourse';
 import CoursesDescription from '../Pages/TeacherPages/CoursesDescription/CoursesDescription';
@@ -44,23 +42,14 @@ const MainContent = props => {
             <Route
               exact
               path='/'
-              render={() => <AdminProfile {...props.authData} />}
+              render={() => <AdminCoursesList {...props.authData} />}
             />
             <Route
               exact
               path='/profile'
               render={() => <AdminProfile {...props.authData} />}
             />
-            <Route
-              exact
-              path='/editprofile'
-              render={() => <AdminEditProfile {...props.authData} />}
-            />
-            <Route
-              exact
-              path='/courses'
-              render={() => <AdminCoursesList {...props.authData} />}
-            />
+
             <Route
               exact
               path='/addcourse'
@@ -70,10 +59,8 @@ const MainContent = props => {
           </Switch>
         ) : (
           <Switch>
-            <Route exact path='/' component={ProfilePage} />
+            <Route exact path='/' component={Courses} />
             <Route exact path='/profile' component={ProfilePage} />
-            <Route exact path='/editprofile' component={EditProfilePage} />
-            <Route exact path='/courses' component={Courses} />
             <Route exact path='/takecourse' component={TakeCourse} />
             <Route
               exact
