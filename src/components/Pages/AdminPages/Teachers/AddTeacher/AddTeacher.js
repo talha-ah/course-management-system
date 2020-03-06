@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 
-import classes from './AddCourse.module.css';
+import classes from './AddTeacher.module.css';
 import Spinner from '../../../../UI/Spinner/Spinner';
 import Button from '../../../../UI/Button/Button';
 import Input from '../../../../UI/Input/Input';
 import SelectInput from '../../../../UI/SelectInput/SelectInput';
 
-class AddCourse extends Component {
+class AddTeacher extends Component {
   state = {
     pageLoading: true,
     isLoading: false,
-    courseTitle: '',
-    courseCode: '',
-    courseCredits: 3,
-    courseType: 'Compulsory',
-    courseSession: 'Fall'
+    teacherEmail: '',
+    teacherCode: '',
+    teacherRank: '',
+    teacherType: 'Permanent'
   };
 
   componentDidMount() {
@@ -24,14 +23,13 @@ class AddCourse extends Component {
   onFormSubmit = e => {
     e.preventDefault();
     this.setState({ isLoading: true });
-    fetch('http://localhost:8080/admin/createcourse', {
+    fetch('http://localhost:8080/admin/createteacher', {
       method: 'POST',
       body: JSON.stringify({
-        title: this.state.courseTitle,
-        code: this.state.courseCode,
-        credits: this.state.courseCredits,
-        type: this.state.courseType,
-        session: this.state.courseSession
+        email: this.state.teacherEmail,
+        code: this.state.teacherCode,
+        rank: this.state.teacherRank,
+        type: this.state.teacherType
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -45,7 +43,7 @@ class AddCourse extends Component {
       .then(resData => {
         this.setState({ isLoading: false });
         console.log(resData);
-        this.props.history.push('/');
+        this.props.history.push('/teachers');
       })
       .catch(err => {
         try {
@@ -74,9 +72,9 @@ class AddCourse extends Component {
     const page = this.state.pageLoading ? (
       <Spinner />
     ) : (
-      <div className={classes.AddCourse}>
+      <div className={classes.AddTeacher}>
         <div className={classes.Title}>
-          <h4>Add Course</h4>
+          <h4>Add Teacher</h4>
         </div>
         <form
           className={classes.Form}
@@ -84,58 +82,46 @@ class AddCourse extends Component {
           method='POST'
         >
           <div className={classes.InputDiv}>
-            <label htmlFor='courseTitle'>Course Title</label>
+            <label htmlFor='teacherEmail'>Teacher Email</label>
             <Input
               type='text'
-              name='courseTitle'
-              placeholder='Course Title'
-              value={this.state.courseTitle}
+              name='teacherEmail'
+              placeholder='Teacher Email'
+              value={this.state.teacherEmail}
               onChange={this.onChange}
             />
           </div>
           <div className={classes.InputDiv}>
-            <label htmlFor='courseCode'>Course Code</label>
+            <label htmlFor='teacherCode'>Teacher Code</label>
             <Input
               type='text'
-              name='courseCode'
-              placeholder='Course Code'
-              value={this.state.courseCode}
+              name='teacherCode'
+              placeholder='Teacher Code'
+              value={this.state.teacherCode}
               onChange={this.onChange}
             />
           </div>
           <div className={classes.InputDiv}>
-            <label htmlFor='courseCredits'>Course Credits</label>
+            <label htmlFor='teacherRank'>Teacher Rank</label>
             <Input
-              type='number'
-              name='courseCredits'
-              placeholder='Course Credits'
-              value={this.state.courseCredits}
+              type='text'
+              name='teacherRank'
+              placeholder='Teacher Rank'
+              value={this.state.teacherRank}
               onChange={this.onChange}
             />
           </div>
 
           <div className={classes.InputDiv}>
-            <label htmlFor='courseType'>Course Type</label>
+            <label htmlFor='teacherType'>Teacher Type</label>
             <SelectInput
-              name='courseType'
-              placeholder='Course Type'
+              name='teacherType'
+              placeholder='Teacher Type'
               onChange={this.onChange}
               disabled=''
-              defaultValue={this.state.courseType}
+              defaultValue={this.state.teacherType}
             >
-              {['Complusory', 'Elective']}
-            </SelectInput>
-          </div>
-          <div className={classes.InputDiv}>
-            <label htmlFor='courseSession'>Course Session</label>
-            <SelectInput
-              name='courseSession'
-              placeholder='Course Session'
-              onChange={this.onChange}
-              disabled=''
-              defaultValue={this.state.courseSession}
-            >
-              {['Fall', 'Summer']}
+              {['Permanent', 'Visiting']}
             </SelectInput>
           </div>
 
@@ -154,4 +140,4 @@ class AddCourse extends Component {
   }
 }
 
-export default AddCourse;
+export default AddTeacher;

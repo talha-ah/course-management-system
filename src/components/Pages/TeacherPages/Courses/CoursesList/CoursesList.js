@@ -1,93 +1,108 @@
 import React, { Component } from 'react';
 
 import classes from './CoursesList.module.css';
+import Spinner from '../../../../UI/Spinner/Spinner';
 import Button from '../../../../UI/Button/Button';
 import TableButton from '../../../../UI/TableButton/TableButton';
 
 class CoursesList extends Component {
   state = {
-    isLoading: true,
+    pageLoading: true,
     courses: '',
-    totalCourses: ''
+    totalCourses: 0
   };
 
   componentDidMount() {
-    const teacherId = '5e4cc7a4781ba62684fe3892';
-    fetch(`http://localhost:8080/teacher/courses/${teacherId}`)
+    fetch('http://localhost:8080/teacher/courses', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.props.token
+      }
+    })
       .then(res => {
-        if (res.status !== 200) {
-          throw new Error('Unknown Status Code');
-        }
+        if (!res.ok) throw res;
         return res.json();
       })
       .then(resData => {
         this.setState({
           courses: resData.courses,
           totalCourses: resData.totalCourses,
-          isLoading: false
+          pageLoading: false
         });
       })
       .catch(err => {
-        console.log('CoursesList', err);
+        try {
+          err.json().then(body => {
+            console.log(body);
+            console.log('message = ' + body.message);
+          });
+        } catch (e) {
+          console.log('Error parsing promise');
+          console.log(err);
+        }
       });
   }
 
-  addPageHandler = () => {
+  addCoursePageHandler = () => {
     this.props.history.push('/takecourse');
   };
 
+  courseHandler = id => {
+    console.log(id);
+  };
+
   render() {
-    var page = this.state.isLoading ? (
-      ''
+    var tableRow = (
+      <tr>
+        <td colSpan='6'>You don't have any courses.</td>
+      </tr>
+    );
+    if (this.state.courses) {
+      tableRow = this.state.courses.map(course => {
+        return (
+          <tr key={course._id}>
+            <td colSpan='2' onClick={() => this.courseHandler(course._id)}>
+              {course.title}
+            </td>
+            <td>{course.sections}</td>
+            <td>{course.session}</td>
+            <td>{course.status}</td>
+            <td>
+              <TableButton title='Add Materials'>+</TableButton>
+              <TableButton title='Disable Course' color='#f83245'>
+                x
+              </TableButton>
+            </td>
+          </tr>
+        );
+      });
+    }
+
+    var page = this.state.pageLoading ? (
+      <Spinner />
     ) : (
       <div className={classes.CoursesList}>
-        <div className={classes.CoursesListHeader}>
-          <h3>CoursesList</h3>
-          <p>
-            This is your CoursesList page. You can see the progress you've made
-            with your courses and manage your Courses
-          </p>
-        </div>
-        <div className={classes.CoursesListArea}>
-          <table className={classes.CoursesListTable}>
-            <caption>Your Course List</caption>
-            <thead>
-              <tr>
-                <th>Course Title</th>
-                <th>Course Code</th>
-                <th>Section</th>
-                <th>Session</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.state.courses.map(course => {
-                return (
-                  <tr key={course._id}>
-                    <td>{course.courseId.title}</td>
-                    <td>{course.courseId.code}</td>
-                    <td>{course.sections}</td>
-                    <td>{course.session}</td>
-                    <td>
-                      <TableButton title='Add Materials'>+</TableButton>
-                      <TableButton title='Disable Course' color='#f83245'>
-                        x
-                      </TableButton>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-            <tfoot>
-              <tr>
-                <th colSpan='3'>Total courses</th>
-                <th colSpan='2'>{this.state.totalCourses}</th>
-              </tr>
-            </tfoot>
-          </table>
-          <div className={classes.buttonDiv}>
-            <Button onClick={this.addPageHandler}>Add Course</Button>
-          </div>
+        <table className={classes.CoursesListTable}>
+          <caption>Course List</caption>
+          <thead>
+            <tr>
+              <th colSpan='2'>Title</th>
+              <th>Sections</th>
+              <th>Session</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>{tableRow}</tbody>
+          <tfoot>
+            <tr>
+              <th colSpan='3'>Total courses</th>
+              <th colSpan='3'>{this.state.totalCourses}</th>
+            </tr>
+          </tfoot>
+        </table>
+        <div className={classes.buttonDiv}>
+          <Button onClick={this.addCoursePageHandler}>Add Course</Button>
         </div>
       </div>
     );

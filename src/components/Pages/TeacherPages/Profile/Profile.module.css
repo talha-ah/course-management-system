@@ -1,52 +1,55 @@
-.editProfileHeader {
-  max-width: 100%;
-  font-size: 1rem;
-  padding: 1rem 1.5rem;
-  position: relative;
-  text-align: center;
-}
-
-.editProfileArea {
-  color: #525f7f;
-  background-color: #fff;
-  max-width: 100%;
-  padding: 1rem 1.5rem 2.5rem 1.5rem;
+.Profile {
+  padding: 32px 40px;
   margin: 1rem 3rem 3rem 3rem;
+  color: #3b3e66;
+  background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 0.375rem;
 }
 
-.editProfileAreaDiv {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-}
-
-.editProfileAreaTitle {
+.Title h4 {
   text-align: center;
-  margin: 30px 0;
-}
-
-.editProfileAreaTitle h4 {
-  margin: 0;
+  margin: 10px 0 25px 0;
+  font-size: 22px;
+  font-style: normal;
   font-weight: 600;
+  line-height: 1.33;
   text-transform: uppercase;
-  line-height: 1.5;
   pointer-events: none;
   white-space: nowrap;
 }
 
-.inputDiv {
+.InputDiv {
   margin-bottom: 1rem;
 }
 
-.inputDiv label {
+.InputDiv label {
   display: inline-block;
   margin-bottom: 0.5rem;
 }
 
-/* ============================================= */
+.InputGroup {
+  display: flex;
+}
+
+.InputGroup div {
+  width: 100%;
+  margin-right: 10px;
+}
+
+.InputGroup div:last-child {
+  margin-right: 0px;
+}
+
+.ButtonDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 25px 0 12px 0;
+}
+
+/* ====================== Upload CV Starts ==================*/
 
 .cvUpload {
   display: flex;
@@ -85,12 +88,13 @@
   height: 100%;
   outline: none;
   opacity: 0;
+  cursor: pointer;
 }
 
 .cvUpload form label {
   position: absolute;
   left: 17px;
-  top: 7px;
+  top: 10px;
   font-weight: bold;
 }
 
@@ -104,13 +108,4 @@
 .cvUpload form button {
   margin-top: -30px;
 }
-
-/* ============================================= */
-
-.buttonDiv {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin: 12px 0;
-}
+/* ====================== Upload CV Ends ==================*/

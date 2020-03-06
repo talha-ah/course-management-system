@@ -11,7 +11,7 @@ const TableButton = props => {
       style={
         props.color
           ? { backgroundColor: props.color }
-          : { backgroundColor: '#5e72e4' }
+          : { backgroundColor: '#3b3e66' }
       }
     >
       {props.children}
@@ -21,7 +21,7 @@ const TableButton = props => {
           style={
             props.color
               ? { backgroundColor: props.color }
-              : { backgroundColor: '#5e72e4' }
+              : { backgroundColor: '#3b3e66' }
           }
         >
           {props.title}

@@ -1,69 +1,68 @@
 .CoursesList {
   position: relative;
+  color: #3b3e66;
   text-align: center;
-}
-
-.CoursesListHeader {
   max-width: 100%;
-  font-size: 1rem;
-  padding: 1rem 1.5rem;
-  position: relative;
-  text-align: center;
-}
-
-.CoursesListArea {
-  color: #525f7f;
-  background-color: #fff;
-  max-width: 100%;
-  /* padding: 1rem 1.5rem 2.5rem 1.5rem; */
-  margin: 1rem 3rem 3rem 3rem;
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 0.375rem;
+  margin: 1rem 3rem 3rem 3rem;
+  background-color: #fff;
+  box-shadow: 0 0.313rem 0.8rem rgba(122, 123, 151, 0.5),
+    0 0.126rem 0.225rem rgba(122, 123, 151, 0.3);
 }
 
 /* Table Starts */
 
-.CoursesListArea table {
+.CoursesList table {
   table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
 }
 
-.CoursesListArea caption {
-  text-align: start;
-  padding: 20px;
+.CoursesList caption {
+  padding-top: 20px;
+
+  text-align: center;
+  margin: 10px 0 25px 0;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.33;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
-.CoursesListArea table thead {
+.CoursesList table thead {
   border-top: 2px solid rgba(7, 9, 25, 0.125);
   border-bottom: 2px solid rgba(7, 9, 25, 0.125);
   background-color: #f4f5fd;
 }
 
-.CoursesListArea table tbody tr {
+.CoursesList table tbody tr {
   border-bottom: 1px solid rgba(7, 9, 25, 0.125);
 }
 
-.CoursesListArea table tbody tr:hover {
+.CoursesList table tbody tr:hover {
   background-color: #f4f5fd;
 }
 
-.CoursesListArea table tbody button:nth-child(1) {
+.CoursesList table tbody button:nth-child(1) {
   margin-right: 15px;
 }
 
-.CoursesListArea th,
-.CoursesListArea td {
+.CoursesList th,
+.CoursesList td {
   padding: 20px;
 }
 
-.CoursesListArea table tfoot {
+.CoursesList table tfoot {
   border-bottom: 2px solid rgba(7, 9, 25, 0.125);
 }
 
 /* Table Ends */
 
 .buttonDiv {
+  margin-top: 25px;
   margin-bottom: 25px;
 }

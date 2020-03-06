@@ -14,9 +14,12 @@ import Error404 from '../../components/Pages/404/404';
 import AdminProfile from '../Pages/AdminPages/Profile/Profile';
 import AdminCoursesList from '../Pages/AdminPages/Courses/CoursesList/CoursesList';
 import AdminAddCourse from '../Pages/AdminPages/Courses/AddCourse/AddCourse';
+import AdminTeacher from '../Pages/AdminPages/Teachers/Teacher/Teacher';
+import AdminTeachers from '../Pages/AdminPages/Teachers/TeacherList/TeacherList';
+import AdminAddTeacher from '../Pages/AdminPages/Teachers/AddTeacher/AddTeacher';
 
 // Teacher Imports
-import ProfilePage from '../Pages/TeacherPages/Profile/EditProfile/EditProfile';
+import ProfilePage from '../Pages/TeacherPages/Profile/Profile';
 import Courses from '../Pages/TeacherPages/Courses/CoursesList/CoursesList';
 import TakeCourse from '../Pages/TeacherPages/Courses/AddCourse/AddCourse';
 import CoursesDescription from '../Pages/TeacherPages/CoursesDescription/CoursesDescription';
@@ -42,41 +45,200 @@ const MainContent = props => {
             <Route
               exact
               path='/'
-              render={() => <AdminCoursesList {...props.authData} />}
+              render={({ match, history, location }) => (
+                <AdminCoursesList
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
             />
             <Route
               exact
               path='/profile'
-              render={() => <AdminProfile {...props.authData} />}
+              render={({ match, history, location }) => (
+                <AdminProfile
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
             />
 
             <Route
               exact
               path='/addcourse'
-              render={() => <AdminAddCourse {...props.authData} />}
+              render={({ match, history, location }) => (
+                <AdminAddCourse
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/teacher'
+              render={({ match, history, location }) => (
+                <AdminTeacher
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/teachers'
+              render={({ match, history, location }) => (
+                <AdminTeachers
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/addteacher'
+              render={({ match, history, location }) => (
+                <AdminAddTeacher
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
             />
             <Route path='*' component={Error404} />
           </Switch>
         ) : (
           <Switch>
-            <Route exact path='/' component={Courses} />
-            <Route exact path='/profile' component={ProfilePage} />
-            <Route exact path='/takecourse' component={TakeCourse} />
+            <Route
+              exact
+              path='/'
+              render={({ match, history, location }) => (
+                <Courses
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/profile'
+              render={({ match, history, location }) => (
+                <ProfilePage
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/takecourse'
+              render={({ match, history, location }) => (
+                <TakeCourse
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
             <Route
               exact
               path='/coursesdescription'
-              component={CoursesDescription}
+              render={(match, history, location) => (
+                <CoursesDescription
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
             />
-            <Route exact path='/courseslog' component={CoursesLog} />
+            <Route
+              exact
+              path='/courseslog'
+              render={({ match, history, location }) => (
+                <CoursesLog
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
             <Route
               exact
               path='/coursesmonitoring'
-              component={CoursesMonitoring}
+              render={({ match, history, location }) => (
+                <CoursesMonitoring
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
             />
-            <Route exact path='/assignments' component={Assignments} />
-            <Route exact path='/papers' component={Papers} />
-            <Route exact path='/quizzes' component={Quizzes} />
-            <Route exact path='/reports' component={Reports} />
+            <Route
+              exact
+              path='/assignments'
+              render={({ match, history, location }) => (
+                <Assignments
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/papers'
+              render={({ match, history, location }) => (
+                <Papers
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/quizzes'
+              render={({ match, history, location }) => (
+                <Quizzes
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/reports'
+              render={({ match, history, location }) => (
+                <Reports
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
             <Route path='*' component={Error404} />
           </Switch>
         )}

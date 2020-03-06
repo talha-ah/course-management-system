@@ -17,7 +17,7 @@
 .SidebarBrand {
   display: block;
   font-size: 1.25rem;
-  color: rgba(0, 0, 0, 0.9);
+  color: #3b3e66;
   line-height: inherit;
   white-space: nowrap;
   padding-bottom: 1rem;
@@ -41,7 +41,7 @@
 .SidebarNavLink {
   text-decoration: none;
   font-size: 1rem;
-  color: rgba(0, 0, 0, 0.5);
+  color: #3b3e66;
   background-color: transparent;
   padding: 0.65rem 1.5rem;
   line-height: 1.5;
@@ -55,7 +55,7 @@
 
 .SidebarNavLink svg {
   margin-right: 16px;
-  color: #5e72e4;
+  color: #3b3e66;
   min-height: 15.5px;
   max-height: 15.5px;
   min-width: 15.5px;
@@ -64,7 +64,7 @@
 
 .SidebarNavTitle {
   font-size: 0.75rem;
-  color: #8898aa;
+  color: #3b3e66;
   margin: 0px 0px 8px;
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;

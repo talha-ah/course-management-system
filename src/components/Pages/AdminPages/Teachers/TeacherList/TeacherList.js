@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
 
-import classes from './CoursesList.module.css';
+import classes from './TeacherList.module.css';
 import Spinner from '../../../../UI/Spinner/Spinner';
 import Button from '../../../../UI/Button/Button';
 import TableButton from '../../../../UI/TableButton/TableButton';
 
-class CoursesList extends Component {
+class TeacherList extends Component {
   state = {
     pageLoading: true,
-    courses: '',
-    totalCourses: 0
+    isLoading: false,
+    teachers: '',
+    totalTeachers: 0
   };
 
   componentDidMount() {
-    fetch('http://localhost:8080/admin/courses', {
+    fetch('http://localhost:8080/admin/teachers', {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token
@@ -25,8 +26,8 @@ class CoursesList extends Component {
       })
       .then(resData => {
         this.setState({
-          courses: resData.courses,
-          totalCourses: resData.totalCourses,
+          teachers: resData.teachers,
+          totalTeachers: resData.totalTeachers,
           pageLoading: false
         });
       })
@@ -43,11 +44,11 @@ class CoursesList extends Component {
       });
   }
 
-  addCoursePageHandler = () => {
-    this.props.history.push('/addcourse');
+  addTeacherPageHandler = () => {
+    this.props.history.push('/addteacher');
   };
 
-  courseHandler = id => {
+  teacherHandler = id => {
     console.log(id);
   };
 
@@ -55,34 +56,31 @@ class CoursesList extends Component {
     const page = this.state.pageLoading ? (
       <Spinner />
     ) : (
-      <div className={classes.CoursesList}>
-        <table className={classes.CoursesListTable}>
-          <caption>Course List</caption>
+      <div className={classes.TeacherList}>
+        <table className={classes.TeacherListTable}>
+          <caption>Teachers List</caption>
           <thead>
             <tr>
-              <th colSpan='2'>Title</th>
-              <th>Code</th>
-              <th>Type</th>
-              <th>Credits</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Rank</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {this.state.courses.map(course => {
+            {this.state.teachers.map(teacher => {
               return (
-                <tr key={course._id}>
-                  <td
-                    colSpan='2'
-                    onClick={() => this.courseHandler(course._id)}
-                  >
-                    {course.title}
+                <tr key={teacher._id}>
+                  <td onClick={() => this.teacherHandler(teacher._id)}>
+                    {teacher.firstName} {teacher.lastName}
                   </td>
-                  <td>{course.code}</td>
-                  <td>{course.type}</td>
-                  <td>{course.credits}</td>
+                  <td>{teacher.email}</td>
+                  <td>{teacher.rank}</td>
+                  <td>{teacher.status}</td>
                   <td>
                     <TableButton title='Add Materials'>+</TableButton>
-                    <TableButton title='Disable Course' color='#f83245'>
+                    <TableButton title='Disable teacher' color='#f83245'>
                       x
                     </TableButton>
                   </td>
@@ -92,13 +90,13 @@ class CoursesList extends Component {
           </tbody>
           <tfoot>
             <tr>
-              <th colSpan='3'>Total courses</th>
-              <th colSpan='3'>{this.state.totalCourses}</th>
+              <th colSpan='3'>Total teachers</th>
+              <th colSpan='2'>{this.state.totalTeachers}</th>
             </tr>
           </tfoot>
         </table>
         <div className={classes.buttonDiv}>
-          <Button onClick={this.addCoursePageHandler}>Add Course</Button>
+          <Button onClick={this.addTeacherPageHandler}>Add Teacher</Button>
         </div>
       </div>
     );
@@ -106,4 +104,4 @@ class CoursesList extends Component {
   }
 }
 
-export default CoursesList;
+export default TeacherList;

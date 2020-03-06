@@ -1,4 +1,4 @@
-.CoursesList {
+.TeacherList {
   position: relative;
   color: #3b3e66;
   text-align: center;
@@ -13,15 +13,14 @@
 
 /* Table Starts */
 
-.CoursesList table {
+.TeacherList table {
   table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
 }
 
-.CoursesList caption {
+.TeacherList caption {
   padding-top: 20px;
-
   text-align: center;
   margin: 10px 0 25px 0;
   font-size: 22px;
@@ -33,30 +32,30 @@
   white-space: nowrap;
 }
 
-.CoursesList table thead {
+.TeacherList table thead {
   border-top: 2px solid rgba(7, 9, 25, 0.125);
   border-bottom: 2px solid rgba(7, 9, 25, 0.125);
   background-color: #f4f5fd;
 }
 
-.CoursesList table tbody tr {
+.TeacherList table tbody tr {
   border-bottom: 1px solid rgba(7, 9, 25, 0.125);
 }
 
-.CoursesList table tbody tr:hover {
+.TeacherList table tbody tr:hover {
   background-color: #f4f5fd;
 }
 
-.CoursesList table tbody button:nth-child(1) {
+.TeacherList table tbody button:nth-child(1) {
   margin-right: 15px;
 }
 
-.CoursesList th,
-.CoursesList td {
+.TeacherList th,
+.TeacherList td {
   padding: 20px;
 }
 
-.CoursesList table tfoot {
+.TeacherList table tfoot {
   border-bottom: 2px solid rgba(7, 9, 25, 0.125);
 }
 

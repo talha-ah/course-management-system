@@ -9,18 +9,24 @@ class EditProfile extends React.Component {
   state = {
     pageLoading: true,
     isLoading: false,
-    admin: '',
     firstName: '',
     lastName: '',
     email: '',
+    birthdate: '',
+    phone: '',
+    address: '',
+    country: '',
+    city: '',
+    zip: '',
     password: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    file: null,
+    fileName: ''
   };
 
   componentDidMount() {
-    fetch('http://localhost:8080/admin/getadmin', {
-      method: 'GET',
+    fetch('http://localhost:8080/teacher/getteacher', {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token
@@ -32,10 +38,16 @@ class EditProfile extends React.Component {
       })
       .then(resData => {
         this.setState({
-          firstName: resData.user.firstName,
-          lastName: resData.user.lastName,
-          email: resData.user.email,
-          pageLoading: false
+          pageLoading: false,
+          firstName: resData.teacher.firstName,
+          lastName: resData.teacher.lastName,
+          email: resData.teacher.email,
+          birthdate: resData.teacher.dob,
+          phone: resData.teacher.phone,
+          address: resData.teacher.address.address,
+          country: resData.teacher.address.country,
+          city: resData.teacher.address.city,
+          zip: resData.teacher.address.zip
         });
       })
       .catch(err => {
@@ -52,22 +64,36 @@ class EditProfile extends React.Component {
   }
 
   onChange = e => {
-    const name = e.target.name;
-    const value = e.target.value;
-    this.setState({
-      [name]: value
-    });
+    if (e.target.type === 'file' && e.target.files[0].name) {
+      this.setState({
+        file: e.target.files[0],
+        fileName: e.target.files[0].name
+      });
+    } else {
+      const name = e.target.name;
+      const value = e.target.value;
+      this.setState({
+        [name]: value
+      });
+    }
   };
 
   onProfileUpdate = e => {
-    e.preventDefault(); // Stop form submit
+    e.preventDefault();
+
     this.setState({ isLoading: true });
-    fetch('http://localhost:8080/admin/editadmin', {
+    fetch('http://localhost:8080/teacher/editteacher', {
       method: 'POST',
       body: JSON.stringify({
         firstName: this.state.firstName,
         lastName: this.state.lastName,
-        email: this.state.email
+        email: this.state.email,
+        dob: this.state.birthdate,
+        phone: this.state.phone,
+        address: this.state.address,
+        country: this.state.country,
+        city: this.state.city,
+        zip: this.state.zip
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -79,8 +105,9 @@ class EditProfile extends React.Component {
         return res.json();
       })
       .then(resData => {
-        console.log(resData);
         this.setState({ isLoading: false });
+        console.log('Profile Updated Successfully!');
+        console.log(resData);
       })
       .catch(err => {
         try {
@@ -95,12 +122,11 @@ class EditProfile extends React.Component {
       });
   };
 
-  onPasswordUpdate = e => {
+  onPasswordChange = e => {
     e.preventDefault();
     this.setState({ isLoading: true });
-
     if (this.state.newPassword === this.state.confirmPassword) {
-      fetch('http://localhost:8080/admin/editadminpassword', {
+      fetch('http://localhost:8080/teacher/editteacherpassword', {
         method: 'POST',
         body: JSON.stringify({
           currentPassword: this.state.password,
@@ -132,6 +158,53 @@ class EditProfile extends React.Component {
         });
     } else {
       console.log('Passwords do not match!');
+    }
+  };
+
+  onCVSubmit = e => {
+    e.preventDefault();
+
+    this.setState({ isLoading: true });
+    if (this.state.file !== null && this.state.fileName !== '') {
+      const file = this.state.file;
+      const fileName = this.state.fileName;
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('fileName', fileName);
+
+      if (file.size < 5000000) {
+        fetch('http://localhost:8080/teacher/editcv', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            Authorization: 'Bearer ' + this.props.token
+          }
+        })
+          .then(res => {
+            if (!res.ok) throw res;
+            return res.json();
+          })
+          .then(resData => {
+            this.setState({ isLoading: false });
+            console.log('CV updated successfully!');
+            console.log(resData);
+          })
+          .catch(err => {
+            try {
+              err.json().then(body => {
+                console.log(body);
+                console.log('message = ' + body.message);
+              });
+            } catch (e) {
+              console.log('Error parsing promise');
+              console.log(err);
+            }
+          });
+      } else {
+        console.log('File too big!');
+      }
+    } else {
+      console.log('No File attached!');
     }
   };
 
@@ -180,9 +253,74 @@ class EditProfile extends React.Component {
               onChange={this.onChange}
             />
           </div>
+          <div className={classes.InputDiv}>
+            <label htmlFor='birthdate'>Birthdate</label>
+            <Input
+              type='date'
+              name='birthdate'
+              placeholder='Birthdate'
+              // value='1980-01-01'
+              value={this.state.birthdate}
+              onChange={this.onChange}
+            />
+          </div>
+          <div className={classes.InputDiv}>
+            <label htmlFor='phone'>Phone Number</label>
+            <Input
+              type='number'
+              name='phone'
+              placeholder='Phone Number'
+              value={this.state.phone}
+              onChange={this.onChange}
+            />
+          </div>
+          <div className={classes.InputDiv}>
+            <label htmlFor='address'>Address</label>
+            <Input
+              type='text'
+              name='address'
+              placeholder='Address'
+              value={this.state.address}
+              onChange={this.onChange}
+            />
+          </div>
+          <div className={classes.InputGroup}>
+            <div className={classes.InputDiv}>
+              <label htmlFor='country'>Country</label>
+              <Input
+                type='text'
+                name='country'
+                placeholder='Country'
+                value={this.state.country}
+                onChange={this.onChange}
+              />
+            </div>
+            <div className={classes.InputDiv}>
+              <label htmlFor='city'>City</label>
+              <Input
+                type='text'
+                name='city'
+                placeholder='City'
+                value={this.state.city}
+                onChange={this.onChange}
+              />
+            </div>
+            <div className={classes.InputDiv}>
+              <label htmlFor='zip'>Zip</label>
+              <Input
+                type='text'
+                name='zip'
+                placeholder='Zip'
+                value={this.state.zip}
+                onChange={this.onChange}
+              />
+            </div>
+          </div>
 
           <div className={classes.ButtonDiv}>
-            <Button type='submit'>Update</Button>
+            <Button type='submit'>
+              {this.state.isLoading ? 'Loading...' : 'Update Profile'}
+            </Button>
           </div>
         </form>
         <br></br>
@@ -192,7 +330,7 @@ class EditProfile extends React.Component {
         <form
           method='POST'
           className={classes.Form}
-          onSubmit={this.onPasswordUpdate}
+          onSubmit={this.onPasswordChange}
         >
           <div className={classes.InputDiv}>
             <label htmlFor='password'>Current Password</label>
@@ -231,6 +369,27 @@ class EditProfile extends React.Component {
             </Button>
           </div>
         </form>
+        <br></br>
+        <div className={classes.Title}>
+          <h4>Update CV</h4>
+        </div>
+
+        <div className={classes.cvUpload}>
+          <form
+            method='POST'
+            onSubmit={this.onCVSubmit}
+            // encType='multipart/form-data'
+          >
+            <Input type='file' onChange={this.onChange} />
+            <label htmlFor='file'>{this.state.fileName}</label>
+            <p>Drag your file here or click to select file.</p>
+            <div className={classes.ButtonDiv}>
+              <Button type='submit'>
+                {this.state.isLoading ? 'Loading...' : 'Update CV'}
+              </Button>
+            </div>
+          </form>
+        </div>
       </div>
     );
     return page;

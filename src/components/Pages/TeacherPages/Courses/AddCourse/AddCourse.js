@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import classes from './AddCourse.module.css';
+import Spinner from '../../../../UI/Spinner/Spinner';
 import Button from '../../../../UI/Button/Button';
 import Input from '../../../../UI/Input/Input';
 import SelectInput from '../../../../UI/SelectInput/SelectInput';
@@ -16,11 +17,14 @@ class AddCourse extends Component {
   };
 
   componentDidMount() {
-    fetch('http://localhost:8080/teacher/listcourses')
+    fetch('http://localhost:8080/teacher/listcourses', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.props.token
+      }
+    })
       .then(res => {
-        if (res.status !== 200) {
-          throw new Error('Unknown Status Code.');
-        }
+        if (!res.ok) throw res;
         return res.json();
       })
       .then(resData => {
@@ -33,7 +37,15 @@ class AddCourse extends Component {
         });
       })
       .catch(err => {
-        console.log('Error', err);
+        try {
+          err.json().then(body => {
+            console.log(body);
+            console.log('message = ' + body.message);
+          });
+        } catch (e) {
+          console.log('Error parsing promise');
+          console.log(err);
+        }
       });
   }
 
@@ -43,36 +55,44 @@ class AddCourse extends Component {
     const courseTitle = this.state.courseTitle;
     var courseId;
 
-    this.state.courses.map(course => {
+    this.state.courses.some(course => {
       if (course.title === courseTitle) {
         courseId = course._id;
+        return true;
       }
-      return true;
+      return false;
     });
 
-    const formData = new FormData();
-    formData.append('courseId', courseId);
-    formData.append('courseSection', this.state.courseSection);
-    formData.append('courseSession', this.state.courseSession);
-
-    const teacherId = '5e4cc7a4781ba62684fe3892';
-    fetch(`http://localhost:8080/teacher/takecourse/${teacherId}`, {
+    fetch('http://localhost:8080/teacher/takecourse', {
       method: 'POST',
-      body: formData
+      body: JSON.stringify({
+        courseId: courseId,
+        sections: this.state.courseSection,
+        session: this.state.courseSession
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.props.token
+      }
     })
       .then(res => {
+        if (!res.ok) throw res;
         return res.json();
       })
       .then(resData => {
-        if (resData.status !== 201 || resData.status !== 200) {
-          const error = new Error(resData.message);
-          throw error;
-        }
-        this.props.history.goback();
-        console.log('Course Added!');
+        console.log(resData);
+        this.props.history.push('/');
       })
       .catch(err => {
-        console.log('AddCourseFormSubmit', err);
+        try {
+          err.json().then(body => {
+            console.log(body);
+            console.log('message = ' + body.message);
+          });
+        } catch (e) {
+          console.log('Error parsing promise');
+          console.log(err);
+        }
       });
   };
 
@@ -82,62 +102,65 @@ class AddCourse extends Component {
     this.setState({ [name]: value });
   };
 
-  cancelHandler = () => {
+  onFormCancel = () => {
     this.props.history.goBack();
   };
 
   render() {
     const page = this.state.isLoading ? (
-      ''
+      <Spinner />
     ) : (
       <div className={classes.AddCourse}>
-        <div className={classes.AddCourseHeader}>
-          <h3>Add a Course</h3>
-          <p>
-            This is your AddCourse page. You can assign a course to you that you
-            want to teach
-          </p>
+        <div className={classes.Title}>
+          <h4>Add Course</h4>
         </div>
-        <div className={classes.AddCourseArea}>
-          <div className={classes.form}>
-            <div className={classes.inputGroup}>
-              <label htmlFor='courseTitle'>Course Title</label>
-              <SelectInput
-                name='courseTitle'
-                placeholder='Select Course'
-                onChange={this.onChange}
-                disabled=''
-                defaultValue=''
-              >
-                {this.state.coursesArray}
-              </SelectInput>
-            </div>
-            <div className={classes.inputGroup}>
-              <label htmlFor='courseSection'>Course Section</label>
-              <Input
-                type='text'
-                placeholder='Section'
-                name='courseSection'
-                onChange={this.onChange}
-              />
-            </div>
-            <div className={classes.inputGroup}>
-              <label htmlFor='courseSession'>Session</label>
-              <Input
-                type='text'
-                placeholder='Session'
-                name='courseSession'
-                onChange={this.onChange}
-              />
-            </div>
+        <form
+          className={classes.Form}
+          onSubmit={this.onFormSubmit}
+          method='POST'
+        >
+          <div className={classes.InputDiv}>
+            <label htmlFor='courseTitle'>Course Title</label>
+            <SelectInput
+              name='courseTitle'
+              placeholder='Course Title'
+              onChange={this.onChange}
+              disabled=''
+              defaultValue=''
+            >
+              {this.state.coursesArray}
+            </SelectInput>
           </div>
-          <div className={classes.buttonDiv}>
-            <Button onClick={this.cancelHandler} color='#f83245'>
+          <div className={classes.InputDiv}>
+            <label htmlFor='courseSection'>Course Section</label>
+            <Input
+              type='text'
+              name='courseSection'
+              placeholder='Course Section'
+              value={this.state.courseSection}
+              onChange={this.onChange}
+            />
+          </div>
+          <div className={classes.InputDiv}>
+            <label htmlFor='courseSession'>Course Session</label>
+            <Input
+              type='text'
+              name='courseSession'
+              placeholder='Course Session'
+              value={this.state.courseSession}
+              onChange={this.onChange}
+            />
+          </div>
+
+          <div className={classes.ButtonDiv}>
+            <Button type='button' onClick={this.onFormCancel} color='#f83245'>
               Cancel
             </Button>
-            <Button onClick={this.onFormSubmit}>Create</Button>
+            <Button type='submit'>
+              {this.state.isLoading ? 'Loading...' : 'Create'}
+            </Button>
           </div>
-        </div>
+        </form>
       </div>
     );
     return page;
