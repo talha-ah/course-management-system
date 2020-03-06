@@ -10,7 +10,7 @@ const teacherModel = new Schema(
     lastName: {
       type: String
     },
-    code: {
+    teacherCode: {
       type: String,
       required: true
     },
@@ -22,30 +22,48 @@ const teacherModel = new Schema(
       type: String,
       required: true
     },
-    role: {
+    rank: {
       type: String,
       required: true
     },
+    type: {
+      type: String
+    },
+    role: [
+      {
+        type: String,
+        required: true
+      }
+    ],
     status: {
       type: String,
       required: true
     },
     cvUrl: {
-      type: String
+      type: String,
+      required: true
     },
     dpURL: {
-      type: String
+      type: String,
+      required: true
     },
     dob: {
       type: String
     },
     address: {
-      type: String
+      address: { type: String },
+      country: { type: String },
+      city: { type: String },
+      zip: { type: String }
     },
     phone: {
-      type: String
+      type: Number
     },
-    courses: [
+    courses: {
+      type: Schema.Types.ObjectId,
+      ref: 'Course'
+    },
+    coursesAssigned: [
       {
         courseId: {
           type: Schema.Types.ObjectId,
@@ -58,8 +76,7 @@ const teacherModel = new Schema(
           type: String
         },
         status: {
-          type: String,
-          required: true
+          type: String
         },
         courseLog: {
           type: Schema.Types.ObjectId,

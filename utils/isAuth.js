@@ -10,9 +10,10 @@ module.exports = async (req, res, next) => {
   }
 
   var token = header.split(' ')[1];
+
   let decodedToken;
   try {
-    decodedToken = jwt.verify(token, 'isthissecretkeysecured');
+    decodedToken = jwt.verify(token, 'isthissecretkeysecure');
   } catch (error) {
     if (!error.status) {
       error.status = 500;
@@ -28,7 +29,7 @@ module.exports = async (req, res, next) => {
 
   req.userId = decodedToken.userId.toString();
   req.email = decodedToken.email;
-  req.isAdmin = decodedToken.isAdmin;
+  req.isAdmin = decodedToken.lol;
 
   next();
 };

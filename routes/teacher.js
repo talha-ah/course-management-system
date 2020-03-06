@@ -3,6 +3,7 @@ const multer = require('multer');
 
 const router = express.Router();
 
+const isAuth = require('../utils/isAuth');
 const teacherController = require('../controllers/teacher');
 
 // =========================================================== Multer ================================================
@@ -33,42 +34,49 @@ const fileStorageCV = multer.diskStorage({
 // File Upload Handler
 const uploadCV = multer({ storage: fileStorageCV });
 
-// multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
-// multer({ storage: fileStorage }).array('image', 2)
+// multer({ storage: fileStorage, fileFilter: fileFilter }).array('image', 2)
 
 // ======================================================== Multer Ends ================================================
 
 // /teacher
 
 // Profile
-router.get('/getteacher/:teacherId', teacherController.getTeacher);
-router.post('/getteacher/:teacherId', teacherController.editProfile);
+router.get('/getteacher', isAuth, teacherController.getTeacher);
+router.post('/editteacher', isAuth, teacherController.editProfile);
 router.post(
-  '/editcv/:teacherId',
+  '/editteacherpassword',
+  isAuth,
+  teacherController.editProfilePassword
+);
+router.post(
+  '/editcv',
+  isAuth,
   uploadCV.single('image'),
   teacherController.editCV
 );
 
 // Courses
-router.get('/listcourses', teacherController.getCourses);
-router.get('/courses/:teacherId', teacherController.getTeacherCourses);
-router.post('/takecourse/:teacherId', teacherController.takeCourse);
-router.delete('/removecourse/:teacherId', teacherController.removeCourse);
+router.get('/courses', isAuth, teacherController.getTeacherCourses);
+router.get('/listcourses', isAuth, teacherController.getCourses);
+router.post('/takecourse', isAuth, teacherController.takeCourse);
+router.delete('/removecourse', isAuth, teacherController.removeCourse);
 
 // NCEAC Forms
-router.post('/addcourselog/:teacherId', teacherController.addCourseLog);
+router.post('/addcourselog', isAuth, teacherController.addCourseLog);
 router.post(
-  '/addcoursedescription/:teacherId',
+  '/addcoursedescription',
+  isAuth,
   teacherController.addCourseDescription
 );
 router.post(
-  '/addcoursemonitoring/:teacherId',
+  '/addcoursemonitoring',
+  isAuth,
   teacherController.addCourseMonitoring
 );
 
 // Materials
-router.post('/addassignment/:teacherId', teacherController.addAssignment);
-router.post('/addquiz/:teacherId', teacherController.addQuiz);
-router.post('/addpaper/:teacherId', teacherController.addPaper);
+router.post('/addassignment', isAuth, teacherController.addAssignment);
+router.post('/addquiz', isAuth, teacherController.addQuiz);
+router.post('/addpaper', isAuth, teacherController.addPaper);
 
 module.exports = router;

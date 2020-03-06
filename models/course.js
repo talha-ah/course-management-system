@@ -13,6 +13,14 @@ const courseModel = new Schema(
       required: true
     },
     credits: {
+      type: Number,
+      required: true
+    },
+    type: {
+      type: String,
+      required: true
+    },
+    session: {
       type: String,
       required: true
     },

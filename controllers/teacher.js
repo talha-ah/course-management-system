@@ -1,4 +1,6 @@
 const { clearFile } = require('../utils/clearFile');
+const bcrypt = require('bcryptjs');
+const validator = require('validator');
 
 const Teacher = require('../models/teacher');
 const Course = require('../models/course');
@@ -12,31 +14,29 @@ const Paper = require('../models/materials/papers');
 // =========================================================== Profile ================================================
 
 exports.getTeacher = async (req, res, next) => {
-  const teacherId = req.params.teacherId;
+  const teacherId = req.userId;
 
   try {
     const teacher = await Teacher.findById(teacherId);
 
     if (!teacher) {
-      const err = new Error('Unable to fetch the teacher.');
-      err.status = 422;
-      throw err;
+      const error = new Error('Unable to fetch the user.');
+      error.status = 404;
+      throw error;
     }
-    const totalCourses = teacher.courses.length;
-    var activeCourses = 0;
-    teacher.courses.map(course => {
-      if (course.status === 'Active') {
-        activeCourses++;
-      }
-    });
+
+    // const totalCourses = teacher.courses.length;
+    // var activeCourses = 0;
+    // teacher.courses.map(course => {
+    //   if (course.status === 'Active') {
+    //     activeCourses++;
+    //   }
+    // });
     res.status(200).send({
       message: 'Teacher fetched.',
       teacher: {
         firstName: teacher.firstName,
         lastName: teacher.lastName,
-        role: teacher.role,
-        totalCourses: totalCourses,
-        activeCourses: activeCourses,
         email: teacher.email,
         dob: teacher.dob,
         address: teacher.address,
@@ -52,7 +52,7 @@ exports.getTeacher = async (req, res, next) => {
 };
 
 exports.editProfile = async (req, res, next) => {
-  const teacherId = req.params.teacherId;
+  const teacherId = req.userId;
 
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
@@ -60,13 +60,48 @@ exports.editProfile = async (req, res, next) => {
   const dob = req.body.dob;
   const phone = req.body.phone;
   const address = req.body.address;
+  const country = req.body.country;
+  const city = req.body.city;
+  const zip = req.body.zip;
 
+  const errors = [];
+
+  if (!validator.isAlphanumeric(firstName)) {
+    errors.push('Invalid First Name!');
+  }
+  if (!validator.isAlphanumeric(lastName)) {
+    errors.push('Invalid Last Name!');
+  }
+  if (!validator.isEmail(email)) {
+    errors.push('Invalid Email!');
+  }
+  if (!validator.isNumeric(String(phone))) {
+    errors.push('Invalid Phone!');
+  }
+  if (!validator.isAlphanumeric(address)) {
+    errors.push('Invalid Address!');
+  }
+  if (!validator.isAlpha(Country)) {
+    errors.push('Invalid Country!');
+  }
+  if (!validator.isAlpha(city)) {
+    errors.push('Invalid City!');
+  }
+  if (!validator.isAlphanumeric(zip)) {
+    errors.push('Invalid Zip!');
+  }
   try {
+    if (errors.length > 0) {
+      var error = new Error(errors);
+      error.status = 400;
+      throw error;
+    }
+
     const teacher = await Teacher.findById(teacherId);
 
     if (!teacher) {
       const err = new Error('Could not find teacher.');
-      err.status = 422;
+      err.status = 404;
       throw err;
     }
 
@@ -84,13 +119,25 @@ exports.editProfile = async (req, res, next) => {
     teacher.email = email;
     teacher.dob = dob;
     teacher.phone = phone;
-    teacher.address = address;
+    teacher.address.address = address;
+    teacher.address.country = country;
+    teacher.address.city = city;
+    teacher.address.zip = zip;
 
     const updatedTeacher = await teacher.save();
 
-    res
-      .status(201)
-      .send({ message: 'Profile Updated', teacher: updatedTeacher });
+    res.status(201).send({
+      message: 'Profile Updated',
+      teacher: {
+        firstName: updatedTeacher.firstName,
+        lastName: updatedTeacher.lastName,
+        email: updatedTeacher.email,
+        dob: updatedTeacher.dob,
+        address: updatedTeacher.address,
+        phone: updatedTeacher.phone,
+        cvPath: updatedTeacher.cvUrl
+      }
+    });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -99,8 +146,67 @@ exports.editProfile = async (req, res, next) => {
   }
 };
 
+exports.editProfilePassword = async (req, res, next) => {
+  const teacherId = req.userId;
+  const currentPassword = req.body.currentPassword;
+  const newPassword = req.body.newPassword;
+
+  const errors = [];
+
+  if (!validator.isLength(newPassword, { min: 6 })) {
+    errors.push('Invalid New Password Length!');
+  }
+  try {
+    if (errors.length > 0) {
+      var error = new Error(errors);
+      error.status = 400;
+      throw error;
+    }
+
+    const teacher = await Teacher.findById(teacherId);
+    if (!teacher) {
+      const err = new Error('Could not find teacher.');
+      err.status = 404;
+      throw err;
+    }
+
+    const passwordCheck = await bcrypt.compare(
+      currentPassword,
+      teacher.password
+    );
+    if (!passwordCheck) {
+      var error = new Error('Wrong password!');
+      error.status = 403;
+      throw error;
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    teacher.password = hashedPassword;
+
+    const updatedTeacher = await teacher.save();
+
+    res.status(201).json({
+      message: 'Password updated!',
+      teacher: {
+        firstName: updatedTeacher.firstName,
+        lastName: updatedTeacher.lastName,
+        email: updatedTeacher.email,
+        dob: updatedTeacher.dob,
+        address: updatedTeacher.address,
+        phone: updatedTeacher.phone,
+        cvPath: updatedTeacher.cvUrl
+      }
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
 exports.editCV = async (req, res, next) => {
-  const teacherId = req.params.teacherId;
+  const teacherId = req.userId;
 
   try {
     if (req.file.mimetype !== 'application/pdf') {
@@ -108,38 +214,36 @@ exports.editCV = async (req, res, next) => {
       error.status = 400;
       throw error;
     }
-
-    if (!req.file) {
-      const err = new Error('No file provided.');
-      err.status = 422;
-      throw err;
-    }
-
     var cvPath = req.file.path;
-    if (!cvPath) {
-      const err = new Error('File not provided.');
-      err.status = 422;
+    if (!cvPath || !req.file) {
+      const err = new Error('No file provided!');
+      err.status = 204;
       throw err;
     }
     cvPath = cvPath.replace(/\\/g, '/');
-
     const teacher = await Teacher.findById(teacherId);
-
     if (!teacher) {
       const err = new Error('Could not find teacher.');
-      err.status = 422;
+      err.status = 404;
       throw err;
     }
-
     if (teacher.cvUrl !== 'undefined' || !teacher.cvUrl) {
       clearFile(teacher.cvUrl);
     }
-
     teacher.cvUrl = cvPath;
-
     const updatedTeacher = await teacher.save();
-
-    res.status(200).json({ message: 'CV Uploaded.', teacher: updatedTeacher });
+    res.status(201).json({
+      message: 'CV Updated!',
+      teacher: {
+        firstName: updatedTeacher.firstName,
+        lastName: updatedTeacher.lastName,
+        email: updatedTeacher.email,
+        dob: updatedTeacher.dob,
+        address: updatedTeacher.address,
+        phone: updatedTeacher.phone,
+        cvPath: updatedTeacher.cvUrl
+      }
+    });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -174,11 +278,11 @@ exports.getCourses = async (req, res, next) => {
 };
 
 exports.getTeacherCourses = async (req, res, next) => {
-  const teacherId = req.params.teacherId;
+  const teacherId = req.userId;
 
   try {
     const teacher = await Teacher.findById(teacherId)
-      .populate('courses.courseId')
+      .populate('coursesAssigned.courseId')
       .exec();
 
     if (!teacher) {
@@ -187,11 +291,32 @@ exports.getTeacherCourses = async (req, res, next) => {
       throw new error();
     }
 
-    const totalCourses = teacher.courses.length;
+    var courses = teacher.coursesAssigned;
 
-    res.status(200).send({
-      message: 'Courses fetched',
-      courses: teacher.courses,
+    var totalCourses = 0;
+    if (courses) {
+      totalCourses = courses.length;
+    }
+
+    var updatedCourses = [];
+
+    courses.map(course => {
+      updatedCourses.push({
+        _id: course.courseId._id,
+        title: course.courseId.title,
+        code: course.courseId.code,
+        credits: course.courseId.credits,
+        type: course.courseId.type,
+        sessionType: course.courseId.session,
+        status: course.status,
+        sections: course.sections,
+        session: course.session
+      });
+    });
+
+    res.status(200).json({
+      message: 'Courses fetched!',
+      courses: updatedCourses,
       totalCourses: totalCourses
     });
   } catch (err) {
@@ -203,7 +328,7 @@ exports.getTeacherCourses = async (req, res, next) => {
 };
 
 exports.takeCourse = async (req, res, next) => {
-  const teacherId = req.params.teacherId;
+  const teacherId = req.userId;
 
   const courseId = req.body.courseId;
   const sections = req.body.sections;
@@ -212,11 +337,11 @@ exports.takeCourse = async (req, res, next) => {
   try {
     const course = await Teacher.find({
       _id: teacherId,
-      'courses.courseId': courseId
+      'coursesAssigned.courseId': courseId
     });
 
     if (course.length > 0) {
-      const error = new Error('Course already taken.');
+      const error = new Error('Course already exists!');
       error.status = 400;
       throw error;
     }
@@ -260,10 +385,10 @@ exports.takeCourse = async (req, res, next) => {
     if (!teacher) {
       const error = new Error('Error in fetching the teacher!');
       error.code = 404;
-      throw new error();
+      throw error;
     }
 
-    teacher.courses.push({
+    teacher.coursesAssigned.push({
       courseId: courseId,
       sections: sections,
       session: session,
@@ -282,7 +407,7 @@ exports.takeCourse = async (req, res, next) => {
       error.code = 404;
       throw new error();
     }
-    res.status(201).send({ teacher: teacherData });
+    res.status(201).json({ message: 'Course added!', teacher: teacherData });
   } catch (err) {
     if (!err.status) {
       err.status = 500;

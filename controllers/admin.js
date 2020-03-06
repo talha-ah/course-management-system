@@ -1,29 +1,29 @@
 const bcrypt = require('bcryptjs');
+const validator = require('validator');
 
 const Teacher = require('../models/teacher');
-const Admin = require('../models/admin');
 const Course = require('../models/course');
 
 exports.getAdmin = async (req, res, next) => {
-  const adminId = req.userId;
+  const userId = req.userId;
   const isAdmin = req.isAdmin;
 
   try {
     if (!isAdmin) {
       var error = new Error('Not Authorized!');
-      error.status = 400;
+      error.status = 401;
       throw error;
     }
 
-    const admin = await Admin.findById(adminId).select('-password');
+    const user = await Teacher.findById(userId).select('-password');
 
-    if (!admin) {
+    if (!user) {
       var error = new Error('User not found!');
-      error.status = 400;
+      error.status = 404;
       throw error;
     }
 
-    res.status(200).json({ message: 'User Fetched!', user: admin });
+    res.status(200).json({ message: 'User Fetched!', user: user });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -67,78 +67,96 @@ exports.editAdmin = async (req, res, next) => {
   }
 };
 
-exports.adminSignup = async (req, res, next) => {
-  const firstName = req.body.firstname;
-  const lastName = req.body.lastname;
-  const email = req.body.email;
-  const password = req.body.password;
+// ================================================= Teachers Section ================================================
 
-  const hashedPassword = await bcrypt.hash(password, 12);
+exports.getTeachers = async (req, res, next) => {
+  try {
+    const teachers = await Teacher.find({ type: { $ne: 'Admin' } });
 
-  const admin = new Admin({
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    password: hashedPassword
-  });
-  admin
-    .save()
-    .then(admin => {
-      if (!admin) {
-        const err = new Error('User creation failed!');
-        err.code = 404;
-        throw err;
-      }
-      res.send({ user: admin });
-    })
-    .catch(err => {
-      if (err.status) {
-        err.status = 500;
-      }
-      next(err);
+    if (!teachers) {
+      var error = new Error('Could not fetch teachers!');
+      error.status = 404;
+      throw error;
+    }
+
+    var totalteachers = 0;
+    teachers.map(teacher => totalteachers++);
+
+    res.status(200).json({
+      message: 'Teachers fetched!',
+      teachers: teachers,
+      totalTeachers: totalteachers
     });
+  } catch (err) {
+    if (err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
 };
 
-// ================================================= Teachers Section ================================================
+exports.getTeacher = async (req, res, next) => {};
 
 exports.createTeacher = async (req, res, next) => {
   const teacherEmail = req.body.email;
   const teacherCode = req.body.code;
-  const role = req.body.role;
+  const rank = req.body.rank;
+  const type = req.body.type;
 
-  const password = 'DefaultPassword';
+  const role = ['Teacher'];
+  const password = 'password';
   const status = 'Pending';
   const dpURL = 'undefined';
   const cvUrl = 'undefined';
 
-  const hashedPassword = await bcrypt.hash(password, 12);
+  const errors = [];
 
-  const teacher = new Teacher({
-    email: teacherEmail,
-    code: teacherCode,
-    password: hashedPassword,
-    status: status,
-    role: role,
-    dpURL: dpURL,
-    cvUrl: cvUrl
-  });
+  if (!validator.isEmail(teacherEmail)) {
+    errors.push('Invalid teacher email!');
+  }
+  if (!validator.isAlphanumeric(teacherCode)) {
+    errors.push('Invalid teacher code!');
+  }
+  if (!validator.isAlphanumeric(rank)) {
+    errors.push('Invalid teacher rank!');
+  }
+  if (!validator.isAlpha(teacherType)) {
+    errors.push('Invalid teacher type!');
+  }
+  try {
+    if (errors.length > 0) {
+      var error = new Error(errors);
+      error.status = 400;
+      throw error;
+    }
 
-  teacher
-    .save()
-    .then(teacher => {
-      if (!teacher) {
-        const err = new Error('User creation failed!');
-        err.code = 404;
-        throw err;
-      }
-      res.send({ teacher: teacher });
-    })
-    .catch(err => {
-      if (!err.status) {
-        err.status = 500;
-      }
-      next(err);
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const teacher = new Teacher({
+      email: teacherEmail,
+      password: hashedPassword,
+      teacherCode: teacherCode,
+      status: status,
+      rank: rank,
+      type: type,
+      dpURL: dpURL,
+      cvUrl: cvUrl,
+      role: role
     });
+
+    const updatedTeacher = await teacher.save();
+    if (!updatedTeacher) {
+      const err = new Error('User creation failed!');
+      err.code = 404;
+      throw err;
+    }
+    res.status(200).json({ message: 'User Created!', teacher: updatedTeacher });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
 };
 
 exports.deactivateTeacher = (req, res, next) => {
@@ -201,69 +219,200 @@ exports.reactivateTeacher = (req, res, next) => {
 
 // ================================================= Courses Section ================================================
 
-exports.createCourse = (req, res, next) => {
-  const courseTitle = req.body.title;
-  const courseCode = req.body.code;
-  const credits = req.body.credits;
-  const status = 'Active';
+exports.getCourses = async (req, res, next) => {
+  try {
+    const courses = await Course.find();
 
-  const course = new Course({
-    title: courseTitle,
-    code: courseCode,
-    credits: credits,
-    status: status
-  });
+    if (!courses) {
+      var error = new Error('Could not fetch courses!');
+      error.status = 404;
+      throw error;
+    }
 
-  course
-    .save()
-    .then(courseData => {
-      if (!courseData) {
-        const err = new Error('Course creation failed!');
-        err.code = 404;
-        throw err;
-      }
-      res.send({ course: courseData });
-    })
-    .catch(err => {
-      if (!err.status) {
-        err.status = 500;
-      }
-      next(err);
+    var totalCourses = 0;
+    courses.map(course => totalCourses++);
+
+    res.status(200).json({
+      message: 'Courses fetched!',
+      courses: courses,
+      totalCourses: totalCourses
     });
+  } catch (err) {
+    if (err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
 };
 
-exports.updateCourse = (req, res, next) => {
+exports.getCourse = async (req, res, next) => {};
+
+exports.createCourse = async (req, res, next) => {
+  const courseTitle = req.body.title;
+  const courseCode = req.body.code;
+  const courseCredits = req.body.credits;
+  const courseType = req.body.type;
+  const courseSession = req.body.session;
+  const status = 'Active';
+
+  const errors = [];
+
+  if (
+    !validator.isAlphanumeric(validator.blacklist(courseTitle, ' ')) ||
+    !validator.isLength(courseTitle, { min: 5 })
+  ) {
+    errors.push('Invalid course title!');
+  }
+  if (!validator.isAlphanumeric(courseCode)) {
+    errors.push('Invalid course code!');
+  }
+  if (
+    !validator.isNumeric(String(courseCredits)) ||
+    !validator.isLength(String(courseCredits), { min: 1, max: 1 })
+  ) {
+    errors.push('Invalid course code!');
+  }
+  if (!validator.isAlpha(courseType)) {
+    errors.push('Invalid course type!');
+  }
+  if (!validator.isAlpha(courseSession)) {
+    errors.push('Invalid course session!');
+  }
+  try {
+    if (errors.length > 0) {
+      var error = new Error(errors);
+      error.status = 400;
+      throw error;
+    }
+
+    const courseFound = await Course.findOne({
+      title: courseTitle,
+      code: courseCode
+    });
+    if (courseFound) {
+      var error = new Error('Course already exists!');
+      error.status = 400;
+      throw error;
+    }
+
+    const course = new Course({
+      title: courseTitle,
+      code: courseCode,
+      credits: courseCredits,
+      type: courseType,
+      session: courseSession,
+      status: status
+    });
+
+    const courseData = await course.save();
+
+    if (!courseData) {
+      const error = new Error('Course creation failed!');
+      error.code = 404;
+      throw error;
+    }
+    res.status(201).json({ message: 'Course created!', course: courseData });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.updateCourse = async (req, res, next) => {
   const courseId = req.body.courseId;
   const courseTitle = req.body.title;
   const courseCode = req.body.code;
-  const credits = req.body.credits;
+  const courseCredits = req.body.credits;
+  const courseType = req.body.type;
+  const courseSession = req.body.session;
 
-  Course.findById(courseId)
-    .then(course => {
-      if (!course) {
-        const err = new Error('Course fetching failed!');
-        err.code = 404;
-        throw err;
-      }
-      course.title = courseTitle;
-      course.code = courseCode;
-      course.credits = credits;
-      return course.save();
-    })
-    .then(courseData => {
-      if (!courseData) {
-        const error = new Error('Error in saving the course!');
-        error.code = 404;
-        throw new error();
-      }
-      res.send({ course: courseData });
-    })
-    .catch(err => {
-      if (!err.status) {
-        err.status = 500;
-      }
-      next(err);
-    });
+  const errors = [];
+
+  if (
+    !validator.isAlphanumeric(validator.blacklist(courseTitle, ' ')) ||
+    !validator.isLength(courseTitle, { min: 5 })
+  ) {
+    errors.push('Invalid course title!');
+  }
+  if (!validator.isAlphanumeric(courseCode)) {
+    errors.push('Invalid course code!');
+  }
+  if (
+    !validator.isNumeric(String(courseCredits)) ||
+    !validator.isLength(String(courseCredits), { min: 1, max: 1 })
+  ) {
+    errors.push('Invalid course code!');
+  }
+  if (!validator.isAlpha(courseType)) {
+    errors.push('Invalid course type!');
+  }
+  if (!validator.isAlpha(courseSession)) {
+    errors.push('Invalid course session!');
+  }
+  try {
+    if (errors.length > 0) {
+      var error = new Error(errors);
+      error.status = 400;
+      throw error;
+    }
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      const err = new Error('Course fetching failed!');
+      err.code = 404;
+      throw err;
+    }
+
+    if (course.status !== 'Active') {
+      const err = new Error('Unable to update course');
+      err.code = 404;
+      throw err;
+    }
+
+    course.title = courseTitle;
+    course.code = courseCode;
+    course.credits = courseCredits;
+    course.type = courseType;
+    course.session = courseSession;
+
+    const updatedCourse = await course.save();
+    if (!updatedCourse) {
+      const error = new Error('Error in saving the course!');
+      error.code = 404;
+      throw new error();
+    }
+    res.status(201).json({ message: 'Course Updated!', course: updatedCourse });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.deactivateCourse = async (req, res, next) => {
+  const courseId = req.params.courseId;
+
+  try {
+    const course = await Course.findById(courseId);
+    if (!course) {
+      const error = new Error('Error in deleting the course!');
+      error.code = 404;
+      throw new error();
+    }
+    course.status = 'Inactive';
+    const updatedCourse = await course.save();
+    res
+      .status(201)
+      .json({ message: 'Course deactivated!', course: updatedCourse });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
 };
 
 exports.deleteCourse = (req, res, next) => {
