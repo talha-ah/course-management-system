@@ -17,6 +17,12 @@ const app = express();
 mongoose.set('debug', true);
 app.use(logger('dev'));
 
+// create a write stream (in append mode)
+// var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+
+// // setup the logger
+// app.use(morgan('combined', { stream: accessLogStream }))
+
 app.use(cors());
 
 // JSON BodyParser

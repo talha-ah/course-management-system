@@ -25,13 +25,6 @@ exports.getTeacher = async (req, res, next) => {
       throw error;
     }
 
-    // const totalCourses = teacher.courses.length;
-    // var activeCourses = 0;
-    // teacher.courses.map(course => {
-    //   if (course.status === 'Active') {
-    //     activeCourses++;
-    //   }
-    // });
     res.status(200).send({
       message: 'Teacher fetched.',
       teacher: {
@@ -63,34 +56,32 @@ exports.editProfile = async (req, res, next) => {
   const country = req.body.country;
   const city = req.body.city;
   const zip = req.body.zip;
-
   const errors = [];
-
-  if (!validator.isAlphanumeric(firstName)) {
-    errors.push('Invalid First Name!');
-  }
-  if (!validator.isAlphanumeric(lastName)) {
-    errors.push('Invalid Last Name!');
-  }
-  if (!validator.isEmail(email)) {
-    errors.push('Invalid Email!');
-  }
-  if (!validator.isNumeric(String(phone))) {
-    errors.push('Invalid Phone!');
-  }
-  if (!validator.isAlphanumeric(address)) {
-    errors.push('Invalid Address!');
-  }
-  if (!validator.isAlpha(Country)) {
-    errors.push('Invalid Country!');
-  }
-  if (!validator.isAlpha(city)) {
-    errors.push('Invalid City!');
-  }
-  if (!validator.isAlphanumeric(zip)) {
-    errors.push('Invalid Zip!');
-  }
   try {
+    if (!validator.isAlphanumeric(firstName)) {
+      errors.push('Invalid First Name!');
+    }
+    if (!validator.isAlphanumeric(lastName)) {
+      errors.push('Invalid Last Name!');
+    }
+    if (!validator.isEmail(email)) {
+      errors.push('Invalid Email!');
+    }
+    if (!validator.isNumeric(String(phone))) {
+      errors.push('Invalid Phone!');
+    }
+    if (!validator.isAlphanumeric(validator.blacklist(address, ' '))) {
+      errors.push('Invalid Address!');
+    }
+    if (!validator.isAlpha(country)) {
+      errors.push('Invalid Country!');
+    }
+    if (!validator.isAlpha(city)) {
+      errors.push('Invalid City!');
+    }
+    if (!validator.isAlphanumeric(zip)) {
+      errors.push('Invalid Zip!');
+    }
     if (errors.length > 0) {
       var error = new Error(errors);
       error.status = 400;
@@ -123,6 +114,7 @@ exports.editProfile = async (req, res, next) => {
     teacher.address.country = country;
     teacher.address.city = city;
     teacher.address.zip = zip;
+    teacher.status = 'Active';
 
     const updatedTeacher = await teacher.save();
 
@@ -142,7 +134,7 @@ exports.editProfile = async (req, res, next) => {
     if (!err.status) {
       err.status = 500;
     }
-    next(er);
+    next(err);
   }
 };
 
@@ -153,10 +145,10 @@ exports.editProfilePassword = async (req, res, next) => {
 
   const errors = [];
 
-  if (!validator.isLength(newPassword, { min: 6 })) {
-    errors.push('Invalid New Password Length!');
-  }
   try {
+    if (!validator.isLength(newPassword, { min: 6 })) {
+      errors.push('Invalid New Password Length!');
+    }
     if (errors.length > 0) {
       var error = new Error(errors);
       error.status = 400;
@@ -277,6 +269,59 @@ exports.getCourses = async (req, res, next) => {
   }
 };
 
+exports.getCourse = async (req, res, next) => {
+  const teacherId = req.userId;
+  const courseId = req.params.courseId;
+
+  try {
+    const teacher = await Teacher.findById(teacherId);
+    var getCourse;
+    teacher.coursesAssigned.map(course => {
+      if (course._id.toString() === courseId.toString()) {
+        getCourse = course;
+      }
+    });
+
+    const course = await Course.findById(getCourse.courseId);
+    const courseLog = await CourseLog.find(getCourse.courseLog);
+    const courseDescription = await CourseDescription.find(
+      getCourse.courseDescription
+    );
+    const courseMonitoring = await CourseMonitoring.find(
+      getCourse.courseMonitoring
+    );
+    const assignments = await Assignment.find(getCourse.assignments);
+    const papers = await Paper.find(getCourse.papers);
+    const quizzes = await Quizz.find(getCourse.quizzes);
+
+    const updatedCourse = {
+      course: {
+        _id: courseId,
+        courseId: course._id,
+        title: course.title,
+        code: course.code,
+        type: course.type,
+        sessionType: course.session,
+        sections: getCourse.sections,
+        session: getCourse.session,
+        status: getCourse.status
+      },
+      courseLog: courseLog,
+      courseDescription: courseDescription,
+      courseMonitoring: courseMonitoring,
+      assignments: assignments,
+      papers: papers,
+      quizzes: quizzes
+    };
+    res.status(200).json({ message: 'Course fetched!', course: updatedCourse });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
 exports.getTeacherCourses = async (req, res, next) => {
   const teacherId = req.userId;
 
@@ -302,7 +347,8 @@ exports.getTeacherCourses = async (req, res, next) => {
 
     courses.map(course => {
       updatedCourses.push({
-        _id: course.courseId._id,
+        _id: course._id,
+        courseId: course.courseId._id,
         title: course.courseId.title,
         code: course.courseId.code,
         credits: course.courseId.credits,
@@ -333,11 +379,11 @@ exports.takeCourse = async (req, res, next) => {
   const courseId = req.body.courseId;
   const sections = req.body.sections;
   const session = req.body.session;
-
   try {
     const course = await Teacher.find({
       _id: teacherId,
-      'coursesAssigned.courseId': courseId
+      'coursesAssigned.courseId': courseId,
+      'coursesAssigned.session': session
     });
 
     if (course.length > 0) {
@@ -416,7 +462,82 @@ exports.takeCourse = async (req, res, next) => {
   }
 };
 
-exports.removeCourse = (req, res, next) => {
+exports.editCourse = async (req, res, next) => {
+  const teacherId = req.userId;
+
+  const courseId = req.body.courseId;
+  // const session = req.body.session;
+  const sections = req.body.sections;
+
+  try {
+    const teacher = await Teacher.findById(teacherId);
+
+    const courseArray = [...teacher.coursesAssigned];
+
+    const courseIndex = teacher.coursesAssigned.findIndex(ci => {
+      return ci._id.toString() === courseId.toString();
+    });
+
+    var getCourse;
+    teacher.coursesAssigned.map(course => {
+      if (course._id.toString() === courseId.toString()) {
+        getCourse = course;
+      }
+    });
+
+    getCourse.sections = sections;
+    courseArray[courseIndex] = getCourse;
+    teacher.coursesAssigned = courseArray;
+
+    const updatedTeacher = await teacher.save();
+
+    res.status(201).json({
+      message: 'Course Updated!',
+      course: getCourse,
+      updatedTeacher: updatedTeacher
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.disableCourse = async (req, res, next) => {
+  const teacherId = req.userId;
+  const courseId = req.params.courseId;
+
+  try {
+    const teacher = await Teacher.findById(teacherId);
+
+    var courseArray = [...teacher.coursesAssigned];
+
+    const courseIndex = teacher.coursesAssigned.findIndex(c => {
+      return c._id.toString() === courseId.toString();
+    });
+
+    var getCourse = courseArray[courseIndex];
+
+    getCourse.status = 'Inactive';
+    courseArray[courseIndex] = getCourse;
+    teacher.coursesAssigned = courseArray;
+
+    const updatedTeacher = await teacher.save();
+
+    res.status(201).json({
+      message: 'Course disabled!',
+      updatedTeacher: updatedTeacher
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.removeCourse = async (req, res, next) => {
   const courseId = req.body.courseId;
   const teacherId = req.body.teacherId;
 
@@ -425,7 +546,7 @@ exports.removeCourse = (req, res, next) => {
   Teacher.findByIdAndUpdate(
     teacherId,
     {
-      $pull: { courses: { courseId: courseId } }
+      $pull: { coursesAssigned: { courseId: courseId } }
     },
     { new: true }
   )

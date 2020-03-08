@@ -56,10 +56,17 @@ router.post(
 );
 
 // Courses
+router.get('/course/:courseId', isAuth, teacherController.getCourse);
 router.get('/courses', isAuth, teacherController.getTeacherCourses);
 router.get('/listcourses', isAuth, teacherController.getCourses);
 router.post('/takecourse', isAuth, teacherController.takeCourse);
-router.delete('/removecourse', isAuth, teacherController.removeCourse);
+router.post('/editcourse', isAuth, teacherController.editCourse);
+router.get('/disablecourse/:courseId', isAuth, teacherController.disableCourse);
+router.delete(
+  '/removecourse/:courseId',
+  isAuth,
+  teacherController.removeCourse
+);
 
 // NCEAC Forms
 router.post('/addcourselog', isAuth, teacherController.addCourseLog);

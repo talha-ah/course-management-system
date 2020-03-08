@@ -84,7 +84,7 @@ const teacherModel = new Schema(
         },
         courseMonitoring: {
           type: Schema.Types.ObjectId,
-          ref: 'Courselonitoring'
+          ref: 'Coursemonitoring'
         },
         courseDescription: {
           type: Schema.Types.ObjectId,

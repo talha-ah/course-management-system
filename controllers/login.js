@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const sgMail = require('@sendgrid/mail');
+
 const Teacher = require('../models/teacher');
 
 exports.login = async (req, res, next) => {
@@ -43,5 +45,28 @@ exports.login = async (req, res, next) => {
       err.status = 500;
     }
     next(err);
+  }
+};
+
+exports.forgetPassword = async (req, res, next) => {
+  const email = req.body.email;
+  api_key =
+    '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';
+
+  console.log(email);
+
+  sgMail.setApiKey(api_key);
+  const msg = {
+    to: email,
+    from: 'test@example.com',
+    subject: 'Sending with Twilio SendGrid is Fun',
+    text: 'and easy to do anywhere, even with Node.js',
+    html: '<strong>and easy to do anywhere, even with Node.js</strong>'
+  };
+  //ES8
+  try {
+    await sgMail.send(msg);
+  } catch (err) {
+    console.error(err.toString());
   }
 };

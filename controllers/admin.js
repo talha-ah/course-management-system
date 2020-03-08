@@ -110,20 +110,19 @@ exports.createTeacher = async (req, res, next) => {
   const cvUrl = 'undefined';
 
   const errors = [];
-
-  if (!validator.isEmail(teacherEmail)) {
-    errors.push('Invalid teacher email!');
-  }
-  if (!validator.isAlphanumeric(teacherCode)) {
-    errors.push('Invalid teacher code!');
-  }
-  if (!validator.isAlphanumeric(rank)) {
-    errors.push('Invalid teacher rank!');
-  }
-  if (!validator.isAlpha(teacherType)) {
-    errors.push('Invalid teacher type!');
-  }
   try {
+    if (!validator.isEmail(teacherEmail)) {
+      errors.push('Invalid teacher email!');
+    }
+    if (!validator.isAlphanumeric(teacherCode)) {
+      errors.push('Invalid teacher code!');
+    }
+    if (!validator.isAlphanumeric(rank)) {
+      errors.push('Invalid teacher rank!');
+    }
+    if (!validator.isAlpha(teacherType)) {
+      errors.push('Invalid teacher type!');
+    }
     if (errors.length > 0) {
       var error = new Error(errors);
       error.status = 400;
@@ -257,28 +256,28 @@ exports.createCourse = async (req, res, next) => {
 
   const errors = [];
 
-  if (
-    !validator.isAlphanumeric(validator.blacklist(courseTitle, ' ')) ||
-    !validator.isLength(courseTitle, { min: 5 })
-  ) {
-    errors.push('Invalid course title!');
-  }
-  if (!validator.isAlphanumeric(courseCode)) {
-    errors.push('Invalid course code!');
-  }
-  if (
-    !validator.isNumeric(String(courseCredits)) ||
-    !validator.isLength(String(courseCredits), { min: 1, max: 1 })
-  ) {
-    errors.push('Invalid course code!');
-  }
-  if (!validator.isAlpha(courseType)) {
-    errors.push('Invalid course type!');
-  }
-  if (!validator.isAlpha(courseSession)) {
-    errors.push('Invalid course session!');
-  }
   try {
+    if (
+      !validator.isAlphanumeric(validator.blacklist(courseTitle, ' ')) ||
+      !validator.isLength(courseTitle, { min: 5 })
+    ) {
+      errors.push('Invalid course title!');
+    }
+    if (!validator.isAlphanumeric(courseCode)) {
+      errors.push('Invalid course code!');
+    }
+    if (
+      !validator.isNumeric(String(courseCredits)) ||
+      !validator.isLength(String(courseCredits), { min: 1, max: 1 })
+    ) {
+      errors.push('Invalid course code!');
+    }
+    if (!validator.isAlpha(courseType)) {
+      errors.push('Invalid course type!');
+    }
+    if (!validator.isAlpha(courseSession)) {
+      errors.push('Invalid course session!');
+    }
     if (errors.length > 0) {
       var error = new Error(errors);
       error.status = 400;
@@ -330,28 +329,28 @@ exports.updateCourse = async (req, res, next) => {
 
   const errors = [];
 
-  if (
-    !validator.isAlphanumeric(validator.blacklist(courseTitle, ' ')) ||
-    !validator.isLength(courseTitle, { min: 5 })
-  ) {
-    errors.push('Invalid course title!');
-  }
-  if (!validator.isAlphanumeric(courseCode)) {
-    errors.push('Invalid course code!');
-  }
-  if (
-    !validator.isNumeric(String(courseCredits)) ||
-    !validator.isLength(String(courseCredits), { min: 1, max: 1 })
-  ) {
-    errors.push('Invalid course code!');
-  }
-  if (!validator.isAlpha(courseType)) {
-    errors.push('Invalid course type!');
-  }
-  if (!validator.isAlpha(courseSession)) {
-    errors.push('Invalid course session!');
-  }
   try {
+    if (
+      !validator.isAlphanumeric(validator.blacklist(courseTitle, ' ')) ||
+      !validator.isLength(courseTitle, { min: 5 })
+    ) {
+      errors.push('Invalid course title!');
+    }
+    if (!validator.isAlphanumeric(courseCode)) {
+      errors.push('Invalid course code!');
+    }
+    if (
+      !validator.isNumeric(String(courseCredits)) ||
+      !validator.isLength(String(courseCredits), { min: 1, max: 1 })
+    ) {
+      errors.push('Invalid course code!');
+    }
+    if (!validator.isAlpha(courseType)) {
+      errors.push('Invalid course type!');
+    }
+    if (!validator.isAlpha(courseSession)) {
+      errors.push('Invalid course session!');
+    }
     if (errors.length > 0) {
       var error = new Error(errors);
       error.status = 400;
