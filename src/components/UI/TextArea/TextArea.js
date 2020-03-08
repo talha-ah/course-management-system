@@ -10,6 +10,7 @@ const TextArea = props => {
       rows={props.rows}
       onChange={props.onChange}
       className={classes.TextArea}
+      disabled={props.disabled}
     >
       {props.value}
     </textarea>

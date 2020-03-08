@@ -1,9 +1,10 @@
-.Tablebutton {
+.Button {
   display: inline-block;
   position: relative;
   color: #fff;
-  height: 35px;
-  width: 35px;
+  background-color: #3b3e66;
+  height: 24px;
+  width: 24px;
   border: 2px solid transparent;
   border-radius: 50%;
   outline: none;
@@ -11,14 +12,14 @@
   transition: all 0.2s ease-out;
 }
 
-.Tablebutton:hover {
+.Button:hover {
   -webkit-transform: translateY(-2px);
   transform: translateY(-2px);
   box-shadow: 0 0.22rem 0.525rem rgba(60, 68, 177, 0.4),
     0 0.0625rem 0.385rem rgba(60, 68, 177, 0.54);
 }
 
-.Tablebutton .tooltiptext {
+.Button .tooltiptext {
   position: absolute;
   top: -35px;
   left: -47px;
@@ -33,7 +34,20 @@
   pointer-events: none;
 }
 
-.Tablebutton:hover .tooltiptext {
+.Button:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
+}
+
+.Button:disabled .tooltiptext {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.Button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  -webkit-transform: none;
+  transform: none;
 }

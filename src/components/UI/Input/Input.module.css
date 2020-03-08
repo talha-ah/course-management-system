@@ -38,6 +38,10 @@
     0 0.156rem 0.125rem rgba(122, 123, 151, 0.06);
 }
 
+.input:disabled {
+  cursor: not-allowed;
+}
+
 .without_ampm::-webkit-datetime-edit-ampm-field {
   display: none;
 }

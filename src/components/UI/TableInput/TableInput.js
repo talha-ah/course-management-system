@@ -12,7 +12,7 @@ const TableInput = props => {
       value={props.value}
       // min={props.min}
       // max={props.max}
-      className={[classes.tableInput, classes.without_ampm].join(' ')}
+      className={[classes.Input, classes.without_ampm].join(' ')}
     />
   );
 };

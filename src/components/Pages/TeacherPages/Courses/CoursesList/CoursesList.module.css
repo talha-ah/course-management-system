@@ -21,7 +21,6 @@
 
 .CoursesList caption {
   padding-top: 20px;
-
   text-align: center;
   margin: 10px 0 25px 0;
   font-size: 22px;
@@ -60,9 +59,47 @@
   border-bottom: 2px solid rgba(7, 9, 25, 0.125);
 }
 
+.CourseTitle {
+  cursor: pointer;
+}
+
 /* Table Ends */
 
 .buttonDiv {
   margin-top: 25px;
   margin-bottom: 25px;
+}
+
+.buttonDiv button:first-child {
+  margin-right: 20px;
+}
+.buttonDiv button:last-child {
+  margin-left: 20px;
+}
+
+/* Modal Starts */
+
+.Modal {
+  background-color: #fff;
+  width: 600px;
+}
+
+.ModalBody {
+  padding: 50px 40px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ModalContentTitle {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.33;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
 }

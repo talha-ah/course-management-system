@@ -5,6 +5,7 @@ import classes from './Input.module.css';
 const Input = props => {
   return (
     <input
+      disabled={props.disabled}
       type={props.type}
       name={props.name}
       value={props.value}

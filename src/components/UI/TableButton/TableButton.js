@@ -5,7 +5,8 @@ import classes from './TableButton.module.css';
 const TableButton = props => {
   return (
     <button
-      className={classes.Tablebutton}
+      className={classes.Button}
+      disabled={props.disabled}
       type={props.type}
       onClick={props.onClick}
       style={

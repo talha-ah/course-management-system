@@ -1,31 +1,28 @@
-.tableInput[type='text'],
-.tableInput[type='date'],
-.tableInput[type='time'] {
+.Input[type='time'],
+.Input[type='date'],
+.Input[type='text'] {
   display: inline-block;
   color: #3b3e66;
   background-color: #fff;
   width: 100%;
-  font-size: 0.95rem;
-  font-weight: 400;
-  line-height: 1.5;
-  padding: 2rem 0;
+  font-size: 0.9rem;
+  margin-top: 20px;
+  margin-bottom: 20px;
   border: 0;
   text-align: center;
 }
 
-.tableInput:focus {
+.Input:focus,
+textarea:focus {
   outline: 0;
-  -webkit-box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.75);
-  box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.75);
 }
 
 .without_ampm::-webkit-datetime-edit-ampm-field {
   display: none;
 }
 
-input[type='time']::-webkit-clear-button,
-input[type='date']::-webkit-clear-button {
+.Input[type='time']::-webkit-clear-button,
+.Input[type='date']::-webkit-clear-button {
   -webkit-appearance: none;
   -moz-appearance: none;
   -o-appearance: none;
@@ -34,20 +31,24 @@ input[type='date']::-webkit-clear-button {
   /* margin: -10px; */
 }
 
-::placeholder {
+/* ::placeholder {
   font-weight: bold;
   color: #dedfe5;
   opacity: 1; /* Firefox */
-}
+/* } */
 
-:-ms-input-placeholder {
-  /* Internet Explorer 10-11 */
-  color: #dedfe5;
+/* :-ms-input-placeholder { */
+/* Internet Explorer 10-11 */
+/* color: #dedfe5;
   font-weight: bold;
-}
+} */
 
-::-ms-input-placeholder {
-  /* Microsoft Edge */
-  color: #dedfe5;
-  font-weight: bold;
+/* ::-ms-input-placeholder { */
+/* Microsoft Edge */
+/* color: #dedfe5; */
+/* font-weight: bold; */
+/* } */
+
+.Input::placeholder {
+  font-size: 1em;
 }

@@ -3,6 +3,8 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 
 import MainContent from '../../components/MainContent/MainContent';
 import Login from '../../components/Pages/loginPage/loginPage';
+import ForgetPassword from '../../components/Pages/loginPage/ForgetPassword/ForgetPassword';
+import Spinner from '../../components/UI/Spinner/Spinner';
 
 class CMS extends Component {
   state = {
@@ -117,7 +119,7 @@ class CMS extends Component {
   render() {
     var route;
     if (this.state.pageLoading) {
-      route = 'Loading...';
+      route = <Spinner />;
     } else {
       route = this.state.isAuth ? (
         <MainContent
@@ -139,6 +141,13 @@ class CMS extends Component {
                 loginHandler={this.loginHandler}
                 isLoading={this.state.isLoading}
               />
+            )}
+          />
+          <Route
+            path='/recover'
+            exact
+            render={props => (
+              <ForgetPassword {...props} isLoading={this.state.isLoading} />
             )}
           />
           <Redirect to='/' />

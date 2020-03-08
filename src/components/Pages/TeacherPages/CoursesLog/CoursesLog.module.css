@@ -1,80 +1,62 @@
 .CoursesLog {
   position: relative;
+  color: #3b3e66;
   text-align: center;
-}
-
-.CoursesLogHeader {
   max-width: 100%;
-  font-size: 1rem;
-  padding: 1rem 1.5rem;
-  position: relative;
-  text-align: center;
-}
-
-.CoursesLogArea {
-  color: #525f7f;
-  background-color: #fff;
-  max-width: 100%;
-  margin: 1rem 3rem 3rem 3rem;
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 0.375rem;
+  margin: 1rem 3rem 3rem 3rem;
+  background-color: #fff;
+  box-shadow: 0 0.313rem 0.8rem rgba(122, 123, 151, 0.5),
+    0 0.126rem 0.225rem rgba(122, 123, 151, 0.3);
 }
 
 /* Table Starts */
 
-.CoursesLogArea table {
+.CoursesLog table {
   table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
 }
 
-.CoursesLogArea caption {
-  text-align: start;
-  padding: 20px;
+.CoursesLog caption {
+  padding-top: 20px;
+  text-align: center;
+  margin: 10px 0 25px 0;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.33;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
-.CoursesLogArea table thead {
+.CoursesLog table thead {
   border-top: 2px solid rgba(7, 9, 25, 0.125);
   border-bottom: 2px solid rgba(7, 9, 25, 0.125);
   background-color: #f4f5fd;
 }
 
-.CoursesLogArea table tbody tr {
+.CoursesLog table tbody tr {
   border-bottom: 1px solid rgba(7, 9, 25, 0.125);
 }
 
-.CoursesLogArea table tbody .CoursesLogTableRow:hover {
-  background-color: #f4f5fd;
+.CoursesLog th {
+  padding: 20px 0;
 }
 
-.CoursesLogArea table tbody tr td {
-  padding: 0;
-}
-
-.CoursesLogArea table tbody tr td:nth-child(3) {
-  text-align: left;
-}
-
-.CoursesLogArea table tbody tr td p {
-  margin: 0;
-}
-
-.CoursesLogArea table tbody button:nth-child(1) {
-  margin-right: 15px;
-}
-
-.CoursesLogArea th,
-.CoursesLogArea td {
-  padding: 20px;
-}
-
-.CoursesLogArea table tfoot {
+.CoursesLog table tfoot {
   border-bottom: 2px solid rgba(7, 9, 25, 0.125);
+}
+
+.CourseTitle {
+  cursor: pointer;
 }
 
 /* Table Ends */
 
 .buttonDiv {
+  margin-top: 25px;
   margin-bottom: 25px;
 }

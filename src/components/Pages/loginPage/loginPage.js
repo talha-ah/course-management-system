@@ -12,7 +12,7 @@ class SignIn extends Component {
   };
 
   ForgetHandler = () => {
-    console.log('ForgetHandler');
+    this.props.history.push('/recover');
   };
 
   onChange = e => {

@@ -8,7 +8,8 @@ import SelectInput from '../../../../UI/SelectInput/SelectInput';
 
 class AddCourse extends Component {
   state = {
-    isLoading: true,
+    pageLoading: true,
+    isLoading: false,
     courses: '',
     coursesArray: [],
     courseTitle: '',
@@ -33,7 +34,7 @@ class AddCourse extends Component {
         this.setState({
           courses: resData.courses,
           coursesArray: arrayCourses,
-          isLoading: false
+          pageLoading: false
         });
       })
       .catch(err => {
@@ -51,7 +52,7 @@ class AddCourse extends Component {
 
   onFormSubmit = e => {
     e.preventDefault(); // Stop form submit
-
+    this.setState({ isLoading: true });
     const courseTitle = this.state.courseTitle;
     var courseId;
 
@@ -84,6 +85,7 @@ class AddCourse extends Component {
         this.props.history.push('/');
       })
       .catch(err => {
+        this.setState({ isLoading: false });
         try {
           err.json().then(body => {
             console.log(body);
@@ -107,7 +109,7 @@ class AddCourse extends Component {
   };
 
   render() {
-    const page = this.state.isLoading ? (
+    const page = this.state.pageLoading ? (
       <Spinner />
     ) : (
       <div className={classes.AddCourse}>

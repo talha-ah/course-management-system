@@ -21,6 +21,7 @@ import AdminAddTeacher from '../Pages/AdminPages/Teachers/AddTeacher/AddTeacher'
 // Teacher Imports
 import ProfilePage from '../Pages/TeacherPages/Profile/Profile';
 import Courses from '../Pages/TeacherPages/Courses/CoursesList/CoursesList';
+import Course from '../Pages/TeacherPages/Courses/Course/Course';
 import TakeCourse from '../Pages/TeacherPages/Courses/AddCourse/AddCourse';
 import CoursesDescription from '../Pages/TeacherPages/CoursesDescription/CoursesDescription';
 import CoursesLog from '../Pages/TeacherPages/CoursesLog/CoursesLog';
@@ -145,6 +146,18 @@ const MainContent = props => {
             />
             <Route
               exact
+              path='/course/:courseId'
+              render={({ match, history, location }) => (
+                <Course
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
               path='/takecourse'
               render={({ match, history, location }) => (
                 <TakeCourse
@@ -193,7 +206,7 @@ const MainContent = props => {
             />
             <Route
               exact
-              path='/assignments'
+              path='/assignments/:courseId'
               render={({ match, history, location }) => (
                 <Assignments
                   match={match}
@@ -205,7 +218,7 @@ const MainContent = props => {
             />
             <Route
               exact
-              path='/papers'
+              path='/papers/:courseId'
               render={({ match, history, location }) => (
                 <Papers
                   match={match}
@@ -217,7 +230,7 @@ const MainContent = props => {
             />
             <Route
               exact
-              path='/quizzes'
+              path='/quizzes/:courseId'
               render={({ match, history, location }) => (
                 <Quizzes
                   match={match}
