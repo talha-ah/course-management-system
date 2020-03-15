@@ -46,9 +46,6 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin: 25px 0 12px 0;
-}
-
-.ButtonDiv button:nth-child(1) {
-  margin-right: 40px;
+  margin-top: 35px;
+  margin-bottom: 12px;
 }

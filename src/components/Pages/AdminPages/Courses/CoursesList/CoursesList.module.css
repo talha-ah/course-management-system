@@ -47,10 +47,6 @@
   background-color: #f4f5fd;
 }
 
-.CoursesList table tbody button:nth-child(1) {
-  margin-right: 15px;
-}
-
 .CoursesList th,
 .CoursesList td {
   padding: 20px;
@@ -65,4 +61,30 @@
 .buttonDiv {
   margin-top: 25px;
   margin-bottom: 25px;
+}
+
+/* =================== Modal Start =============== */
+.Modal {
+  background-color: #fff;
+  width: 600px;
+}
+
+.ModalBody {
+  padding: 50px 40px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ModalContentTitle {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.33;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
 }

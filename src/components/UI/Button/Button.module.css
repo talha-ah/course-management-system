@@ -1,7 +1,10 @@
 .button {
   display: inline-block;
+  box-sizing: border-box;
   color: #fff;
+  background-color: #3b3e66;
   padding: 0.53rem 1.3rem;
+  margin-right: 20px;
   font-size: 0.95rem;
   line-height: 1.5;
   border: 2px solid transparent;
@@ -16,6 +19,31 @@
   transform: translateY(-2px);
   box-shadow: 0 0.22rem 0.525rem rgba(60, 68, 177, 0.4),
     0 0.0625rem 0.385rem rgba(60, 68, 177, 0.54);
+}
+
+.buttonRed {
+  display: inline-block;
+  box-sizing: border-box;
+  color: #3b3e3b;
+  background-color: #fff;
+  margin-right: 20px;
+  padding: 0.53rem 1.3rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  border: 2px solid #f83245;
+  border-radius: 0.2rem;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+
+.buttonRed:hover {
+  -webkit-transform: translateY(-2px);
+  transform: translateY(-2px);
+  box-shadow: 0 0.22rem 0.525rem rgba(248, 50, 69, 0.4),
+    0 0.0625rem 0.385rem rgba(248, 50, 69, 0.54);
+  background-color: #f83245;
+  color: #fff;
 }
 
 .button:disabled {

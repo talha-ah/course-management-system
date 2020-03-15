@@ -30,7 +30,12 @@ class AddCourse extends Component {
       })
       .then(resData => {
         const arrayCourses = [];
-        resData.courses.map(course => arrayCourses.push(course.title));
+        resData.courses.map(course => {
+          if (course.status === 'Active') {
+            return arrayCourses.push(course.title);
+          }
+          return true;
+        });
         this.setState({
           courses: resData.courses,
           coursesArray: arrayCourses,
@@ -155,7 +160,7 @@ class AddCourse extends Component {
           </div>
 
           <div className={classes.ButtonDiv}>
-            <Button type='button' onClick={this.onFormCancel} color='#f83245'>
+            <Button type='button' onClick={this.onFormCancel} buttonType='red'>
               Cancel
             </Button>
             <Button type='submit'>

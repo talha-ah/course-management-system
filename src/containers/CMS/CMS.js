@@ -117,43 +117,40 @@ class CMS extends Component {
   };
 
   render() {
-    var route;
-    if (this.state.pageLoading) {
-      route = <Spinner />;
-    } else {
-      route = this.state.isAuth ? (
-        <MainContent
-          authData={{
-            isAdmin: this.state.isAdmin,
-            token: this.state.token,
-            userId: this.state.userId
-          }}
-          logoutHandler={this.logoutHandler}
+    var route = this.state.pageLoading ? (
+      <Spinner />
+    ) : this.state.isAuth ? (
+      <MainContent
+        authData={{
+          isAdmin: this.state.isAdmin,
+          token: this.state.token,
+          userId: this.state.userId
+        }}
+        logoutHandler={this.logoutHandler}
+      />
+    ) : (
+      <Switch>
+        <Route
+          path='/'
+          exact
+          render={props => (
+            <Login
+              {...props}
+              loginHandler={this.loginHandler}
+              isLoading={this.state.isLoading}
+            />
+          )}
         />
-      ) : (
-        <Switch>
-          <Route
-            path='/'
-            exact
-            render={props => (
-              <Login
-                {...props}
-                loginHandler={this.loginHandler}
-                isLoading={this.state.isLoading}
-              />
-            )}
-          />
-          <Route
-            path='/recover'
-            exact
-            render={props => (
-              <ForgetPassword {...props} isLoading={this.state.isLoading} />
-            )}
-          />
-          <Redirect to='/' />
-        </Switch>
-      );
-    }
+        <Route
+          path='/recover'
+          exact
+          render={props => (
+            <ForgetPassword {...props} isLoading={this.state.isLoading} />
+          )}
+        />
+        <Redirect to='/' />
+      </Switch>
+    );
     return route;
   }
 }

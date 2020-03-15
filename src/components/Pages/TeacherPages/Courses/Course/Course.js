@@ -55,7 +55,6 @@ class Course extends Component {
           courseQuizzes: resData.course.quizzes,
           pageLoading: false
         });
-        console.log(this.state);
       })
       .catch(err => {
         try {
@@ -102,6 +101,38 @@ class Course extends Component {
       .then(resData => {
         console.log(resData);
         this.setState({ isLoading: false });
+      })
+      .catch(err => {
+        this.setState({ isLoading: false });
+        try {
+          err.json().then(body => {
+            console.log(body);
+            console.log('message = ' + body.message);
+          });
+        } catch (e) {
+          console.log('Error parsing promise');
+          console.log(err);
+        }
+      });
+  };
+
+  onDeleteHandler = () => {
+    this.setState({ isLoading: true });
+
+    fetch(`http://localhost:8080/teacher/removecourse/${this.state._id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.props.token
+      }
+    })
+      .then(res => {
+        if (!res.ok) throw res;
+        return res.json();
+      })
+      .then(resData => {
+        console.log(resData);
+        this.setState({ isLoading: false });
+        this.props.history.push('/');
       })
       .catch(err => {
         this.setState({ isLoading: false });
@@ -197,6 +228,16 @@ class Course extends Component {
               }
             >
               {this.state.isLoading ? 'Loading...' : 'Update'}
+            </Button>
+            <Button
+              type='button'
+              // disabled={
+              //   this.state.courseStatus === 'Inactive' ? 'disabled' : ''
+              // }
+              buttonType='red'
+              onClick={this.onDeleteHandler}
+            >
+              {this.state.isLoading ? 'Loading...' : 'Delete'}
             </Button>
           </div>
         </form>

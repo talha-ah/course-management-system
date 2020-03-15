@@ -11,6 +11,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         adminSidebar: !state.adminSidebar
       };
+
     default:
       return state;
   }

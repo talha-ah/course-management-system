@@ -3,18 +3,15 @@ import React from 'react';
 import classes from './Button.module.css';
 
 const Button = props => {
+  const styles =
+    props.buttonType === 'red' ? classes.buttonRed : classes.button;
   return (
     <button
-      className={classes.button}
+      className={styles}
       name={props.name}
       type={props.type}
       onClick={props.onClick}
       disabled={props.disabled}
-      style={
-        props.color
-          ? { backgroundColor: props.color }
-          : { backgroundColor: '#3b3e66' }
-      }
     >
       {props.children}
     </button>

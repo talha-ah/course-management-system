@@ -67,7 +67,6 @@ class CoursesList extends Component {
         return res.json();
       })
       .then(resData => {
-        console.log(resData);
         this.setState({ disableModal: false });
         this.fetchFunction();
       })
@@ -220,12 +219,15 @@ class CoursesList extends Component {
               <div className={classes.buttonDiv}>
                 <Button
                   type='button'
-                  color='#f83245'
                   onClick={() => this.disableModalHandler()}
                 >
                   Cancel
                 </Button>
-                <Button type='button' onClick={this.onDisableCourse}>
+                <Button
+                  type='button'
+                  onClick={this.onDisableCourse}
+                  buttonType='red'
+                >
                   Disable
                 </Button>
               </div>
@@ -268,7 +270,7 @@ class CoursesList extends Component {
               </div>
               <Button
                 type='button'
-                color='#f83245'
+                buttonType='red'
                 onClick={() => this.materialsModalHandler()}
               >
                 Cancel

@@ -1,44 +1,69 @@
 import React, { Component } from 'react';
 
 import classes from './CoursesLog.module.css';
+import Spinner from '../../../UI/Spinner/Spinner';
 import Button from '../../../UI/Button/Button';
 import TableButton from '../../../UI/TableButton/TableButton';
 import TableInput from '../../../UI/TableInput/TableInput';
 import TextArea from '../../../UI/TextArea/TextArea';
+import Modal from '../../../UI/Modal/Modal';
+import SelectInput from '../../../UI/SelectInput/SelectInput';
 
 class CoursesLog extends Component {
   state = {
+    pageLoading: true,
+    modalLoading: true,
+    selectCourseModal: true,
+    isLoading: false,
+    modalCourseId: '',
+    modalCourseTitle: '',
+    courses: '',
+    coursesArray: [],
+    courseLog: '',
+    addingRow: false,
+    addLogLoading: false,
     date: '',
     duration: '01:30',
     topicsCovered: '',
-    evaluationInstruments: '',
-    addingRow: false,
-    data: {
-      0: {
-        date: '13/03/18',
-        duration: '1:30',
-        topicsCovered:
-          'Context-Free Grammers Versus Regular Expression\nLexical Versus Syntactic Analysis',
-        evaluationInstruments: 'Exercise for practice',
-        Signature: ''
-      },
-      1: {
-        date: '13/03/18',
-        duration: '1:30',
-        topicsCovered:
-          'Context-Free Grammers Versus Regular Expression\nLexical Verasdasdassus Syntactic Analysis',
-        evaluationInstruments: 'Exercise for practice',
-        Signature: ''
-      }
-    }
+    evaluationInstruments: ''
   };
 
   componentDidMount() {
-    console.log(this.props);
-
-    // fetch(`http://localhost:8080/teacher/getcourselog/${courseId}`,{
-
-    // })
+    fetch('http://localhost:8080/teacher/courses', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.props.token
+      }
+    })
+      .then(res => {
+        if (!res.ok) throw res;
+        return res.json();
+      })
+      .then(resData => {
+        const arrayCourses = [];
+        resData.courses.map(course => {
+          if (course.status === 'Active') {
+            return arrayCourses.push(course.title);
+          }
+          return true;
+        });
+        this.setState({
+          courses: resData.courses,
+          coursesArray: arrayCourses,
+          modalLoading: false
+        });
+      })
+      .catch(err => {
+        try {
+          err.json().then(body => {
+            console.log(body);
+            console.log('message = ' + body.message);
+          });
+        } catch (e) {
+          console.log('Error parsing promise');
+          console.log(err);
+        }
+      });
     this.setInstantDate();
   }
 
@@ -53,31 +78,140 @@ class CoursesLog extends Component {
     this.setState({ date: today });
   };
 
+  selectCourseModal = (id, title) => {
+    this.setState(prevState => ({
+      selectCourseModal: !prevState.selectCourseModal
+    }));
+  };
+
+  onModalCancel = () => {
+    if (this.state.modalCourseId !== '') {
+      this.selectCourseModal();
+    } else {
+      this.props.history.push('/');
+    }
+  };
+
+  onChangeCourse = e => {
+    const title = e.target.value;
+    this.setState({
+      modalCourseTitle: title
+    });
+  };
+
+  onSelectCourse = () => {
+    this.setState({ isLoading: true });
+    const courseTitle = this.state.modalCourseTitle;
+    var courseId;
+
+    this.state.courses.some(course => {
+      if (course.title === courseTitle) {
+        courseId = course._id;
+        return true;
+      }
+      return false;
+    });
+
+    fetch(`http://localhost:8080/teacher/getcourselog/${courseId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.props.token
+      }
+    })
+      .then(res => {
+        if (!res.ok) throw res;
+        return res.json();
+      })
+      .then(resData => {
+        this.setState({
+          pageLoading: false,
+          selectCourseModal: false,
+          modalCourseId: courseId,
+          modalCourseTitle: courseTitle,
+          courseLog: resData.courseLog,
+          isLoading: false
+        });
+      })
+      .catch(err => {
+        try {
+          err.json().then(body => {
+            console.log(body);
+            console.log('message = ' + body.message);
+          });
+        } catch (e) {
+          console.log('Error parsing promise');
+          console.log(err);
+        }
+      });
+  };
+
   onChange = e => {
     const name = e.target.name;
     const value = e.target.value;
     this.setState({
       [name]: value
     });
-    console.log(name);
-    console.log(value);
   };
 
   insertRowHandler = () => {
-    this.setState({ addingRow: true });
+    this.setState(prevState => ({ addingRow: !prevState.addingRow }));
   };
 
-  addRowHandler = () => {
+  addRowCancelHandler = () => {
     this.setState({ addingRow: false });
-    console.log('Log Added');
+  };
+
+  onLogAddHandler = () => {
+    this.setState({ addLogLoading: true });
+
+    fetch(
+      `http://localhost:8080/teacher/addcourselog/${this.state.courseLog._id}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          date: this.state.date,
+          duration: this.state.duration,
+          topics: this.state.topicsCovered,
+          instruments: this.state.evaluationInstruments
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.props.token
+        }
+      }
+    )
+      .then(res => {
+        if (!res.ok) throw res;
+        return res.json();
+      })
+      .then(resData => {
+        this.setState({
+          addLogLoading: false,
+          addingRow: false
+        });
+        this.onSelectCourse();
+      })
+      .catch(err => {
+        try {
+          err.json().then(body => {
+            console.log(body);
+            console.log('message = ' + body.message);
+          });
+        } catch (e) {
+          console.log('Error parsing promise');
+          console.log(err);
+        }
+      });
   };
 
   render() {
-    return (
+    const page = this.state.pageLoading ? (
+      <Spinner />
+    ) : (
       <div className={classes.CoursesLog}>
         <table className={classes.CoursesLogTable}>
           <caption>
-            Subject: <strong>Compiler Construction</strong>
+            Subject: <strong>{this.state.modalCourseTitle}</strong>
           </caption>
           <thead>
             <tr>
@@ -89,21 +223,27 @@ class CoursesLog extends Component {
             </tr>
           </thead>
           <tbody>
-            {Object.entries(this.state.data).map(row => {
-              return (
-                <tr key={row} className={classes.CoursesLogTableRow}>
-                  <td style={{ padding: '20px' }}>{row[1].date}</td>
-                  <td style={{ padding: '20px' }}>{row[1].duration}</td>
-                  <td>
-                    <TextArea disabled value={row[1].topicsCovered} />
-                  </td>
-                  <td style={{ padding: '20px' }}>
-                    {row[1].evaluationInstruments}
-                  </td>
-                  <td style={{ padding: '20px' }}>-</td>
-                </tr>
-              );
-            })}
+            {this.state.courseLog.log.length > 0 ? (
+              this.state.courseLog.log.map(row => {
+                return (
+                  <tr key={row._id} className={classes.CoursesLogTableRow}>
+                    <td style={{ padding: '20px' }}>{row.date}</td>
+                    <td style={{ padding: '20px' }}>{row.duration}</td>
+                    <td>
+                      <TextArea value={row.topics} />
+                    </td>
+                    <td style={{ padding: '20px' }}>{row.instruments}</td>
+                    <td style={{ padding: '20px' }}>-</td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr key={1} className={classes.CoursesLogTableRow}>
+                <td style={{ padding: '20px' }} colSpan='5'>
+                  You haven't added any courselog for this course yet!
+                </td>
+              </tr>
+            )}
             {this.state.addingRow ? (
               <tr className={classes.AddRow}>
                 <td>
@@ -141,11 +281,21 @@ class CoursesLog extends Component {
                 </td>
                 <td>
                   <TableButton
+                    title='Add'
                     className={classes.Button}
-                    onClick={this.addRowHandler}
+                    onClick={this.onLogAddHandler}
                     type='button'
                   >
                     +
+                  </TableButton>
+                  <TableButton
+                    color='#f83245'
+                    title='Cancel'
+                    className={classes.Button}
+                    onClick={this.addRowCancelHandler}
+                    type='button'
+                  >
+                    x
                   </TableButton>
                 </td>
               </tr>
@@ -157,10 +307,53 @@ class CoursesLog extends Component {
             onClick={this.insertRowHandler}
             disabled={this.state.addingRow ? true : false}
           >
-            Add Log Row
+            {this.state.addLogLoading ? 'Loading' : 'Add Log Row'}
           </Button>
         </div>
       </div>
+    );
+    return (
+      <>
+        {page}
+        {/* ======================================= Modal Starts =================================*/}
+        <Modal visible={this.state.selectCourseModal}>
+          <div className={classes.Modal}>
+            {this.state.modalLoading ? (
+              <Spinner />
+            ) : (
+              <div className={classes.ModalBody}>
+                <div className={classes.ModalContent}>
+                  <div className={classes.ModalContentTitle}>
+                    Select Course!
+                  </div>
+                  <SelectInput
+                    name='courseTitle'
+                    placeholder='Course List'
+                    onChange={this.onChangeCourse}
+                    disabled=''
+                    defaultValue=''
+                  >
+                    {this.state.coursesArray}
+                  </SelectInput>
+                </div>
+                <div className={classes.buttonDiv}>
+                  <Button
+                    type='button'
+                    buttonType='red'
+                    onClick={this.onModalCancel}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type='button' onClick={this.onSelectCourse}>
+                    {this.state.isLoading ? 'Loading' : 'Select'}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </Modal>
+        {/* =======================================  Modal Ends  ====================================*/}
+      </>
     );
   }
 }

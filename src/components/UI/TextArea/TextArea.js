@@ -5,15 +5,15 @@ import classes from './TextArea.module.css';
 const TextArea = props => {
   return (
     <textarea
+      className={classes.TextArea}
       name={props.name}
       placeholder={props.placeholder}
       rows={props.rows}
       onChange={props.onChange}
-      className={classes.TextArea}
       disabled={props.disabled}
-    >
-      {props.value}
-    </textarea>
+      value={props.value}
+      defaultValue={props.defaultValue}
+    />
   );
 };
 

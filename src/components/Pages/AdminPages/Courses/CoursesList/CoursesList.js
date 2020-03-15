@@ -4,15 +4,24 @@ import classes from './CoursesList.module.css';
 import Spinner from '../../../../UI/Spinner/Spinner';
 import Button from '../../../../UI/Button/Button';
 import TableButton from '../../../../UI/TableButton/TableButton';
+import Modal from '../../../../UI/Modal/Modal';
 
 class CoursesList extends Component {
   state = {
+    isLoading: false,
     pageLoading: true,
     courses: '',
-    totalCourses: 0
+    totalCourses: 0,
+    disableModal: false,
+    modalCourseId: '',
+    modalCourseTitle: ''
   };
 
   componentDidMount() {
+    this.fetchCourse();
+  }
+
+  fetchCourse = () => {
     fetch('http://localhost:8080/admin/courses', {
       headers: {
         'Content-Type': 'application/json',
@@ -41,14 +50,61 @@ class CoursesList extends Component {
           console.log(err);
         }
       });
-  }
+  };
+
+  onDisableCourse = () => {
+    this.setState({
+      isLoading: true
+    });
+    fetch(
+      `http://localhost:8080/admin//deactivatecourse/${this.state.modalCourseId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.props.token
+        }
+      }
+    )
+      .then(res => {
+        if (!res.ok) throw res;
+        return res.json();
+      })
+      .then(resData => {
+        this.setState({
+          isLoading: false,
+          disableModal: false
+        });
+        this.fetchCourse();
+      })
+      .catch(err => {
+        try {
+          err.json().then(body => {
+            console.log(body);
+            console.log('message = ' + body.message);
+          });
+        } catch (e) {
+          console.log('Error parsing promise');
+          console.log(err);
+        }
+      });
+  };
 
   addCoursePageHandler = () => {
     this.props.history.push('/addcourse');
   };
 
-  courseHandler = id => {
-    console.log(id);
+  disableModalHandler = (id, title) => {
+    if (id && title) {
+      this.setState(prevState => ({
+        disableModal: !prevState.disableModal,
+        modalCourseId: id,
+        modalCourseTitle: title
+      }));
+    } else {
+      this.setState(prevState => ({
+        disableModal: !prevState.disableModal
+      }));
+    }
   };
 
   render() {
@@ -64,6 +120,7 @@ class CoursesList extends Component {
               <th>Code</th>
               <th>Type</th>
               <th>Credits</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -71,18 +128,20 @@ class CoursesList extends Component {
             {this.state.courses.map(course => {
               return (
                 <tr key={course._id}>
-                  <td
-                    colSpan='2'
-                    onClick={() => this.courseHandler(course._id)}
-                  >
-                    {course.title}
-                  </td>
+                  <td colSpan='2'>{course.title}</td>
                   <td>{course.code}</td>
                   <td>{course.type}</td>
                   <td>{course.credits}</td>
+                  <td>{course.status}</td>
                   <td>
-                    <TableButton title='Add Materials'>+</TableButton>
-                    <TableButton title='Disable Course' color='#f83245'>
+                    <TableButton
+                      disabled={course.status === 'Active' ? '' : 'disabled'}
+                      title='Disable Course'
+                      color='#f83245'
+                      onClick={() =>
+                        this.disableModalHandler(course._id, course.title)
+                      }
+                    >
                       x
                     </TableButton>
                   </td>
@@ -92,7 +151,7 @@ class CoursesList extends Component {
           </tbody>
           <tfoot>
             <tr>
-              <th colSpan='3'>Total courses</th>
+              <th colSpan='4'>Total courses</th>
               <th colSpan='3'>{this.state.totalCourses}</th>
             </tr>
           </tfoot>
@@ -100,6 +159,36 @@ class CoursesList extends Component {
         <div className={classes.buttonDiv}>
           <Button onClick={this.addCoursePageHandler}>Add Course</Button>
         </div>
+        {/* ===================================  Modal ===============================*/}
+        <Modal visible={this.state.disableModal}>
+          <div className={classes.Modal}>
+            <div className={classes.ModalBody}>
+              <div className={classes.ModalContent}>
+                <div className={classes.ModalContentTitle}>
+                  Deactivate Course!
+                </div>
+                <div className={classes.ModalContentBody}>
+                  <p>You won't be able to activate this course after this!</p>
+                  <p>
+                    Deactivate <strong>{this.state.modalCourseTitle}?</strong>
+                  </p>
+                </div>
+              </div>
+              <div className={classes.buttonDiv}>
+                <Button type='button' onClick={this.disableModalHandler}>
+                  Cancel
+                </Button>
+                <Button
+                  type='button'
+                  buttonType='red'
+                  onClick={this.onDisableCourse}
+                >
+                  Disable
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Modal>
       </div>
     );
     return page;
