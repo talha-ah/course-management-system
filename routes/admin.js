@@ -21,7 +21,11 @@ router.get('/courses', isAuth, adminController.getCourses);
 router.get('/course/:courseId', isAuth, adminController.getCourse);
 router.post('/createcourse', isAuth, adminController.createCourse);
 router.post('/editcourse', isAuth, adminController.updateCourse);
-router.post('/deactivatecourse', isAuth, adminController.deactivateCourse);
+router.get(
+  '/deactivatecourse/:courseId',
+  isAuth,
+  adminController.deactivateCourse
+);
 router.delete('/deletecourse', isAuth, adminController.deleteCourse);
 
 module.exports = router;

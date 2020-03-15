@@ -62,24 +62,17 @@ router.get('/listcourses', isAuth, teacherController.getCourses);
 router.post('/takecourse', isAuth, teacherController.takeCourse);
 router.post('/editcourse', isAuth, teacherController.editCourse);
 router.get('/disablecourse/:courseId', isAuth, teacherController.disableCourse);
-router.delete(
-  '/removecourse/:courseId',
-  isAuth,
-  teacherController.removeCourse
-);
+router.get('/removecourse/:courseId', isAuth, teacherController.removeCourse);
 
 // NCEAC Forms
-router.post('/addcourselog', isAuth, teacherController.addCourseLog);
-router.post(
-  '/addcoursedescription',
-  isAuth,
-  teacherController.addCourseDescription
-);
-router.post(
-  '/addcoursemonitoring',
-  isAuth,
-  teacherController.addCourseMonitoring
-);
+router.get('/getcourselog/:courseId', isAuth, teacherController.getCourseLog);
+router.post('/addcourselog/:logId', isAuth, teacherController.addCourseLog);
+
+router.get('/adddescription', isAuth, teacherController.addCourseDescription);
+router.post('/adddescription', isAuth, teacherController.addCourseDescription);
+
+router.get('/addmonitoring', isAuth, teacherController.addCourseMonitoring);
+router.post('/addmonitoring', isAuth, teacherController.addCourseMonitoring);
 
 // Materials
 router.post('/addassignment', isAuth, teacherController.addAssignment);

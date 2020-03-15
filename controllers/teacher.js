@@ -248,7 +248,7 @@ exports.editCV = async (req, res, next) => {
 
 exports.getCourses = async (req, res, next) => {
   try {
-    const courses = await Course.find().select('title');
+    const courses = await Course.find().select('title status');
     // const courses = await Course.find({ status: 'Active' }).select(
     //   'title -_id'
     // );
@@ -538,54 +538,110 @@ exports.disableCourse = async (req, res, next) => {
 };
 
 exports.removeCourse = async (req, res, next) => {
-  const courseId = req.body.courseId;
-  const teacherId = req.body.teacherId;
+  const courseId = req.params.courseId;
+  const teacherId = req.userId;
 
-  // delete course places
+  try {
+    const teacher = await Teacher.findByIdAndUpdate(
+      teacherId,
+      {
+        $pull: { coursesAssigned: { _id: courseId } }
+      }
+      // { new: true }
+    );
+    if (!teacher) {
+      const error = new Error('Error in removing course from the teacher!');
+      error.code = 404;
+      throw new error();
+    }
 
-  Teacher.findByIdAndUpdate(
-    teacherId,
-    {
-      $pull: { coursesAssigned: { courseId: courseId } }
-    },
-    { new: true }
-  )
-    .then(teacher => {
-      if (!teacher) {
-        const error = new Error('Error in removing course from the teacher!');
-        error.code = 404;
-        throw new error();
-      }
-      res.send({ teacher: teacher, courseName: courseName });
-    })
-    .catch(err => {
-      if (!err.status) {
-        err.status = 500;
-      }
-      next(err);
+    const courseIndex = teacher.coursesAssigned.findIndex(c => {
+      return c._id.toString() === courseId.toString();
     });
+
+    const course = teacher.coursesAssigned[courseIndex];
+
+    await CourseLog.findByIdAndDelete(course.courseLog);
+    await CourseMonitoring.findByIdAndDelete(course.courseMonitoring);
+    await CourseDescription.findByIdAndDelete(course.courseDescription);
+    await Assignment.findByIdAndDelete(course.assignments);
+    await Quizz.findByIdAndDelete(course.quizzes);
+    await Paper.findByIdAndDelete(course.papers);
+
+    res.status(201).json({
+      message: 'Course deleted.',
+      teacher: teacher
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
 };
 
 // =========================================================== NCEAC Forms ================================================
 
+exports.getCourseLog = async (req, res, next) => {
+  const teacherId = req.userId;
+  const courseId = req.params.courseId;
+
+  try {
+    const teacher = await Teacher.findById(teacherId);
+
+    const courseIndex = teacher.coursesAssigned.findIndex(c => {
+      return c._id.toString() === courseId.toString();
+    });
+
+    const course = teacher.coursesAssigned[courseIndex];
+
+    if (!course) {
+      const error = new Error('Error in fetching course!');
+      error.code = 404;
+      throw error();
+    }
+
+    const courseLog = await CourseLog.findById(course.courseLog);
+
+    if (!courseLog) {
+      const error = new Error('Error in fetching course log!');
+      error.code = 404;
+      throw error();
+    }
+
+    res
+      .status(200)
+      .json({ message: 'CourseLog fetched!', courseLog: courseLog });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
 exports.addCourseLog = async (req, res, next) => {
-  const courseId = req.body.courseId;
-  const teacherId = req.body.teacherId;
+  const courseLogId = req.params.logId;
+  const teacherId = req.userId;
 
   const date = req.body.date;
   const duration = req.body.duration;
   const topics = req.body.topics;
   const instruments = req.body.instruments;
+
   try {
-    const courseLog = await CourseLog.findOne({
-      teacherId: teacherId,
-      courseId: courseId
-    });
+    const courseLog = await CourseLog.findById(courseLogId);
+
+    if (courseLog.teacherId.toString() !== teacherId.toString()) {
+      const error = new Error('Teacher ID error in course log!');
+      error.code = 404;
+      throw error();
+    }
 
     if (!courseLog) {
       const error = new Error('Error in fetching course log!');
       error.code = 404;
-      throw new error();
+      throw error();
     }
 
     courseLog.log.push({
@@ -597,7 +653,7 @@ exports.addCourseLog = async (req, res, next) => {
 
     const courseLogDoc = await courseLog.save();
 
-    res.send({ courseLog: courseLogDoc });
+    res.status(201).json({ message: 'Log created!', courseLog: courseLogDoc });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
