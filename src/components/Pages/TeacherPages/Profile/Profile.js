@@ -53,12 +53,18 @@ class EditProfile extends React.Component {
       .catch(err => {
         try {
           err.json().then(body => {
-            console.log(body);
-            console.log('message = ' + body.message);
+            this.props.notify(
+              true,
+              'Error',
+              body.error.status + ' ' + body.message
+            );
           });
         } catch (e) {
-          console.log('Error parsing promise');
-          console.log(err);
+          this.props.notify(
+            true,
+            'Error',
+            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+          );
         }
       });
   }
@@ -106,18 +112,23 @@ class EditProfile extends React.Component {
       })
       .then(resData => {
         this.setState({ isLoading: false });
-        console.log('Profile Updated Successfully!');
-        console.log(resData);
+        this.props.notify(true, 'Success', resData.message);
       })
       .catch(err => {
         try {
           err.json().then(body => {
-            console.log(body);
-            console.log('message = ' + body.message);
+            this.props.notify(
+              true,
+              'Error',
+              body.error.status + ' ' + body.message
+            );
           });
         } catch (e) {
-          console.log('Error parsing promise');
-          console.log(err);
+          this.props.notify(
+            true,
+            'Error',
+            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+          );
         }
       });
   };
@@ -143,21 +154,27 @@ class EditProfile extends React.Component {
         })
         .then(resData => {
           this.setState({ isLoading: false });
-          console.log(resData);
+          this.props.notify(true, 'Success', resData.message);
         })
         .catch(err => {
           try {
             err.json().then(body => {
-              console.log(body);
-              console.log('message = ' + body.message);
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
             });
           } catch (e) {
-            console.log('Error parsing promise');
-            console.log(err);
+            this.props.notify(
+              true,
+              'Error',
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+            );
           }
         });
     } else {
-      console.log('Passwords do not match!');
+      this.props.notify(true, 'Error', 'Passwords do not match!');
     }
   };
 
@@ -186,25 +203,31 @@ class EditProfile extends React.Component {
           })
           .then(resData => {
             this.setState({ isLoading: false });
-            console.log('CV updated successfully!');
-            console.log(resData);
+            this.props.notify(true, 'Success', resData.message);
           })
           .catch(err => {
             try {
               err.json().then(body => {
-                console.log(body);
-                console.log('message = ' + body.message);
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
               });
             } catch (e) {
-              console.log('Error parsing promise');
-              console.log(err);
+              this.props.notify(
+                true,
+                'Error',
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+              );
             }
           });
       } else {
-        console.log('File too big!');
+        this.props.notify(true, 'Error', 'File too big!');
       }
     } else {
-      console.log('No File attached!');
+      this.props.notify(true, 'Error', 'No File attached!');
     }
   };
 

@@ -1,41 +1,20 @@
-/* .Notify {
-  box-sizing: border-box;
-  position: absolute;
-  top: 3em;
-  left: 600px;
-  width: 280px;
-  padding: 10px 10px;
-  background-color: #ffffff;
-  box-shadow: 0 0.313rem 0.719rem rgba(122, 123, 151, 0.1),
-    0 0.156rem 0.125rem rgba(122, 123, 151, 0.06);
-}
-
-.NotifyTitleBar {
-  box-sizing: border-box;
-  font-size: 0.9em;
-  font-weight: bold;
-  width: 100%;
-  height: 100%;
+.ErrorBoundary {
   display: flex;
-  flex-direction: row;
+  height: 100vh;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
-.CloseButton {
-  cursor: pointer;
+.ErrorBoundaryContent {
+  box-sizing: border-box;
+  width: 680px;
+  padding: 10px 10px;
+  color: #fff;
+  background-color: rgba(255, 0, 0, 1);
+  box-shadow: 0 0.313rem 0.719rem rgba(255, 0, 0, 1),
+    0 0.156rem 0.125rem rgba(255, 0, 0, 1);
 }
 
-.Notify hr {
+.ErrorBoundary hr {
   margin: 10px 0;
 }
-
-.NotifyBody {
-  box-sizing: border-box;
-  font-size: 0.8em;
-  font-weight: bold;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  padding-bottom: 5px;
-} */

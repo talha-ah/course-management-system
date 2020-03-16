@@ -6,7 +6,7 @@ import Login from '../../components/Pages/loginPage/loginPage';
 import ForgetPassword from '../../components/Pages/loginPage/ForgetPassword/ForgetPassword';
 import Spinner from '../../components/UI/Spinner/Spinner';
 
-import ErrorBoundary from '../../components/UI/ErrorBoundary/ErrorBoundary';
+import Notify from '../../components/UI/Notify/Notify';
 
 class CMS extends Component {
   state = {
@@ -15,7 +15,10 @@ class CMS extends Component {
     isAuth: false,
     token: '',
     userId: false,
-    isAdmin: false
+    isAdmin: false,
+    notify: false,
+    notifyType: '',
+    notifyMessage: ''
   };
 
   componentDidMount() {
@@ -77,6 +80,7 @@ class CMS extends Component {
           isAdmin: isAdmin,
           isLoading: false
         });
+        this.transitNotify(true, 'Success', result.message);
         localStorage.setItem('userId', result.userId);
         localStorage.setItem('token', result.token);
         const expiry = 3600000;
@@ -86,17 +90,47 @@ class CMS extends Component {
         // window.location.reload();
       })
       .catch(error => {
-        this.setState({ isLoading: false });
         try {
           error.json().then(body => {
-            console.log(body);
-            console.log('message = ' + body.message);
+            this.setState({
+              isLoading: false
+            });
+            this.transitNotify(
+              true,
+              'Error',
+              body.error.status + ' ' + body.message
+            );
           });
         } catch (e) {
-          console.log('Error parsing promise');
-          console.log(error);
+          this.setState({
+            isLoading: false
+          });
+          this.transitNotify(
+            true,
+            'Error',
+            error.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+          );
         }
       });
+  };
+
+  defaultNotify = () => {
+    setTimeout(() => {
+      this.setState({
+        notify: false,
+        notifyType: '',
+        notifyMessage: ''
+      });
+    }, 3000);
+  };
+
+  transitNotify = (notify, notifyType, notifyMessage) => {
+    this.setState({
+      notify: notify,
+      notifyType: notifyType,
+      notifyMessage: notifyMessage
+    });
+    this.defaultNotify();
   };
 
   autoLogoutHandler = expiry => {
@@ -126,7 +160,8 @@ class CMS extends Component {
         authData={{
           isAdmin: this.state.isAdmin,
           token: this.state.token,
-          userId: this.state.userId
+          userId: this.state.userId,
+          notify: this.transitNotify
         }}
         logoutHandler={this.logoutHandler}
       />
@@ -153,7 +188,20 @@ class CMS extends Component {
         <Redirect to='/' />
       </Switch>
     );
-    return <ErrorBoundary>{route}</ErrorBoundary>;
+    return (
+      <>
+        {this.state.notify ? (
+          <Notify
+            notify
+            type={this.state.notifyType}
+            message={this.state.notifyMessage}
+          />
+        ) : (
+          ''
+        )}
+        {route}
+      </>
+    );
   }
 }
 

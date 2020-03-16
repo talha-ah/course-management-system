@@ -8,16 +8,14 @@ class Notify extends Component {
   };
 
   componentDidMount() {
+    if (this.props.notify) this.openNotify();
     setTimeout(() => {
-      this.setState({ notifyVis: false });
+      this.closeNotify();
     }, 3000);
   }
 
-  transitNotify = () => {
-    this.setState({
-      notifyVis: false
-    });
-  };
+  openNotify = () => this.setState({ notifyVis: true });
+  closeNotify = () => this.setState({ notifyVis: false });
 
   render() {
     var styles = {
@@ -47,13 +45,14 @@ class Notify extends Component {
         }}
       >
         <div className={classes.NotifyTitleBar}>
-          <div>Success</div>
-          <div className={classes.CloseButton}>x</div>
+          <div>{this.props.type}</div>
+          <div className={classes.CloseButton} onClick={this.closeNotify}>
+            x
+          </div>
         </div>
         <hr style={{ border: `0.5px solid ${styles.borderColor}` }} />
         <div className={classes.NotifyBody}>
-          <div>Your account information has been saved.</div>
-          {this.props.message}
+          <div>{this.props.message}</div>
         </div>
       </div>
     );

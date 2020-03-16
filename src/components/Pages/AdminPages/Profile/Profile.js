@@ -41,12 +41,18 @@ class EditProfile extends React.Component {
       .catch(err => {
         try {
           err.json().then(body => {
-            console.log(body);
-            console.log('message = ' + body.message);
+            this.props.notify(
+              true,
+              'Error',
+              body.error.status + ' ' + body.message
+            );
           });
         } catch (e) {
-          console.log('Error parsing promise');
-          console.log(err);
+          this.props.notify(
+            true,
+            'Error',
+            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+          );
         }
       });
   }
@@ -79,18 +85,24 @@ class EditProfile extends React.Component {
         return res.json();
       })
       .then(resData => {
-        console.log(resData);
+        this.props.notify(true, 'Success', resData.message);
         this.setState({ isLoading: false });
       })
       .catch(err => {
         try {
           err.json().then(body => {
-            console.log(body);
-            console.log('message = ' + body.message);
+            this.props.notify(
+              true,
+              'Error',
+              body.error.status + ' ' + body.message
+            );
           });
         } catch (e) {
-          console.log('Error parsing promise');
-          console.log(err);
+          this.props.notify(
+            true,
+            'Error',
+            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+          );
         }
       });
   };
@@ -117,21 +129,27 @@ class EditProfile extends React.Component {
         })
         .then(resData => {
           this.setState({ isLoading: false });
-          console.log(resData);
+          this.props.notify(true, 'Success', resData.message);
         })
         .catch(err => {
           try {
             err.json().then(body => {
-              console.log(body);
-              console.log('message = ' + body.message);
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
             });
           } catch (e) {
-            console.log('Error parsing promise');
-            console.log(err);
+            this.props.notify(
+              true,
+              'Error',
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+            );
           }
         });
     } else {
-      console.log('Passwords do not match!');
+      this.props.notify(true, 'Error', 'Passwords do not match.');
     }
   };
 
