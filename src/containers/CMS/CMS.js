@@ -6,6 +6,8 @@ import Login from '../../components/Pages/loginPage/loginPage';
 import ForgetPassword from '../../components/Pages/loginPage/ForgetPassword/ForgetPassword';
 import Spinner from '../../components/UI/Spinner/Spinner';
 
+import ErrorBoundary from '../../components/UI/ErrorBoundary/ErrorBoundary';
+
 class CMS extends Component {
   state = {
     isLoading: false,
@@ -151,7 +153,7 @@ class CMS extends Component {
         <Redirect to='/' />
       </Switch>
     );
-    return route;
+    return <ErrorBoundary>{route}</ErrorBoundary>;
   }
 }
 

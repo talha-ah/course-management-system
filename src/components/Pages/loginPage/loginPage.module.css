@@ -18,6 +18,7 @@
 }
 
 .LeftLogin {
+  background-color: #ffffff;
   grid-area: LeftAuth;
   display: flex;
   flex-direction: column;
