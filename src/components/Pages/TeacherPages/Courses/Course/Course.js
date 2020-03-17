@@ -27,7 +27,7 @@ class Course extends Component {
 
   componentDidMount() {
     const courseId = this.props.match.params.courseId;
-    fetch(`http://localhost:8080/teacher/course/${courseId}`, {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/course/${courseId}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token
@@ -88,7 +88,7 @@ class Course extends Component {
     e.preventDefault(); // Stop form submit
     this.setState({ isLoading: true });
 
-    fetch('http://localhost:8080/teacher/editcourse', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/editcourse`, {
       method: 'POST',
       body: JSON.stringify({
         courseId: this.state._id,
@@ -130,12 +130,15 @@ class Course extends Component {
   onDeleteHandler = () => {
     this.setState({ isLoading: true });
 
-    fetch(`http://localhost:8080/teacher/removecourse/${this.state._id}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token
+    fetch(
+      `${process.env.REACT_APP_SERVER_URL}/teacher/removecourse/${this.state._id}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.props.token
+        }
       }
-    })
+    )
       .then(res => {
         if (!res.ok) throw res;
         return res.json();

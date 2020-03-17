@@ -29,7 +29,7 @@ class CoursesLog extends Component {
   };
 
   componentDidMount() {
-    fetch('http://localhost:8080/teacher/courses', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token
@@ -118,12 +118,15 @@ class CoursesLog extends Component {
       return false;
     });
 
-    fetch(`http://localhost:8080/teacher/getcourselog/${courseId}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token
+    fetch(
+      `${process.env.REACT_APP_SERVER_URL}/teacher/getcourselog/${courseId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.props.token
+        }
       }
-    })
+    )
       .then(res => {
         if (!res.ok) throw res;
         return res.json();
@@ -178,7 +181,7 @@ class CoursesLog extends Component {
     this.setState({ addLogLoading: true });
 
     fetch(
-      `http://localhost:8080/teacher/addcourselog/${this.state.courseLog._id}`,
+      `${process.env.REACT_APP_SERVER_URL}/teacher/addcourselog/${this.state.courseLog._id}`,
       {
         method: 'POST',
         body: JSON.stringify({

@@ -22,7 +22,7 @@ class CoursesList extends Component {
   }
 
   fetchFunction = () => {
-    fetch('http://localhost:8080/teacher/courses', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token
@@ -60,7 +60,7 @@ class CoursesList extends Component {
 
   onDisableCourse = () => {
     fetch(
-      `http://localhost:8080/teacher/disablecourse/${this.state.modalCourseId}`,
+      `${process.env.REACT_APP_SERVER_URL}/teacher/disablecourse/${this.state.modalCourseId}`,
       {
         headers: {
           'Content-Type': 'application/json',

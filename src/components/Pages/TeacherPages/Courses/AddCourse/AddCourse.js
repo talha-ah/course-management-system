@@ -18,7 +18,7 @@ class AddCourse extends Component {
   };
 
   componentDidMount() {
-    fetch('http://localhost:8080/teacher/listcourses', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/listcourses`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token
@@ -75,7 +75,7 @@ class AddCourse extends Component {
       return false;
     });
 
-    fetch('http://localhost:8080/teacher/takecourse', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/takecourse`, {
       method: 'POST',
       body: JSON.stringify({
         courseId: courseId,

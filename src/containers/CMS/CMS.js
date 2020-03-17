@@ -22,6 +22,7 @@ class CMS extends Component {
   };
 
   componentDidMount() {
+    console.log(process.env.REACT_APP_SERVER_URL);
     const token = localStorage.getItem('token');
     const expiry = localStorage.getItem('expiry');
     const userId = localStorage.getItem('userId');
@@ -55,7 +56,7 @@ class CMS extends Component {
     event.preventDefault();
     this.setState({ isLoading: true });
 
-    fetch('http://localhost:8080/login', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -136,6 +137,7 @@ class CMS extends Component {
   autoLogoutHandler = expiry => {
     setTimeout(() => {
       this.logoutHandler();
+      this.transitNotify(true, 'Success', 'AutoLogout was successfull.');
     }, expiry);
   };
 
@@ -150,6 +152,7 @@ class CMS extends Component {
     localStorage.removeItem('userId');
     localStorage.removeItem('token');
     localStorage.removeItem('expiry');
+    this.transitNotify(true, 'Success', 'Logout successfully.');
   };
 
   render() {

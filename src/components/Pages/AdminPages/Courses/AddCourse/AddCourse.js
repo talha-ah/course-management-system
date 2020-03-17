@@ -24,7 +24,7 @@ class AddCourse extends Component {
   onFormSubmit = e => {
     e.preventDefault();
     this.setState({ isLoading: true });
-    fetch('http://localhost:8080/admin/createcourse', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/admin/createcourse`, {
       method: 'POST',
       body: JSON.stringify({
         title: this.state.courseTitle,

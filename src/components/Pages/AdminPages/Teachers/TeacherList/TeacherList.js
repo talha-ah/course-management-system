@@ -14,7 +14,7 @@ class TeacherList extends Component {
   };
 
   componentDidMount() {
-    fetch('http://localhost:8080/admin/teachers', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/admin/teachers`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token

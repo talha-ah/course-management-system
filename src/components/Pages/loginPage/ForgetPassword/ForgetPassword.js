@@ -21,7 +21,7 @@ class SignIn extends Component {
   onFormSubmit = e => {
     e.preventDefault();
 
-    fetch('http://localhost:8080/login/forgetpassword', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/login/forgetpassword`, {
       method: 'POST',
       body: JSON.stringify({ email: this.state.email }),
       headers: {

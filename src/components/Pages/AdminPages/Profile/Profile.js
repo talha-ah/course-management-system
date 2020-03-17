@@ -19,7 +19,7 @@ class EditProfile extends React.Component {
   };
 
   componentDidMount() {
-    fetch('http://localhost:8080/admin/getadmin', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/admin/getadmin`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ class EditProfile extends React.Component {
   onProfileUpdate = e => {
     e.preventDefault(); // Stop form submit
     this.setState({ isLoading: true });
-    fetch('http://localhost:8080/admin/editadmin', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/admin/editadmin`, {
       method: 'POST',
       body: JSON.stringify({
         firstName: this.state.firstName,
@@ -112,7 +112,7 @@ class EditProfile extends React.Component {
     this.setState({ isLoading: true });
 
     if (this.state.newPassword === this.state.confirmPassword) {
-      fetch('http://localhost:8080/admin/editadminpassword', {
+      fetch(`${process.env.REACT_APP_SERVER_URL}/admin/editadminpassword`, {
         method: 'POST',
         body: JSON.stringify({
           currentPassword: this.state.password,

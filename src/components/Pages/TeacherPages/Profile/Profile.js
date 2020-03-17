@@ -26,7 +26,7 @@ class EditProfile extends React.Component {
   };
 
   componentDidMount() {
-    fetch('http://localhost:8080/teacher/getteacher', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/getteacher`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token
@@ -88,7 +88,7 @@ class EditProfile extends React.Component {
     e.preventDefault();
 
     this.setState({ isLoading: true });
-    fetch('http://localhost:8080/teacher/editteacher', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/editteacher`, {
       method: 'POST',
       body: JSON.stringify({
         firstName: this.state.firstName,
@@ -137,7 +137,7 @@ class EditProfile extends React.Component {
     e.preventDefault();
     this.setState({ isLoading: true });
     if (this.state.newPassword === this.state.confirmPassword) {
-      fetch('http://localhost:8080/teacher/editteacherpassword', {
+      fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/editteacherpassword`, {
         method: 'POST',
         body: JSON.stringify({
           currentPassword: this.state.password,
@@ -190,7 +190,7 @@ class EditProfile extends React.Component {
       formData.append('fileName', fileName);
 
       if (file.size < 5000000) {
-        fetch('http://localhost:8080/teacher/editcv', {
+        fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/editcv`, {
           method: 'POST',
           body: formData,
           headers: {

@@ -23,7 +23,7 @@ class AddTeacher extends Component {
   onFormSubmit = e => {
     e.preventDefault();
     this.setState({ isLoading: true });
-    fetch('http://localhost:8080/admin/createteacher', {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/admin/createteacher`, {
       method: 'POST',
       body: JSON.stringify({
         email: this.state.teacherEmail,
