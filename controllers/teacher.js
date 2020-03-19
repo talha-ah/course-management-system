@@ -1134,13 +1134,13 @@ exports.getPapers = async (req, res, next) => {
 
 exports.addPaper = async (req, res, next) => {
   const teacherId = req.userId;
-  const quizId = req.params.quizId;
+  const paperId = req.params.paperId;
 
   const title = req.body.title;
   const grade = req.body.grade;
   const assessment = req.body.prePost;
-  var quizPath = req.files['quiz'][0].path;
-  const quizFileName = req.files['quiz'][0].originalname;
+  var paperPath = req.files['paper'][0].path;
+  const paperFileName = req.files['paper'][0].originalname;
   var solutionPath = req.files['solution'][0].path;
   const solutionFileName = req.files['solution'][0].originalname;
 
@@ -1158,7 +1158,7 @@ exports.addPaper = async (req, res, next) => {
     ) {
       errors.push('Invalid grades!');
     }
-    if (assessment !== 'Pre-Mid' && assessment !== 'Post-Mid') {
+    if (assessment !== 'Mid-Term' && assessment !== 'Final-Term') {
       errors.push('Invalid assessment field!');
     }
     if (errors.length > 0) {
@@ -1166,8 +1166,8 @@ exports.addPaper = async (req, res, next) => {
       error.status = 400;
       throw error;
     }
-    if (!quizPath && !req.files['quiz'][0]) {
-      const err = new Error('Quiz file required!');
+    if (!paperPath && !req.files['paper'][0]) {
+      const err = new Error('Paper file required!');
       err.status = 204;
       throw err;
     }
@@ -1178,34 +1178,34 @@ exports.addPaper = async (req, res, next) => {
       throw err;
     }
 
-    quizPath = quizPath.replace(/\\/g, '/');
+    paperPath = paperPath.replace(/\\/g, '/');
     solutionPath = solutionPath.replace(/\\/g, '/');
 
-    const quiz = await Quiz.findById(quizId);
+    const paper = await Paper.findById(paperId);
 
-    if (!quiz) {
-      const err = new Error('Could not find quiz doc.');
+    if (!paper) {
+      const err = new Error('Could not find paper doc.');
       err.status = 404;
       throw err;
     }
 
-    if (quiz.teacherId.toString() !== teacherId.toString()) {
-      const error = new Error('Teacher ID error in quiz doc!');
+    if (paper.teacherId.toString() !== teacherId.toString()) {
+      const error = new Error('Teacher ID error in paper doc!');
       error.code = 404;
       throw error();
     }
 
-    quiz.quizzes.push({
+    paper.papers.push({
       title: title,
       grade: grade,
       assessment: assessment,
-      quiz: { name: quizFileName, path: quizPath },
+      paper: { name: paperFileName, path: paperPath },
       solution: { name: solutionFileName, path: solutionPath }
     });
 
-    const quizDoc = await quiz.save();
+    const paperDoc = await paper.save();
 
-    res.status(201).json({ message: 'Quiz saved.', quizzes: quizDoc });
+    res.status(201).json({ message: 'Paper saved.', papers: paperDoc });
   } catch (err) {
     if (!err.status) {
       err.status = 500;

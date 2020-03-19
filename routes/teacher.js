@@ -204,7 +204,7 @@ router.get('/getpapers/:courseId', isAuth, teacherController.getPapers);
 router.post(
   '/addpaper/:paperId',
   isAuth,
-  uploadPaper.fields([
+  uploadQuiz.fields([
     { name: 'paper', maxCount: 1 },
     { name: 'solution', maxCount: 1 }
   ]),
