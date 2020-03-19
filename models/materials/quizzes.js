@@ -13,10 +13,17 @@ const quizzes = new Schema({
   },
   quizzes: [
     {
-      questionFilePath: { type: String },
-      solutionFilePath: { type: String },
-      weightage: { type: String },
-      time: { type: String }
+      title: { type: String },
+      grade: { type: String },
+      assessment: { type: String },
+      quiz: {
+        name: { type: String },
+        path: { type: String }
+      },
+      solution: {
+        name: { type: String },
+        path: { type: String }
+      }
     }
   ]
 });

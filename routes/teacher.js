@@ -8,6 +8,7 @@ const teacherController = require('../controllers/teacher');
 
 // =========================================================== Multer ================================================
 
+// ============================== CV ========
 // Multer Storage
 const fileStorageCV = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -19,20 +20,114 @@ const fileStorageCV = multer.diskStorage({
 });
 
 // Multer FileFilter
-// const fileFilter = (req, file, cb) => {
-//   if (
-//     file.mimetype === 'image/png' ||
-//     file.mimetype === 'image/jpg' ||
-//     file.mimetype === 'image/jpeg'
-//   ) {
-//     cb(null, true);
-//   } else {
-//     cb(null, false);
-//   }
-// };
+const fileFilterCV = (req, file, cb) => {
+  if (file.mimetype === 'application/pdf') {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
 
 // File Upload Handler
-const uploadCV = multer({ storage: fileStorageCV });
+const uploadCV = multer({ storage: fileStorageCV, fileFilter: fileFilterCV });
+// ============================== CV ==========
+
+// ============================== Assignment ========
+// Multer Storage
+const fileStorageAssignment = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'data/assignments');
+  },
+  filename: function(req, file, cb) {
+    cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);
+  }
+});
+
+// Multer FileFilter
+const fileFilterAssignment = (req, file, cb) => {
+  if (
+    file.mimetype === 'application/pdf' ||
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+// File Upload Handler
+const uploadAssignment = multer({
+  storage: fileStorageAssignment,
+  fileFilter: fileFilterAssignment
+});
+
+// ============================== Assignment ==========
+// ============================== Quiz ========
+// Multer Storage
+const fileStorageQuiz = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'data/quizzes');
+  },
+  filename: function(req, file, cb) {
+    cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);
+  }
+});
+
+// Multer FileFilter
+const fileFilterQuiz = (req, file, cb) => {
+  if (
+    file.mimetype === 'application/pdf' ||
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+// File Upload Handler
+const uploadQuiz = multer({
+  storage: fileStorageQuiz,
+  fileFilter: fileFilterQuiz
+});
+
+// ============================== Quiz ==========
+// ============================== Paper ========
+// Multer Storage
+const fileStoragePaper = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'data/papers');
+  },
+  filename: function(req, file, cb) {
+    cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);
+  }
+});
+
+// Multer FileFilter
+const fileFilterPaper = (req, file, cb) => {
+  if (
+    file.mimetype === 'application/pdf' ||
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+// File Upload Handler
+const uploadPaper = multer({
+  storage: fileStoragePaper,
+  fileFilter: fileFilterPaper
+});
+
+// ============================== Paper ==========
 
 // multer({ storage: fileStorage, fileFilter: fileFilter }).array('image', 2)
 
@@ -71,12 +166,49 @@ router.post('/addcourselog/:logId', isAuth, teacherController.addCourseLog);
 router.get('/adddescription', isAuth, teacherController.addCourseDescription);
 router.post('/adddescription', isAuth, teacherController.addCourseDescription);
 
-router.get('/addmonitoring', isAuth, teacherController.addCourseMonitoring);
+router.get(
+  '/getmonitoring/:courseId',
+  isAuth,
+  teacherController.getCourseMonitoring
+);
 router.post('/addmonitoring', isAuth, teacherController.addCourseMonitoring);
 
 // Materials
-router.post('/addassignment', isAuth, teacherController.addAssignment);
-router.post('/addquiz', isAuth, teacherController.addQuiz);
-router.post('/addpaper', isAuth, teacherController.addPaper);
+router.get(
+  '/getassignments/:courseId',
+  isAuth,
+  teacherController.getAssignments
+);
+router.post(
+  '/addassignment/:assignmentId',
+  isAuth,
+  uploadAssignment.fields([
+    { name: 'assignment', maxCount: 1 },
+    { name: 'solution', maxCount: 1 }
+  ]),
+  teacherController.addAssignment
+);
+
+router.get('/getquizzes/:courseId', isAuth, teacherController.getQuizzes);
+router.post(
+  '/addquiz/:quizId',
+  isAuth,
+  uploadQuiz.fields([
+    { name: 'quiz', maxCount: 1 },
+    { name: 'solution', maxCount: 1 }
+  ]),
+  teacherController.addQuiz
+);
+
+router.get('/getpapers/:courseId', isAuth, teacherController.getPapers);
+router.post(
+  '/addpaper/:paperId',
+  isAuth,
+  uploadPaper.fields([
+    { name: 'paper', maxCount: 1 },
+    { name: 'solution', maxCount: 1 }
+  ]),
+  teacherController.addPaper
+);
 
 module.exports = router;
