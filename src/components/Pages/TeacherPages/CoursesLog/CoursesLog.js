@@ -117,48 +117,51 @@ class CoursesLog extends Component {
       }
       return false;
     });
-
-    fetch(
-      `${process.env.REACT_APP_SERVER_URL}/teacher/getcourselog/${courseId}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + this.props.token
+    if (courseTitle !== '' && courseTitle !== 'Course List') {
+      fetch(
+        `${process.env.REACT_APP_SERVER_URL}/teacher/getcourselog/${courseId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.props.token
+          }
         }
-      }
-    )
-      .then(res => {
-        if (!res.ok) throw res;
-        return res.json();
-      })
-      .then(resData => {
-        this.setState({
-          pageLoading: false,
-          selectCourseModal: false,
-          modalCourseId: courseId,
-          modalCourseTitle: courseTitle,
-          courseLog: resData.courseLog,
-          isLoading: false
-        });
-        this.props.notify(true, 'Success', resData.message);
-      })
-      .catch(err => {
-        try {
-          err.json().then(body => {
+      )
+        .then(res => {
+          if (!res.ok) throw res;
+          return res.json();
+        })
+        .then(resData => {
+          this.setState({
+            pageLoading: false,
+            selectCourseModal: false,
+            modalCourseId: courseId,
+            modalCourseTitle: courseTitle,
+            courseLog: resData.courseLog,
+            isLoading: false
+          });
+          this.props.notify(true, 'Success', resData.message);
+        })
+        .catch(err => {
+          try {
+            err.json().then(body => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
-        }
-      });
+          }
+        });
+    } else {
+      this.props.notify(true, 'Error', 'Please select a course!');
+    }
   };
 
   onChange = e => {
@@ -253,7 +256,7 @@ class CoursesLog extends Component {
                     <td style={{ padding: '20px' }}>{row.date}</td>
                     <td style={{ padding: '20px' }}>{row.duration}</td>
                     <td>
-                      <TextArea value={row.topics} />
+                      <TextArea defaultValue={row.topics} />
                     </td>
                     <td style={{ padding: '20px' }}>{row.instruments}</td>
                     <td style={{ padding: '20px' }}>-</td>

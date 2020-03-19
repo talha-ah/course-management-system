@@ -22,7 +22,6 @@ class CMS extends Component {
   };
 
   componentDidMount() {
-    console.log(process.env.REACT_APP_SERVER_URL);
     const token = localStorage.getItem('token');
     const expiry = localStorage.getItem('expiry');
     const userId = localStorage.getItem('userId');

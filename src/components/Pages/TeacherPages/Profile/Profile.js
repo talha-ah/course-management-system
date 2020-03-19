@@ -403,7 +403,11 @@ class EditProfile extends React.Component {
             onSubmit={this.onCVSubmit}
             // encType='multipart/form-data'
           >
-            <Input type='file' onChange={this.onChange} />
+            <Input
+              type='file'
+              accept='application/pdf'
+              onChange={this.onChange}
+            />
             <label htmlFor='file'>{this.state.fileName}</label>
             <p>Drag your file here or click to select file.</p>
             <div className={classes.ButtonDiv}>

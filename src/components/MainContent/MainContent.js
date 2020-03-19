@@ -206,7 +206,7 @@ const MainContent = props => {
             />
             <Route
               exact
-              path='/assignments/:courseId'
+              path='/assignments'
               render={({ match, history, location }) => (
                 <Assignments
                   match={match}
@@ -218,7 +218,7 @@ const MainContent = props => {
             />
             <Route
               exact
-              path='/papers/:courseId'
+              path='/papers'
               render={({ match, history, location }) => (
                 <Papers
                   match={match}
@@ -230,7 +230,7 @@ const MainContent = props => {
             />
             <Route
               exact
-              path='/quizzes/:courseId'
+              path='/quizzes'
               render={({ match, history, location }) => (
                 <Quizzes
                   match={match}

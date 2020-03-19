@@ -1,21 +1,111 @@
 .Assignments {
   position: relative;
-}
-
-.AssignmentsHeader {
-  max-width: 100%;
-  font-size: 1rem;
-  padding: 1rem 1.5rem;
-  position: relative;
+  color: #3b3e66;
   text-align: center;
-}
-
-.AssignmentsArea {
-  color: #525f7f;
-  background-color: #fff;
   max-width: 100%;
-  padding: 1rem 1.5rem 2.5rem 1.5rem;
-  margin: 0 3rem;
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 0.375rem;
+  margin: 1rem 3rem 3rem 3rem;
+  background-color: #fff;
+  box-shadow: 0 0.313rem 0.8rem rgba(122, 123, 151, 0.5),
+    0 0.126rem 0.225rem rgba(122, 123, 151, 0.3);
+}
+
+/* Table Starts */
+
+.Assignments table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.Assignments caption {
+  padding-top: 20px;
+  text-align: center;
+  margin: 10px 0 25px 0;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.33;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.Assignments table thead {
+  border-top: 2px solid rgba(7, 9, 25, 0.125);
+  border-bottom: 2px solid rgba(7, 9, 25, 0.125);
+  background-color: #f4f5fd;
+}
+
+.Assignments table tbody tr {
+  border-bottom: 1px solid rgba(7, 9, 25, 0.125);
+}
+
+.Assignments table th {
+  padding: 20px 0;
+}
+
+.Assignments table tfoot {
+  border-bottom: 2px solid rgba(7, 9, 25, 0.125);
+}
+
+.CourseTitle {
+  cursor: pointer;
+}
+
+/* Table Ends */
+
+.buttonDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 25px 0;
+}
+
+.Modal {
+  background-color: #fff;
+  width: 600px;
+  color: #3b3e66;
+}
+
+.ModalBody {
+  padding: 50px 40px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ModalContent {
+  width: 100%;
+}
+
+.ModalContentTitle {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.33;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Add Assignment */
+
+.InputGroup {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+/* .InputGroup * { */
+.InputGroup :nth-child(2) {
+  max-width: 80%;
 }

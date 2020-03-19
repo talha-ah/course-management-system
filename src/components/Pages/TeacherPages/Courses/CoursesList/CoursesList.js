@@ -125,11 +125,29 @@ class CoursesList extends Component {
 
   materialPageHandler = e => {
     if (e.target.name === 'assignment') {
-      this.props.history.push(`/assignments/${this.state.modalCourseId}`);
+      this.props.history.push({
+        pathname: '/assignments',
+        state: {
+          courseId: this.state.modalCourseId,
+          courseTitle: this.state.modalCourseTitle
+        }
+      });
     } else if (e.target.name === 'paper') {
-      this.props.history.push(`/papers/${this.state.modalCourseId}`);
+      this.props.history.push({
+        pathname: '/papers',
+        state: {
+          courseId: this.state.modalCourseId,
+          courseTitle: this.state.modalCourseTitle
+        }
+      });
     } else if (e.target.name === 'quiz') {
-      this.props.history.push(`/quizzes/${this.state.modalCourseId}`);
+      this.props.history.push({
+        pathname: '/quizzes',
+        state: {
+          courseId: this.state.modalCourseId,
+          courseTitle: this.state.modalCourseTitle
+        }
+      });
     }
   };
 

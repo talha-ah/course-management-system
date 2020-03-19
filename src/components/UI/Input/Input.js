@@ -12,6 +12,9 @@ const Input = props => {
       placeholder={props.placeholder}
       onChange={props.onChange}
       className={classes.input}
+      min={props.min}
+      max={props.max}
+      accept={props.accept}
     />
   );
 };

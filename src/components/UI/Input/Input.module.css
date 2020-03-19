@@ -14,6 +14,7 @@
 .input[type='week'],
 .input[type='submit'],
 .input[type='checkbox'],
+.input[type='file'],
 .textarea {
   display: block;
   box-sizing: border-box;
@@ -40,6 +41,19 @@
 
 .input:disabled {
   cursor: not-allowed;
+}
+
+input[type='date']::-webkit-datetime-edit {
+  font-weight: bold;
+  color: #dedfe5;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+input[type='date']:invalid::-webkit-datetime-edit {
+  color: #dedfe5;
 }
 
 .without_ampm::-webkit-datetime-edit-ampm-field {
