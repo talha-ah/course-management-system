@@ -163,15 +163,27 @@ router.get('/removecourse/:courseId', isAuth, teacherController.removeCourse);
 router.get('/getcourselog/:courseId', isAuth, teacherController.getCourseLog);
 router.post('/addcourselog/:logId', isAuth, teacherController.addCourseLog);
 
-router.get('/adddescription', isAuth, teacherController.addCourseDescription);
-router.post('/adddescription', isAuth, teacherController.addCourseDescription);
+router.get(
+  '/getdescription/:courseId',
+  isAuth,
+  teacherController.getCourseDescription
+);
+router.post(
+  '/adddescription/:descriptionId',
+  isAuth,
+  teacherController.addCourseDescription
+);
 
 router.get(
   '/getmonitoring/:courseId',
   isAuth,
   teacherController.getCourseMonitoring
 );
-router.post('/addmonitoring', isAuth, teacherController.addCourseMonitoring);
+router.post(
+  '/addmonitoring/:monitorId',
+  isAuth,
+  teacherController.addCourseMonitoring
+);
 
 // Materials
 router.get(

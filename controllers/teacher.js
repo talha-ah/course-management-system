@@ -628,7 +628,7 @@ exports.getCourseLog = async (req, res, next) => {
     if (!course) {
       const error = new Error('Error in fetching course!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     const courseLog = await CourseLog.findById(course.courseLog);
@@ -636,7 +636,7 @@ exports.getCourseLog = async (req, res, next) => {
     if (!courseLog) {
       const error = new Error('Error in fetching course log!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     res
@@ -684,13 +684,13 @@ exports.addCourseLog = async (req, res, next) => {
     if (courseLog.teacherId.toString() !== teacherId.toString()) {
       const error = new Error('Teacher ID error in course log!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     if (!courseLog) {
       const error = new Error('Error in fetching course log!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     courseLog.log.push({
@@ -727,7 +727,7 @@ exports.getCourseMonitoring = async (req, res, next) => {
     if (!course) {
       const error = new Error('Error in fetching course!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     const courseMonitor = await CourseMonitoring.findById(
@@ -737,10 +737,8 @@ exports.getCourseMonitoring = async (req, res, next) => {
     if (!courseMonitor) {
       const error = new Error('Error in fetching course monitoring!');
       error.code = 404;
-      throw error();
+      throw error;
     }
-
-    console.log(courseMonitor.data.howFar);
 
     res.status(200).json({
       message: 'Course Monitoring fetched!',
@@ -755,19 +753,47 @@ exports.getCourseMonitoring = async (req, res, next) => {
 };
 
 exports.addCourseMonitoring = async (req, res, next) => {
-  const courseId = req.body.courseId;
-  const teacherId = req.body.teacherId;
+  const teacherId = req.userId;
+  const monitorId = req.params.monitorId;
 
   const howFar = req.body.howFar;
   const fullCover = req.body.fullCover;
   const relevantProblems = req.body.relevantProblems;
   const assessStandard = req.body.assessStandard;
   const emergeApplication = req.body.emergeApplication;
+  const errors = [];
   try {
-    const courseMonitoring = await CourseMonitoring.findOne({
-      teacherId: teacherId,
-      courseId: courseId
-    });
+    if (
+      validator.isEmpty(howFar) ||
+      validator.isEmpty(fullCover) ||
+      validator.isEmpty(relevantProblems) ||
+      validator.isEmpty(assessStandard) ||
+      validator.isEmpty(emergeApplication)
+    ) {
+      errors.push('Invalid fields!');
+    }
+
+    if (errors.length > 0) {
+      var error = new Error(errors);
+      error.status = 400;
+      throw error;
+    }
+
+    const courseMonitoring = await CourseMonitoring.findById(monitorId);
+
+    if (!courseMonitoring) {
+      const error = new Error('Error in fetching courseMonitoring!');
+      error.code = 404;
+      throw error;
+    }
+
+    if (courseMonitoring.teacherId.toString() !== teacherId.toString()) {
+      const error = new Error(
+        'Error in validating teacher Id in courseMonitoring!'
+      );
+      error.code = 404;
+      throw error;
+    }
 
     courseMonitoring.data.howFar = howFar;
     courseMonitoring.data.fullCover = fullCover;
@@ -777,7 +803,51 @@ exports.addCourseMonitoring = async (req, res, next) => {
 
     const courseMonitoringDoc = await courseMonitoring.save();
 
-    res.send({ courseMonitoring: courseMonitoringDoc });
+    res.status(201).json({
+      message: 'Course monitoring saved!',
+      courseMonitoring: courseMonitoringDoc
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getCourseDescription = async (req, res, next) => {
+  const teacherId = req.userId;
+  const courseId = req.params.courseId;
+
+  try {
+    const teacher = await Teacher.findById(teacherId);
+
+    const courseIndex = teacher.coursesAssigned.findIndex(c => {
+      return c._id.toString() === courseId.toString();
+    });
+
+    const course = teacher.coursesAssigned[courseIndex];
+
+    if (!course) {
+      const error = new Error('Error in fetching course!');
+      error.code = 404;
+      throw error;
+    }
+
+    const courseDescription = await CourseDescription.findById(
+      course.courseDescription
+    );
+
+    if (!courseDescription) {
+      const error = new Error('Error in fetching course description!');
+      error.code = 404;
+      throw error;
+    }
+
+    res.status(200).json({
+      message: 'Course Description fetched!',
+      courseDescription: courseDescription
+    });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -787,63 +857,154 @@ exports.addCourseMonitoring = async (req, res, next) => {
 };
 
 exports.addCourseDescription = async (req, res, next) => {
-  const courseId = req.body.courseId;
-  const teacherId = req.body.teacherId;
+  const teacherId = req.userId;
+  const descriptionId = req.params.descriptionId;
+  const phase = req.body.phase;
 
-  const prerequisites = req.body.prerequisites;
-  const assignments = req.body.assignments; //
-  const quizzes = req.body.quizzes; //
-  const mid = req.body.mid; //
-  const final = req.body.final; //
-  const courseCoordinator = req.body.courseCoordinator;
-  const url = req.body.url;
-  const currentCatalogue = req.body.currentCatalogue;
-  const textBook = req.body.textBook;
-  const referenceMaterial = req.body.referenceMaterial;
-  const courseGoals = req.body.courseGoals;
-  const topicsCovered = req.body.topicsCovered;
-  const labProjects = req.body.labProjects;
-  const progAssignments = req.body.progAssignments;
-  const theory = req.body.theory; //
-  const problemAnalysis = req.body.problemAnalysis; //
-  const solutionDesign = req.body.solutionDesign; //
-  const socialAndEthicalIssues = req.body.socialAndEthicalIssues; //
-  const oralAndWritten = req.body.oralAndWritten;
+  if (phase === 'phase1') {
+    const prerequisites = req.body.prerequisites;
+    const assignments = req.body.assignments;
+    const quizzes = req.body.quizzes;
+    const mid = req.body.midTerm;
+    const final = req.body.finalTerm;
+    const coordinator = req.body.coordinator;
+    const url = req.body.url;
+    const catalog = req.body.catalog;
+    const textbook = req.body.textbook;
+    const reference = req.body.reference;
+    const goals = req.body.goals;
+    const errors = [];
+    try {
+      if (
+        validator.isEmpty(prerequisites) ||
+        validator.isEmpty(String(assignments)) ||
+        validator.isEmpty(String(quizzes)) ||
+        validator.isEmpty(String(mid)) ||
+        validator.isEmpty(String(final)) ||
+        validator.isEmpty(coordinator) ||
+        validator.isEmpty(catalog) ||
+        validator.isEmpty(textbook) ||
+        validator.isEmpty(reference) ||
+        validator.isEmpty(goals)
+      ) {
+        errors.push('Invalid fields!');
+      }
 
-  try {
-    const courseDescription = await CourseDescription.findOne({
-      teacherId: teacherId,
-      courseId: courseId
-    });
+      if (errors.length > 0) {
+        var error = new Error(errors);
+        error.status = 400;
+        throw error;
+      }
 
-    courseDescription.data.prerequisites = prerequisites;
-    courseDescription.data.assessmentInstruments.assignments = assignments;
-    courseDescription.data.assessmentInstruments.quizzes = quizzes;
-    courseDescription.data.assessmentInstruments.mid = mid;
-    courseDescription.data.assessmentInstruments.final = final;
-    courseDescription.data.courseCoordinator = courseCoordinator;
-    courseDescription.data.url = url;
-    courseDescription.data.currentCatalogue = currentCatalogue;
-    courseDescription.data.textBook = textBook;
-    courseDescription.data.referenceMaterial.push(referenceMaterial);
-    courseDescription.data.courseGoals = courseGoals;
-    courseDescription.data.topicsCovered = topicsCovered;
-    courseDescription.data.labProjects = labProjects;
-    courseDescription.data.progAssignments = progAssignments;
-    courseDescription.data.classTimeSpent.theory = theory;
-    courseDescription.data.classTimeSpent.problemAnalysis = problemAnalysis;
-    courseDescription.data.classTimeSpent.solutionDesign = solutionDesign;
-    courseDescription.data.classTimeSpent.socialAndEthicalIssues = socialAndEthicalIssues;
-    courseDescription.data.oralAndWritten = oralAndWritten;
+      const courseDescription = await CourseDescription.findById(descriptionId);
 
-    const courseDescriptionDoc = await courseDescription.save();
+      if (!courseDescription) {
+        const error = new Error('Error in fetching courseDescription!');
+        error.code = 404;
+        throw error;
+      }
 
-    res.send({ CourseDescription: courseDescriptionDoc });
-  } catch (err) {
-    if (!err.status) {
-      err.status = 500;
+      if (courseDescription.teacherId.toString() !== teacherId.toString()) {
+        const error = new Error(
+          'Error in validating teacher Id in courseDescription!'
+        );
+        error.code = 404;
+        throw error;
+      }
+
+      courseDescription.data.prerequisites = prerequisites;
+      courseDescription.data.assessment.assignments = assignments;
+      courseDescription.data.assessment.quizzes = quizzes;
+      courseDescription.data.assessment.mid = mid;
+      courseDescription.data.assessment.final = final;
+      courseDescription.data.coordinator = coordinator;
+      courseDescription.data.url = url;
+      courseDescription.data.catalog = catalog;
+      courseDescription.data.textbook = textbook;
+      courseDescription.data.reference = reference;
+      courseDescription.data.goals = goals;
+      courseDescription.status = 'pending';
+
+      const courseDescriptionDoc = await courseDescription.save();
+
+      res.status(201).json({
+        message: 'Course description phase 1 saved!',
+        courseDescription: courseDescriptionDoc
+      });
+    } catch (err) {
+      if (!err.status) {
+        err.status = 500;
+      }
+      next(err);
     }
-    next(err);
+  } else {
+    const topicsCovered = req.body.topicsCovered;
+    const laboratory = req.body.laboratory;
+    const programming = req.body.programming;
+    const theory = req.body.theory;
+    const problemAnalysis = req.body.problem;
+    const solutionDesign = req.body.solution;
+    const socialAndEthicalIssues = req.body.social;
+    const oralWritten = req.body.oralWritten;
+    const errors = [];
+    try {
+      if (
+        validator.isEmpty(topicsCovered) ||
+        validator.isEmpty(laboratory) ||
+        validator.isEmpty(programming) ||
+        validator.isEmpty(String(theory)) ||
+        validator.isEmpty(String(problemAnalysis)) ||
+        validator.isEmpty(String(solutionDesign)) ||
+        validator.isEmpty(String(socialAndEthicalIssues)) ||
+        validator.isEmpty(oralWritten)
+      ) {
+        errors.push('Invalid fields!');
+      }
+
+      if (errors.length > 0) {
+        var error = new Error(errors);
+        error.status = 400;
+        throw error;
+      }
+
+      const courseDescription = await CourseDescription.findById(descriptionId);
+
+      if (!courseDescription) {
+        const error = new Error('Error in fetching courseDescription!');
+        error.code = 404;
+        throw error;
+      }
+
+      if (courseDescription.teacherId.toString() !== teacherId.toString()) {
+        const error = new Error(
+          'Error in validating teacher Id in courseDescription!'
+        );
+        error.code = 404;
+        throw error;
+      }
+
+      courseDescription.data.topicsCovered = topicsCovered;
+      courseDescription.data.laboratory = laboratory;
+      courseDescription.data.programming = programming;
+      courseDescription.data.classTime.theory = theory;
+      courseDescription.data.classTime.problemAnalysis = problemAnalysis;
+      courseDescription.data.classTime.solutionDesign = solutionDesign;
+      courseDescription.data.classTime.socialAndEthicalIssues = socialAndEthicalIssues;
+      courseDescription.data.oralWritten = oralWritten;
+      courseDescription.status = 'complete';
+
+      const courseDescriptionDoc = await courseDescription.save();
+
+      res.status(201).json({
+        message: 'Course description phase 2 saved!',
+        courseDescription: courseDescriptionDoc
+      });
+    } catch (err) {
+      if (!err.status) {
+        err.status = 500;
+      }
+      next(err);
+    }
   }
 };
 
@@ -865,7 +1026,7 @@ exports.getAssignments = async (req, res, next) => {
     if (!course) {
       const error = new Error('Error in fetching course!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     const assignments = await Assignment.findById(course.assignments);
@@ -873,7 +1034,7 @@ exports.getAssignments = async (req, res, next) => {
     if (!assignments) {
       const error = new Error('Error in fetching course assignments!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     res.status(200).json({
@@ -948,7 +1109,7 @@ exports.addAssignment = async (req, res, next) => {
     if (assignment.teacherId.toString() !== teacherId.toString()) {
       const error = new Error('Teacher ID error in assignment doc!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     assignment.assignments.push({
@@ -988,7 +1149,7 @@ exports.getQuizzes = async (req, res, next) => {
     if (!course) {
       const error = new Error('Error in fetching course!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     const quizzes = await Quiz.findById(course.quizzes);
@@ -996,7 +1157,7 @@ exports.getQuizzes = async (req, res, next) => {
     if (!quizzes) {
       const error = new Error('Error in fetching course quizzes!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     res.status(200).json({
@@ -1071,7 +1232,7 @@ exports.addQuiz = async (req, res, next) => {
     if (quiz.teacherId.toString() !== teacherId.toString()) {
       const error = new Error('Teacher ID error in quiz doc!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     quiz.quizzes.push({
@@ -1109,7 +1270,7 @@ exports.getPapers = async (req, res, next) => {
     if (!course) {
       const error = new Error('Error in fetching course!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     const papers = await Paper.findById(course.papers);
@@ -1117,7 +1278,7 @@ exports.getPapers = async (req, res, next) => {
     if (!papers) {
       const error = new Error('Error in fetching course papers!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     res.status(200).json({
@@ -1192,7 +1353,7 @@ exports.addPaper = async (req, res, next) => {
     if (paper.teacherId.toString() !== teacherId.toString()) {
       const error = new Error('Teacher ID error in paper doc!');
       error.code = 404;
-      throw error();
+      throw error;
     }
 
     paper.papers.push({

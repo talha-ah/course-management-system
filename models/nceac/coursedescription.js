@@ -11,30 +11,31 @@ const courseDescription = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Teacher'
   },
+  status: { type: String, default: 'new', required: true },
   data: {
-    prerequisites: { type: String },
-    assessmentInstruments: {
-      assignments: { type: String },
-      quizzes: { type: String },
-      mid: { type: String },
-      final: { type: String }
+    prerequisites: { type: String, default: '' },
+    assessment: {
+      assignments: { type: String, default: '' },
+      quizzes: { type: String, default: '' },
+      mid: { type: String, default: '' },
+      final: { type: String, default: '' }
     },
-    courseCoordinator: { type: String },
-    url: { type: String },
-    currentCatalogue: { type: String },
-    textBook: { type: String },
-    referenceMaterial: [{ type: String }],
-    courseGoals: { type: String },
-    topicsCovered: { type: String },
-    labProjects: { type: String },
-    progAssignments: { type: String },
-    classTimeSpent: {
-      theory: { type: String },
-      problemAnalysis: { type: String },
-      solutionDesign: { type: String },
-      socialAndEthicalIssues: { type: String }
+    coordinator: { type: String, default: '' },
+    url: { type: String, default: '' },
+    catalog: { type: String, default: '' },
+    textbook: { type: String, default: '' },
+    reference: { type: String, default: '' },
+    goals: { type: String, default: '' },
+    topicsCovered: { type: String, default: '' },
+    laboratory: { type: String, default: '' },
+    programming: { type: String, default: '' },
+    classTime: {
+      theory: { type: String, default: '' },
+      problemAnalysis: { type: String, default: '' },
+      solutionDesign: { type: String, default: '' },
+      socialAndEthicalIssues: { type: String, default: '' }
     },
-    oralAndWritten: { type: String }
+    oralWritten: { type: String, default: '' }
   }
 });
 

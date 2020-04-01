@@ -12,11 +12,11 @@ const courseMonitoring = new Schema({
     ref: 'Teacher'
   },
   data: {
-    howFar: { type: String },
-    fullCover: { type: String },
-    relevantProblems: { type: String },
-    assessStandard: { type: String },
-    emergeApplication: { type: String }
+    howFar: { type: String, default: '' },
+    fullCover: { type: String, default: '' },
+    relevantProblems: { type: String, default: '' },
+    assessStandard: { type: String, default: '' },
+    emergeApplication: { type: String, default: '' }
   }
 });
 
