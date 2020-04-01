@@ -68,6 +68,8 @@
   background-color: #fff;
   width: 600px;
   color: #3b3e66;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 0.375rem;
 }
 
 .ModalBody {

@@ -315,7 +315,7 @@ class CoursesLog extends Component {
                     +
                   </TableButton>
                   <TableButton
-                    color='#f83245'
+                    color='#ff9494'
                     title='Cancel'
                     className={classes.Button}
                     onClick={this.addRowCancelHandler}

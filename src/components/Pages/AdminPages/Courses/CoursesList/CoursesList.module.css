@@ -67,6 +67,8 @@
 .Modal {
   background-color: #fff;
   width: 600px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 0.375rem;
 }
 
 .ModalBody {

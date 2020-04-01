@@ -5,6 +5,7 @@ import classes from './TextArea.module.css';
 const TextArea = props => {
   return (
     <textarea
+      style={props.style}
       className={classes.TextArea}
       name={props.name}
       placeholder={props.placeholder}

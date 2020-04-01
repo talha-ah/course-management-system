@@ -25,12 +25,12 @@ class Notify extends Component {
 
     switch (this.props.type) {
       case 'Success':
-        styles.color = 'green';
-        styles.borderColor = 'green';
+        styles.color = '#4F8A10';
+        styles.borderColor = '#4F8A10';
         break;
       case 'Error':
-        styles.color = 'red';
-        styles.borderColor = 'red';
+        styles.color = '#FF9494';
+        styles.borderColor = '#FF9494';
         break;
       default:
     }

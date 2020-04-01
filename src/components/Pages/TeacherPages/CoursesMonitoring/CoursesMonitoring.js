@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import classes from './CoursesMonitoring.module.css';
 import Spinner from '../../../UI/Spinner/Spinner';
 import Button from '../../../UI/Button/Button';
-// import TextArea from '../../../UI/TextArea/TextArea';
+import TextArea from '../../../UI/TextArea/TextArea';
 import Modal from '../../../UI/Modal/Modal';
 import SelectInput from '../../../UI/SelectInput/SelectInput';
 
@@ -17,12 +17,12 @@ class CoursesMonitoring extends Component {
     modalCourseTitle: '',
     courses: '',
     coursesArray: [],
-    courseMonitoring: '',
-    r1: '',
-    r2: '',
-    r3: '',
-    r4: '',
-    r5: ''
+    courseMonitoringId: '',
+    howFar: '',
+    fullCover: '',
+    relevantProblems: '',
+    assessStandard: '',
+    emergeApplication: ''
   };
 
   componentDidMount() {
@@ -119,16 +119,20 @@ class CoursesMonitoring extends Component {
           return res.json();
         })
         .then(resData => {
-          console.log(resData);
-          // this.setState({
-          //   pageLoading: false,
-          //   selectCourseModal: false,
-          //   modalCourseId: courseId,
-          //   modalCourseTitle: courseTitle,
-          //   courseMonitoring: resData.courseMonitoring,
-          //   isLoading: false
-          // });
-          // this.props.notify(true, 'Success', resData.message);
+          this.setState({
+            pageLoading: false,
+            selectCourseModal: false,
+            modalCourseId: courseId,
+            modalCourseTitle: courseTitle,
+            courseMonitoringId: resData.courseMonitoring._id,
+            howFar: resData.courseMonitoring.data.howFar,
+            fullCover: resData.courseMonitoring.data.fullCover,
+            relevantProblems: resData.courseMonitoring.data.relevantProblems,
+            assessStandard: resData.courseMonitoring.data.assessStandard,
+            emergeApplication: resData.courseMonitoring.data.emergeApplication,
+            isLoading: false
+          });
+          this.props.notify(true, 'Success', resData.message);
         })
         .catch(err => {
           try {
@@ -158,14 +162,66 @@ class CoursesMonitoring extends Component {
     this.setState({ [name]: value });
   };
 
-  submitHandler = () => {
-    const r1 = this.state.r1;
-    const r2 = this.state.r2;
-    const r3 = this.state.r3;
-    const r4 = this.state.r4;
-    const r5 = this.state.r5;
-    console.log('1', r1, '2', r2, '3', r3, '4', r4, '5', r5);
-    console.log('Form Submitted');
+  submitHandler = e => {
+    e.preventDefault();
+    const howFar = this.state.howFar;
+    const fullCover = this.state.fullCover;
+    const relevantProblems = this.state.relevantProblems;
+    const assessStandard = this.state.assessStandard;
+    const emergeApplication = this.state.emergeApplication;
+    const monitorId = this.state.courseMonitoringId;
+    if (
+      howFar !== '' &&
+      fullCover !== '' &&
+      relevantProblems !== '' &&
+      assessStandard !== '' &&
+      emergeApplication !== ''
+    ) {
+      fetch(
+        `${process.env.REACT_APP_SERVER_URL}/teacher/addmonitoring/${monitorId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.props.token
+          },
+          body: JSON.stringify({
+            howFar: howFar,
+            fullCover: fullCover,
+            relevantProblems: relevantProblems,
+            assessStandard: assessStandard,
+            emergeApplication: emergeApplication
+          })
+        }
+      )
+        .then(res => {
+          if (!res.ok) throw res;
+          return res.json();
+        })
+        .then(resData => {
+          this.props.history.push('/');
+          this.props.notify(true, 'Success', resData.message);
+        })
+        .catch(err => {
+          try {
+            err.json().then(body => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
+            this.props.notify(
+              true,
+              'Error',
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+            );
+          }
+        });
+    } else {
+      this.props.notify(true, 'Error', 'Fields should not be empty!');
+    }
   };
 
   render() {
@@ -173,42 +229,70 @@ class CoursesMonitoring extends Component {
       <Spinner />
     ) : (
       <div className={classes.CoursesMonitoring}>
-        <table className={classes.CoursesMonitoringTable}>
-          <caption>
-            Subject: <strong>{this.state.modalCourseTitle}</strong>
-          </caption>
-          <thead>
-            <tr>
-              <th>Criteria/Attribute</th>
-              <th>Existing Process</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>How Far</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Full Cover</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Relevant Problems</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Assess Standards</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Emerge Application</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-        <div className={classes.buttonDiv}>
-          <Button onClick={this.submitHandler}>Submit Form</Button>
+        <div className={classes.Caption}>
+          Course Monitoring: {this.state.courseTitle}
         </div>
+        <form method='POST' onSubmit={this.submitHandler}>
+          <div className={classes.InputGroup}>
+            <label className={classes.Label}>
+              How far objectives have been achieved?
+            </label>
+            <TextArea
+              rows='6'
+              onChange={this.onChange}
+              name='howFar'
+              value={this.state.howFar}
+              style={{ minHeight: '132px', maxHeight: '200px' }}
+            />
+          </div>
+          <div className={classes.InputGroup}>
+            <label className={classes.Label}>Full Coverage of contents.</label>
+            <TextArea
+              rows='6'
+              onChange={this.onChange}
+              name='fullCover'
+              value={this.state.fullCover}
+              style={{ minHeight: '132px', maxHeight: '200px' }}
+            />
+          </div>
+          <div className={classes.InputGroup}>
+            <label className={classes.Label}>
+              Relevant Problem Skills Development
+            </label>
+            <TextArea
+              rows='6'
+              onChange={this.onChange}
+              name='relevantProblems'
+              value={this.state.relevantProblems}
+              style={{ minHeight: '132px', maxHeight: '200px' }}
+            />
+          </div>
+          <div className={classes.InputGroup}>
+            <label className={classes.Label}>Assessment Standards</label>
+            <TextArea
+              rows='6'
+              onChange={this.onChange}
+              name='assessStandard'
+              value={this.state.assessStandard}
+              style={{ minHeight: '132px', maxHeight: '200px' }}
+            />
+          </div>
+          <div className={classes.InputGroup}>
+            <label className={classes.Label}>
+              Application of emerging technologies
+            </label>
+            <TextArea
+              rows='6'
+              onChange={this.onChange}
+              name='emergeApplication'
+              value={this.state.emergeApplication}
+              style={{ minHeight: '132px', maxHeight: '200px' }}
+            />
+          </div>
+          <div className={classes.buttonDiv}>
+            <Button type='submit'>Submit Form</Button>
+          </div>
+        </form>
       </div>
     );
     return (

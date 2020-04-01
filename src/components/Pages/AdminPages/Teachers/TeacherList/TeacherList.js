@@ -86,7 +86,7 @@ class TeacherList extends Component {
                   <td>{teacher.status}</td>
                   <td>
                     <TableButton title='Add Materials'>+</TableButton>
-                    <TableButton title='Disable teacher' color='#f83245'>
+                    <TableButton title='Disable teacher' color='#ff9494'>
                       x
                     </TableButton>
                   </td>

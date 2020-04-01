@@ -192,7 +192,7 @@ class CoursesList extends Component {
               <TableButton
                 title='Disable Course'
                 disabled={course.status === 'Active' ? '' : 'disabled'}
-                color='#f83245'
+                color='#ff9494'
                 onClick={() =>
                   this.disableModalHandler(course._id, course.title)
                 }

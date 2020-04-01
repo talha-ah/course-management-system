@@ -62,9 +62,9 @@ class SignIn extends Component {
             </div>
           </form>
         </div>
-        <div className={classes.RightLogin}>
+        {/* <div className={classes.RightLogin}>
           <h1>Course Management System</h1>
-        </div>
+        </div> */}
       </div>
     );
   }

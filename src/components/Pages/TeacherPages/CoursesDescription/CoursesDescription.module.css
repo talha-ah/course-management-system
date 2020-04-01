@@ -1,80 +1,136 @@
 .CoursesDescription {
   position: relative;
-  text-align: center;
-}
-
-.CoursesDescriptionHeader {
-  max-width: 100%;
-  font-size: 1rem;
-  padding: 1rem 1.5rem;
-  position: relative;
-  text-align: center;
-}
-
-.CoursesDescriptionArea {
-  color: #525f7f;
+  color: #3b3e66;
   background-color: #fff;
   max-width: 100%;
-  margin: 1rem 3rem 3rem 3rem;
+  padding: 20px;
+  margin: 0.2rem 3rem 3rem 3rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 0.375rem;
+  box-shadow: 0 0.313rem 0.8rem rgba(122, 123, 151, 0.5),
+    0 0.126rem 0.225rem rgba(122, 123, 151, 0.3);
+}
+
+/* Form Starts */
+
+.CoursesDescription .Caption {
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.33;
+  text-transform: uppercase;
+  margin: 10px 0 15px 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.CoursesDescription label {
+  font-weight: bold;
+}
+
+.CoursesDescription textarea {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.CoursesDescription textarea:disabled {
+  cursor: not-allowed;
+}
+
+.CoursesDescription .InnerInputGroup {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  max-height: 103px;
+  border: 1px solid rgb(169, 169, 169);
+  border-radius: 0.375rem;
+}
+.CoursesDescription .InnerInputGroup table {
+  width: 100%;
+  padding: 0 10px;
+}
+.CoursesDescription .InnerInputGroup table input {
+  width: 15%;
+  outline: none;
+  margin-bottom: 0;
+  border: 0;
+  border-bottom: 1px solid rgb(169, 169, 169);
+}
+.CoursesDescription .InnerInputGroup table input:disabled {
+  cursor: not-allowed;
+}
+/* Chrome, Safari, Edge, Opera */
+.CoursesDescription .InnerInputGroup table input::-webkit-outer-spin-button,
+.CoursesDescription .InnerInputGroup table input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.CoursesDescription .InnerInputGroup table input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* Form Ends */
+
+.TabsButtons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.TabsButtons .Button {
+  display: inline-block;
+  box-sizing: border-box;
+  color: #3b3e66;
+  padding: 0.53rem 2rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.buttonDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+.buttonDiv button:first-child {
+  margin-right: 20px;
+}
+
+.Modal {
+  background-color: #fff;
+  width: 600px;
+  color: #3b3e66;
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 0.375rem;
 }
 
-/* Table Starts */
+.ModalBody {
+  padding: 50px 40px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 
-.CoursesDescriptionArea table {
-  table-layout: fixed;
+.ModalContent {
   width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
 }
 
-.CoursesDescriptionArea caption {
-  text-align: start;
-  padding: 20px;
-}
-
-.CoursesDescriptionArea table thead {
-  border-top: 2px solid rgba(7, 9, 25, 0.125);
-  border-bottom: 2px solid rgba(7, 9, 25, 0.125);
-  background-color: #f4f5fd;
-}
-
-.CoursesDescriptionArea table tbody tr {
-  border-bottom: 1px solid rgba(7, 9, 25, 0.125);
-}
-
-.CoursesDescriptionArea table tbody .CoursesDescriptionTableRow:hover {
-  background-color: #f4f5fd;
-}
-
-.CoursesDescriptionArea table tbody tr td {
-  padding: 0;
-}
-
-.CoursesDescriptionArea table tbody tr td:nth-child(3) {
-  text-align: left;
-}
-
-.CoursesDescriptionArea table tbody tr td p {
-  margin: 0;
-}
-
-.CoursesDescriptionArea table tbody button:nth-child(1) {
-  margin-right: 15px;
-}
-
-.CoursesDescriptionArea th,
-.CoursesDescriptionArea td {
-  padding: 20px;
-}
-
-.CoursesDescriptionArea table tfoot {
-  border-bottom: 2px solid rgba(7, 9, 25, 0.125);
-}
-
-/* Table Ends */
-
-.buttonDiv {
+.ModalContentTitle {
+  text-align: center;
   margin-bottom: 25px;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.33;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
 }

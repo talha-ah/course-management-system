@@ -171,7 +171,7 @@ const MainContent = props => {
             <Route
               exact
               path='/coursesdescription'
-              render={(match, history, location) => (
+              render={({ match, history, location }) => (
                 <CoursesDescription
                   match={match}
                   location={location}

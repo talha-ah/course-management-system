@@ -10,8 +10,8 @@ const TableInput = props => {
       placeholder={props.placeholder}
       onChange={props.onChange}
       value={props.value}
-      // min={props.min}
-      // max={props.max}
+      min={props.min}
+      max={props.max}
       className={[classes.Input, classes.without_ampm].join(' ')}
     />
   );

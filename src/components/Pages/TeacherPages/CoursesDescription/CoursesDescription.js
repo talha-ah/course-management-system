@@ -1,46 +1,218 @@
 import React, { Component } from 'react';
 
 import classes from './CoursesDescription.module.css';
+import Spinner from '../../../UI/Spinner/Spinner';
 import Button from '../../../UI/Button/Button';
 import TextArea from '../../../UI/TextArea/TextArea';
+import Modal from '../../../UI/Modal/Modal';
+import SelectInput from '../../../UI/SelectInput/SelectInput';
 
 class CoursesDescription extends Component {
   state = {
-    r1: '',
-    r2: '',
-    r3: '',
-    r4: '',
-    r5: '',
-    r6: '',
-    r7: '',
-    r8: '',
-    r9: '',
-    r10: '',
-    r11: '',
-    r12: '',
-    r13: '',
-    r14: '',
-    r15: '',
-    r16: '',
+    pageLoading: true,
+    modalLoading: true,
+    selectCourseModal: true,
+    isLoading: false,
+    modalCourseId: '',
+    modalCourseTitle: '',
+    courses: '',
+    coursesArray: [],
+    courseDescriptionId: '',
+    status: 'new',
+    phase: false,
+    prerequisites: '',
+    assignments: '',
+    quizzes: '',
+    midTerm: '',
+    finalTerm: '',
+    coordinator: '',
+    url: '',
+    catalog: '',
+    textbook: '',
+    reference: '',
+    goals: '',
+    topicsCovered: '',
+    laboratory: '',
+    programming: '',
+    theory: '',
+    problem: '',
+    solution: '',
+    social: '',
+    oralWritten: '',
     data: {
-      0: {
-        1: 'Course Code',
-        2: 'Course Title',
-        3: 'Credit Hourse',
-        4: 'Prerequisites by Course(s) and Topics',
-        5: 'Assessment Instruments with Weight (homework, quizzes, midterms, final, programming assignments, lab work, etc',
-        6: 'Course Coordinator',
-        7: 'URL (if any)',
-        8: 'Current Catalog',
-        9: ' Textbook (or Laboratory Manual for Laboratory Courses)',
-        10: 'Reference Material',
-        11: 'Course Goals',
-        12: 'Topic Covered in the Course, with Number of Lectures on Each Topic (assume 15-week instruction and one-hour lectures)',
-        13: 'Laboratory Projects/Experiments Done in the Course',
-        14: 'Programming Assignments Done in the Course',
-        15: 'Class Time Spent on (in credit hourse)',
-        16: 'Oral and Written Communications'
+      phase1: {
+        prerequisites: 'Prerequisites by Course(s) and Topics',
+        assessment:
+          'Assessment Instruments with Weight (homework, quizzes, midterms, final, programming assignments, lab work, etc in %)',
+        coordinator: 'Course Coordinator',
+        url: 'URL (if any)',
+        catalog: 'Current Catalog',
+        textbook: 'Textbook (or Laboratory Manual for Laboratory Courses)',
+        reference: 'Reference Material',
+        goals: 'Course Goals'
+      },
+      phase2: {
+        topicsCovered:
+          'Topic Covered in the Course, with Number of Lectures on Each Topic (assume 15-week instruction and one-hour lectures)',
+        laboratory: 'Laboratory Projects/Experiments Done in the Course',
+        programming: 'Programming Assignments Done in the Course',
+        classTime: 'Class Time Spent on (in credit hourse)',
+        oralWritten: 'Oral and Written Communications'
       }
+    }
+  };
+
+  componentDidMount() {
+    console.log(this.props);
+    fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.props.token
+      }
+    })
+      .then(res => {
+        if (!res.ok) throw res;
+        return res.json();
+      })
+      .then(resData => {
+        const arrayCourses = [];
+        resData.courses.map(course => {
+          if (course.status === 'Active') {
+            return arrayCourses.push(course.title);
+          }
+          return true;
+        });
+        this.setState({
+          courses: resData.courses,
+          coursesArray: arrayCourses,
+          modalLoading: false
+        });
+      })
+      .catch(err => {
+        try {
+          err.json().then(body => {
+            this.props.notify(
+              true,
+              'Error',
+              body.error.status + ' ' + body.message
+            );
+          });
+        } catch (e) {
+          this.props.notify(
+            true,
+            'Error',
+            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+          );
+        }
+      });
+  }
+
+  selectCourseModal = () => {
+    this.setState(prevState => ({
+      selectCourseModal: !prevState.selectCourseModal
+    }));
+  };
+
+  onModalCancel = () => {
+    if (this.state.modalCourseId !== '') {
+      this.selectCourseModal();
+    } else {
+      this.props.history.push('/');
+    }
+  };
+
+  changeCourse = () => {
+    this.setState({
+      selectCourseModal: true
+    });
+  };
+
+  onChangeCourse = e => {
+    const title = e.target.value;
+    this.setState({
+      modalCourseTitle: title
+    });
+  };
+
+  onSelectCourse = () => {
+    this.setState({ isLoading: true });
+    const courseTitle = this.state.modalCourseTitle;
+
+    var courseId;
+
+    this.state.courses.some(course => {
+      if (course.title === courseTitle) {
+        courseId = course._id;
+        return true;
+      }
+      return false;
+    });
+
+    if (courseTitle !== '' && courseTitle !== 'Course List') {
+      fetch(
+        `${process.env.REACT_APP_SERVER_URL}/teacher/getdescription/${courseId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.props.token
+          }
+        }
+      )
+        .then(res => {
+          if (!res.ok) throw res;
+          return res.json();
+        })
+        .then(resData => {
+          this.setState({
+            pageLoading: false,
+            selectCourseModal: false,
+            modalCourseId: courseId,
+            modalCourseTitle: courseTitle,
+            courseDescriptionId: resData.courseDescription._id,
+            status: resData.courseDescription.status,
+            prerequisites: resData.courseDescription.data.prerequisites,
+            assignments: resData.courseDescription.data.assessment.assignments,
+            quizzes: resData.courseDescription.data.assessment.quizzes,
+            midTerm: resData.courseDescription.data.assessment.mid,
+            finalTerm: resData.courseDescription.data.assessment.final,
+            coordinator: resData.courseDescription.data.coordinator,
+            url: resData.courseDescription.data.url,
+            catalog: resData.courseDescription.data.catalog,
+            textbook: resData.courseDescription.data.textbook,
+            reference: resData.courseDescription.data.reference,
+            goals: resData.courseDescription.data.goals,
+            topicsCovered: resData.courseDescription.data.topicsCovered,
+            laboratory: resData.courseDescription.data.laboratory,
+            programming: resData.courseDescription.data.programming,
+            theory: resData.courseDescription.data.classTime.theory,
+            problem: resData.courseDescription.data.classTime.problemAnalysis,
+            solution: resData.courseDescription.data.classTime.solutionDesign,
+            social:
+              resData.courseDescription.data.classTime.socialAndEthicalIssues,
+            oralWritten: resData.courseDescription.data.oralWritten,
+            isLoading: false
+          });
+          this.props.notify(true, 'Success', resData.message);
+        })
+        .catch(err => {
+          try {
+            err.json().then(body => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
+            this.props.notify(
+              true,
+              'Error',
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+            );
+          }
+        });
+    } else {
+      this.props.notify(true, 'Error', 'Please select a course!');
     }
   };
 
@@ -50,90 +222,431 @@ class CoursesDescription extends Component {
     this.setState({ [name]: value });
   };
 
-  submitHandler = e => {
-    const r1 = e.target.value;
-    const r2 = e.target.value;
-    const r3 = e.target.value;
-    const r4 = e.target.value;
-    const r5 = e.target.value;
-    const r6 = e.target.value;
-    const r7 = e.target.value;
-    const r8 = e.target.value;
-    const r9 = e.target.value;
-    const r10 = e.target.value;
-    const r11 = e.target.value;
-    const r12 = e.target.value;
-    const r13 = e.target.value;
-    const r14 = e.target.value;
-    const r15 = e.target.value;
-    const r16 = e.target.value;
-    console.log(
-      r1,
-      r2,
-      r3,
-      r4,
-      r5,
-      r6,
-      r7,
-      r8,
-      r9,
-      r10,
-      r11,
-      r12,
-      r13,
-      r14,
-      r15,
-      r16
-    );
-    console.log('Form Submitted');
+  submitPhase1Handler = e => {
+    e.preventDefault();
+    if (this.state.status === 'new') {
+      const descriptionId = this.state.courseDescriptionId;
+      const prerequisites = this.state.prerequisites;
+      const assignments = this.state.assignments;
+      const quizzes = this.state.quizzes;
+      const midTerm = this.state.midTerm;
+      const finalTerm = this.state.finalTerm;
+      const coordinator = this.state.coordinator;
+      const url = this.state.url;
+      const catalog = this.state.catalog;
+      const textbook = this.state.textbook;
+      const reference = this.state.reference;
+      const goals = this.state.goals;
+
+      if (
+        prerequisites !== '' &&
+        assignments !== '' &&
+        quizzes !== '' &&
+        midTerm !== '' &&
+        finalTerm !== '' &&
+        coordinator !== '' &&
+        catalog !== '' &&
+        textbook !== '' &&
+        reference !== '' &&
+        goals !== ''
+      ) {
+        fetch(
+          `${process.env.REACT_APP_SERVER_URL}/teacher/adddescription/${descriptionId}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + this.props.token
+            },
+            body: JSON.stringify({
+              phase: 'phase1',
+              prerequisites: prerequisites,
+              assignments: assignments,
+              quizzes: quizzes,
+              midTerm: midTerm,
+              finalTerm: finalTerm,
+              coordinator: coordinator,
+              url: url,
+              catalog: catalog,
+              textbook: textbook,
+              reference: reference,
+              goals: goals
+            })
+          }
+        )
+          .then(res => {
+            if (!res.ok) throw res;
+            return res.json();
+          })
+          .then(resData => {
+            this.props.history.push('/');
+            this.props.notify(true, 'Success', resData.message);
+          })
+          .catch(err => {
+            try {
+              err.json().then(body => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
+              this.props.notify(
+                true,
+                'Error',
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+              );
+            }
+          });
+      } else {
+        this.props.notify(true, 'Error', 'Fields should not be empty!');
+      }
+    } else {
+      this.props.notify(true, 'Error', 'You cannot Edit this.');
+    }
+  };
+
+  submitPhase2Handler = e => {
+    e.preventDefault();
+    if (this.state.status === 'pending') {
+      const descriptionId = this.state.courseDescriptionId;
+      const topicsCovered = this.state.topicsCovered;
+      const laboratory = this.state.laboratory;
+      const programming = this.state.programming;
+      const theory = this.state.theory;
+      const problem = this.state.problem;
+      const solution = this.state.solution;
+      const social = this.state.social;
+      const oralWritten = this.state.oralWritten;
+      if (
+        topicsCovered !== '' &&
+        laboratory !== '' &&
+        programming !== '' &&
+        theory !== '' &&
+        problem !== '' &&
+        solution !== '' &&
+        social !== '' &&
+        oralWritten !== ''
+      ) {
+        fetch(
+          `${process.env.REACT_APP_SERVER_URL}/teacher/adddescription/${descriptionId}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + this.props.token
+            },
+            body: JSON.stringify({
+              phase: 'phase2',
+              topicsCovered: topicsCovered,
+              laboratory: laboratory,
+              programming: programming,
+              theory: theory,
+              problem: problem,
+              solution: solution,
+              social: social,
+              oralWritten: oralWritten
+            })
+          }
+        )
+          .then(res => {
+            if (!res.ok) throw res;
+            return res.json();
+          })
+          .then(resData => {
+            console.log(resData);
+            this.props.history.push('/');
+            this.props.notify(true, 'Success', resData.message);
+          })
+          .catch(err => {
+            try {
+              err.json().then(body => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
+              this.props.notify(
+                true,
+                'Error',
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+              );
+            }
+          });
+      } else {
+        this.props.notify(true, 'Error', 'Fields should not be empty!');
+      }
+    } else {
+      this.props.notify(true, 'Error', 'You cannot Edit this.');
+    }
   };
 
   render() {
-    return (
-      <div className={classes.CoursesDescription}>
-        <div className={classes.CoursesDescriptionHeader}>
-          <h3>Courses Description Process Form</h3>
-          <p>
-            <u>Institution: Government College University, Lahore</u>
-          </p>
-          <p>
-            <u>Program to be evaluated: Bachelor of Computer Science, BS(CS)</u>
-          </p>
+    var pageContent = !this.state.phase ? (
+      <form method='POST' onSubmit={this.submitPhase1Handler}>
+        {Object.entries(this.state.data.phase1).map(row => {
+          return (
+            <div className={classes.InputGroup} key={row[0]}>
+              <label className={classes.Label}>{row[1]}</label>
+              {row[0] === 'assessment' ? (
+                <div className={classes.InnerInputGroup}>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td>Assignments</td>
+                        <td>
+                          <input
+                            disabled={
+                              this.state.status === 'new' ? false : true
+                            }
+                            type='number'
+                            name='assignments'
+                            value={this.state.assignments}
+                            onChange={this.onChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Quizzes</td>
+                        <td>
+                          <input
+                            disabled={
+                              this.state.status === 'new' ? false : true
+                            }
+                            type='number'
+                            name='quizzes'
+                            value={this.state.quizzes}
+                            onChange={this.onChange}
+                            autoComplete='off'
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Mid-Term Exam</td>
+                        <td>
+                          <input
+                            disabled={
+                              this.state.status === 'new' ? false : true
+                            }
+                            type='number'
+                            name='midTerm'
+                            value={this.state.midTerm}
+                            onChange={this.onChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Final Exam</td>
+                        <td>
+                          <input
+                            disabled={
+                              this.state.status === 'new' ? false : true
+                            }
+                            type='number'
+                            name='finalTerm'
+                            value={this.state.finalTerm}
+                            onChange={this.onChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <TextArea
+                  disabled={this.state.status === 'new' ? false : true}
+                  rows='2'
+                  onChange={this.onChange}
+                  name={row[0]}
+                  value={this.state[row[0]]}
+                  style={{ minHeight: '52px', maxHeight: '200px' }}
+                />
+              )}
+            </div>
+          );
+        })}
+        <div className={classes.buttonDiv}>
+          <Button type='button' buttonType='red' onPress={this.changeCourse}>
+            Change Course
+          </Button>
+          <Button type='submit'>
+            {this.state.isLoading ? 'Submitting' : 'Submit Form'}
+          </Button>
         </div>
-        <div className={classes.CoursesDescriptionArea}>
-          <table className={classes.CoursesDescriptionTable}>
-            <caption>
-              Subject: <strong>Compiler Construction</strong>
-            </caption>
-            <thead>
-              <tr>
-                <th></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(this.state.data[0]).map(row => {
-                return (
-                  <tr key={row[0]}>
-                    <td>{row[1]}</td>
-                    <td>
-                      <TextArea
-                        placeholder={row[1]}
-                        name={row[0]}
-                        rows='8'
-                        onChange={this.onChange}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          <div className={classes.buttonDiv}>
-            <Button onClick={this.submitHandler}>Submit Form</Button>
+      </form>
+    ) : (
+      <form method='POST' onSubmit={this.submitPhase2Handler}>
+        {Object.entries(this.state.data.phase2).map(row => {
+          return (
+            <div className={classes.InputGroup} key={row[0]}>
+              <label className={classes.Label}>{row[1]}</label>
+              {row[0] === 'classTime' ? (
+                <div className={classes.InnerInputGroup}>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td>Theory</td>
+                        <td>
+                          <input
+                            disabled={
+                              this.state.status === 'pending' ? false : true
+                            }
+                            type='number'
+                            name='theory'
+                            value={this.state.theory}
+                            onChange={this.onChange}
+                            autoComplete='off'
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Problem Analysis</td>
+                        <td>
+                          <input
+                            disabled={
+                              this.state.status === 'pending' ? false : true
+                            }
+                            type='number'
+                            name='problem'
+                            value={this.state.problem}
+                            onChange={this.onChange}
+                            autoComplete='off'
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Solution Design</td>
+                        <td>
+                          <input
+                            disabled={
+                              this.state.status === 'pending' ? false : true
+                            }
+                            type='number'
+                            name='solution'
+                            value={this.state.solution}
+                            onChange={this.onChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Social and Ethical issues</td>
+                        <td>
+                          <input
+                            disabled={
+                              this.state.status === 'pending' ? false : true
+                            }
+                            type='number'
+                            name='social'
+                            value={this.state.social}
+                            onChange={this.onChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <TextArea
+                  disabled={this.state.status === 'pending' ? false : true}
+                  rows='2'
+                  onChange={this.onChange}
+                  name={row[0]}
+                  value={this.state[row[0]]}
+                  style={{ minHeight: '52px', maxHeight: '200px' }}
+                />
+              )}
+            </div>
+          );
+        })}
+        <div className={classes.buttonDiv}>
+          <Button type='button' buttonType='red' onPress={this.changeCourse}>
+            Change Course
+          </Button>
+          <Button type='submit'>
+            {this.state.isLoading ? 'Submitting' : 'Submit Form'}
+          </Button>
+        </div>
+      </form>
+    );
+
+    var page = this.state.pageLoading ? (
+      <Spinner />
+    ) : (
+      <div className={classes.CoursesDescription}>
+        <div className={classes.Caption}>
+          Course Description: {this.state.modalCourseTitle}
+        </div>
+        <div className={classes.TabsButtons}>
+          <div
+            className={classes.Button}
+            onClick={() => this.setState({ phase: false })}
+            style={{
+              borderBottom: this.state.phase ? 'none' : '1px solid #3b3e66'
+            }}
+          >
+            Phase 1
+          </div>
+          <div
+            className={classes.Button}
+            onClick={() => this.setState({ phase: true })}
+            style={{
+              borderBottom: this.state.phase ? '1px solid #3b3e66' : 'none'
+            }}
+          >
+            Phase 2
           </div>
         </div>
+        {pageContent}
       </div>
+    );
+
+    return (
+      <>
+        {page}
+        {/* ======================================= Modal Starts =================================*/}
+        <Modal visible={this.state.selectCourseModal}>
+          <div className={classes.Modal}>
+            {this.state.modalLoading ? (
+              <Spinner />
+            ) : (
+              <div className={classes.ModalBody}>
+                <div className={classes.ModalContent}>
+                  <div className={classes.ModalContentTitle}>
+                    Select Course!
+                  </div>
+                  <SelectInput
+                    name='courseTitle'
+                    placeholder='Course List'
+                    onChange={this.onChangeCourse}
+                    disabled=''
+                    defaultValue=''
+                  >
+                    {this.state.coursesArray}
+                  </SelectInput>
+                </div>
+                <div className={classes.buttonDiv}>
+                  <Button
+                    type='button'
+                    buttonType='red'
+                    onClick={this.onModalCancel}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type='button' onClick={this.onSelectCourse}>
+                    {this.state.isLoading ? 'Loading' : 'Select'}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </Modal>
+        {/* =======================================  Modal Ends  ====================================*/}
+      </>
     );
   }
 }

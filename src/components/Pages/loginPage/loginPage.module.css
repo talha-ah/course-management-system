@@ -1,13 +1,13 @@
-.Login {
+/* .Login {
   padding: 0;
   margin: 0;
   display: grid;
   grid-template-columns: 50% 50%;
   grid-template-areas: 'LeftAuth RightAuth';
-}
+} */
 
 .RightLogin {
-  grid-area: RightAuth;
+  /* grid-area: RightAuth; */
   color: #ffffff;
   background-color: #112239;
   height: 100vh;
@@ -18,8 +18,12 @@
 }
 
 .LeftLogin {
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  /* grid-area: LeftAuth; */
   background-color: #ffffff;
-  grid-area: LeftAuth;
   display: flex;
   flex-direction: column;
   align-items: center; /* vertically - Cross Axis */
