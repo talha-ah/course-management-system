@@ -10,25 +10,31 @@ import * as actionTypes from '../../store/actions';
 class Header extends Component {
   state = {
     profileDropDown: false,
-    notificationDropDown: false
+    notificationDropDown: false,
+    notifications: {
+      0: 1,
+      1: 2,
+      2: 3
+    }
   };
 
-  // localMthod() {
-  //   document.addEventListener('click', this.handleClick);
-  //   console.log('localMthod');
-  // }
+  componentDidMount() {
+    document.addEventListener('mousedown', this.handleClickOutside);
+  }
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside);
+  }
 
-  // componentWillUnmount() {
-  //   document.removeEventListener('click', this.handleClick, false);
-  //   console.log('componentWillUnmount');
-  // }
-
-  handleClick = e => {
-    if (!this.node.contains(e.target)) {
-      this.setState(prevState => ({
-        profileDropDown: false,
-        notificationDropDown: false
-      }));
+  handleClickOutside = event => {
+    if (this.state.profileDropDown) {
+      if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+        this.setState({ profileDropDown: false });
+      }
+    }
+    if (this.state.notificationDropDown) {
+      if (this.wrapperRef2 && !this.wrapperRef2.contains(event.target)) {
+        this.setState({ notificationDropDown: false });
+      }
     }
   };
 
@@ -52,7 +58,6 @@ class Header extends Component {
   };
 
   render() {
-    // this.localMthod();
     let InvisibleStyles = {
       width: '0px',
       height: '0px',
@@ -73,7 +78,6 @@ class Header extends Component {
               <li className={classes.headerNavItemSwitch}>Switch to Admin</li>
               <li className={classes.headerNavItem}>
                 <label className={classes.switch}>
-                  {/* <input type='checkbox' onChange={this.props.switchSidebar} /> */}
                   <input type='checkbox' onChange={this.switchSidebarHandler} />
                   <span
                     className={[classes.slider, classes.round].join(' ')}
@@ -84,7 +88,6 @@ class Header extends Component {
           ) : (
             ''
           )}
-
           <li
             className={[
               classes.headerNavItemFloat,
@@ -92,6 +95,7 @@ class Header extends Component {
             ].join(' ')}
             name='bell'
             onClick={event => this.dropDownHandler(event)}
+            ref={node => (this.wrapperRef2 = node)}
           >
             <FontAwesomeIcon icon={faBell} />
             <div
@@ -101,37 +105,19 @@ class Header extends Component {
                   ? visibleStyles
                   : InvisibleStyles
               }
-              ref={node => (this.node = node)}
             >
               <div className={classes.headerDropDownTitle}>
                 <h6>Notifications</h6>
               </div>
               <ul className={classes.headerDropDownUl}>
-                <li className={classes.headerDropDownItem}>
-                  <div>
-                    <FontAwesomeIcon icon={faDotCircle} />1
-                  </div>
-                </li>
-                <li className={classes.headerDropDownItem}>
-                  <div>
-                    <FontAwesomeIcon icon={faDotCircle} />2
-                  </div>
-                </li>
-                <li className={classes.headerDropDownItem}>
-                  <div>
-                    <FontAwesomeIcon icon={faDotCircle} />3
-                  </div>
-                </li>
-                <li className={classes.headerDropDownItem}>
-                  <div>
-                    <FontAwesomeIcon icon={faDotCircle} />4
-                  </div>
-                </li>
-                <li className={classes.headerDropDownItem}>
-                  <div>
-                    <FontAwesomeIcon icon={faDotCircle} />5
-                  </div>
-                </li>
+                {Object.entries(this.state.notifications).map(noti => (
+                  <li key={noti[0]} className={classes.headerDropDownItem}>
+                    <div>
+                      <FontAwesomeIcon icon={faDotCircle} />
+                      {noti[1]}
+                    </div>
+                  </li>
+                ))}
               </ul>
             </div>
           </li>
@@ -142,6 +128,7 @@ class Header extends Component {
             ].join(' ')}
             name='profile'
             onClick={event => this.dropDownHandler(event)}
+            ref={node => (this.wrapperRef = node)}
           >
             <FontAwesomeIcon icon={faUser} />
             <div
@@ -149,7 +136,6 @@ class Header extends Component {
               style={
                 this.state.profileDropDown ? visibleStyles : InvisibleStyles
               }
-              ref={node => (this.node = node)}
             >
               <div className={classes.headerDropDownTitle}>
                 <h6>Welcome!</h6>
