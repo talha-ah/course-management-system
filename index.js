@@ -51,7 +51,7 @@ const PORT = process.env.PORT || 8080;
 // Mongoose Connector
 mongoose
   .connect(
-    'mongodb+srv://betarid:xtHucKuf9wzRJ6An@node-5ioaz.mongodb.net/cms?retryWrites=true&w=majority',
+    `mongodb+srv://${process.env.MONGO_URI_USERNAME}:${process.env.MONGO_URI_PASSWORD}@node-5ioaz.mongodb.net/${process.env.MONGO_URI_DATABASE}?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }
   )
   .then(result => {

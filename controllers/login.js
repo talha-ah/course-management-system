@@ -31,7 +31,7 @@ exports.login = async (req, res, next) => {
     });
     const token = await jwt.sign(
       { userId: teacher._id, email: teacher.email, lol: isAdmin },
-      'isthissecretkeysecure',
+      process.env.JWT_SECRET_KEY,
       { expiresIn: '3600000' }
     );
     const tokenAppend = isAdmin ? 'yes' : 'no';

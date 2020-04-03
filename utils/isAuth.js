@@ -13,7 +13,7 @@ module.exports = async (req, res, next) => {
 
   let decodedToken;
   try {
-    decodedToken = jwt.verify(token, 'isthissecretkeysecure');
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
   } catch (error) {
     if (!error.status) {
       error.status = 500;
