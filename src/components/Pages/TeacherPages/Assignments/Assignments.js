@@ -10,8 +10,8 @@ import SelectInput from '../../../UI/SelectInput/SelectInput';
 class Assignments extends Component {
   state = {
     pageLoading: true,
-    modalLoading: false,
-    selectCourseModal: false,
+    modalLoading: true,
+    selectCourseModal: true,
     isLoading: false,
     addAssignmentLoading: false,
     addAssignmentModal: false,

@@ -24,8 +24,8 @@ class CoursesLog extends Component {
     addLogLoading: false,
     date: '',
     duration: '01:30',
-    topicsCovered: '',
-    evaluationInstruments: ''
+    topics: '',
+    instruments: ''
   };
 
   componentDidMount() {
@@ -181,53 +181,61 @@ class CoursesLog extends Component {
   };
 
   onLogAddHandler = () => {
-    this.setState({ addLogLoading: true });
-
-    fetch(
-      `${process.env.REACT_APP_SERVER_URL}/teacher/addcourselog/${this.state.courseLog._id}`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          date: this.state.date,
-          duration: this.state.duration,
-          topics: this.state.topicsCovered,
-          instruments: this.state.evaluationInstruments
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + this.props.token
+    const topics = this.state.topics;
+    const instruments = this.state.instruments;
+    if (topics !== '' && instruments !== '') {
+      this.setState({ addLogLoading: true });
+      fetch(
+        `${process.env.REACT_APP_SERVER_URL}/teacher/addcourselog/${this.state.courseLog._id}`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            date: this.state.date,
+            duration: this.state.duration,
+            topics: topics,
+            instruments: instruments
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.props.token
+          }
         }
-      }
-    )
-      .then(res => {
-        if (!res.ok) throw res;
-        return res.json();
-      })
-      .then(resData => {
-        this.setState({
-          addLogLoading: false,
-          addingRow: false
-        });
-        this.onSelectCourse();
-        this.props.notify(true, 'Success', resData.message);
-      })
-      .catch(err => {
-        try {
-          err.json().then(body => {
+      )
+        .then(res => {
+          if (!res.ok) throw res;
+          return res.json();
+        })
+        .then(resData => {
+          this.setState({
+            addLogLoading: false,
+            addingRow: false
+          });
+          this.onSelectCourse();
+          this.props.notify(true, 'Success', resData.message);
+        })
+        .catch(err => {
+          this.setState({
+            addLogLoading: false
+          });
+          try {
+            err.json().then(body => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
-        }
-      });
+          }
+        });
+    } else {
+      this.props.notify(true, 'Error', 'Field cannot be empty!');
+    }
   };
 
   render() {
@@ -256,7 +264,17 @@ class CoursesLog extends Component {
                     <td style={{ padding: '20px' }}>{row.date}</td>
                     <td style={{ padding: '20px' }}>{row.duration}</td>
                     <td>
-                      <TextArea defaultValue={row.topics} />
+                      <TextArea
+                        defaultValue={row.topics}
+                        disabled={true}
+                        rows='1'
+                        style={{
+                          height: '35px',
+                          minHeight: '35px',
+                          maxHeight: '85px',
+                          border: '0'
+                        }}
+                      />
                     </td>
                     <td style={{ padding: '20px' }}>{row.instruments}</td>
                     <td style={{ padding: '20px' }}>-</td>
@@ -272,7 +290,7 @@ class CoursesLog extends Component {
             )}
             {this.state.addingRow ? (
               <tr className={classes.AddRow}>
-                <td>
+                <td style={{ padding: '10px' }}>
                   <TableInput
                     type='date'
                     name='date'
@@ -291,18 +309,26 @@ class CoursesLog extends Component {
                 <td>
                   <TextArea
                     placeholder='Topics Covered'
-                    name='topicsCovered'
-                    rows='2'
+                    name='topics'
+                    rows='1'
                     onChange={this.onChange}
-                    value={this.state.topicsCovered}
+                    value={this.state.topics}
+                    style={{
+                      height: '35px',
+                      minHeight: '35px',
+                      maxHeight: '85px',
+                      border: '0',
+                      textAlign: 'center'
+                    }}
                   />
                 </td>
                 <td>
                   <TableInput
                     type='text'
                     placeholder='Evaluation Instruments'
-                    name='evaluationInstruments'
+                    name='instruments'
                     onChange={this.onChange}
+                    value={this.state.instruments}
                   />
                 </td>
                 <td>

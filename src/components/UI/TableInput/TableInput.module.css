@@ -1,28 +1,58 @@
-.Input[type='time'],
-.Input[type='date'],
-.Input[type='text'] {
-  display: inline-block;
+.input[type='color'],
+.input[type='date'],
+.input[type='datetime-local'],
+.input[type='datetime'],
+.input[type='email'],
+.input[type='month'],
+.input[type='number'],
+.input[type='password'],
+.input[type='search'],
+.input[type='tel'],
+.input[type='text'],
+.input[type='time'],
+.input[type='url'],
+.input[type='week'],
+.input[type='submit'],
+.input[type='checkbox'],
+.input[type='file'] {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.53rem 1rem;
   color: #3b3e66;
   background-color: #fff;
-  width: 100%;
-  font-size: 0.9rem;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.5;
   border: 0;
   text-align: center;
+  cursor: text;
+  /* margin-top: 20px; */
+  /* margin-bottom: 20px; */
 }
 
-.Input:focus,
-textarea:focus {
+.input:focus {
   outline: 0;
 }
 
-.without_ampm::-webkit-datetime-edit-ampm-field {
-  display: none;
+.input:disabled {
+  cursor: not-allowed;
 }
 
-.Input[type='time']::-webkit-clear-button,
-.Input[type='date']::-webkit-clear-button {
+.input[type='time']::-webkit-inner-spin-button,
+.input[type='time']::-webkit-clear-button,
+.input[type='time']::-webkit-datetime-edit-ampm-field,
+.input[type='date']::-webkit-inner-spin-button,
+.input[type='date']::-webkit-clear-button,
+.input[type='datatime']::-webkit-datetime-edit,
+.input[type='datatime']::-webkit-datetime-edit-fields-wrapper,
+.input[type='datatime']::-webkit-datetime-edit-text,
+.input[type='datatime']::-webkit-datetime-edit-month-field,
+.input[type='datatime']::-webkit-datetime-edit-day-field,
+.input[type='datatime']::-webkit-datetime-edit-year-field,
+.input[type='date']::-webkit-calendar-picker-indicator {
+  display: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   -o-appearance: none;
@@ -30,24 +60,19 @@ textarea:focus {
   appearance: none;
 }
 
-/* ::placeholder {
+/* 
+.input::placeholder {
   font-weight: bold;
   color: #dedfe5;
-  opacity: 1; /* Firefox */
-/* } */
+  opacity: 1;
+}
 
-/* :-ms-input-placeholder { */
-/* Internet Explorer 10-11 */
-/* color: #dedfe5;
+.input:-ms-input-placeholder {
+  color: #dedfe5;
+  font-weight: bold;
+}
+
+.input::-ms-input-placeholder {
+  color: #dedfe5;
   font-weight: bold;
 } */
-
-/* ::-ms-input-placeholder { */
-/* Microsoft Edge */
-/* color: #dedfe5; */
-/* font-weight: bold; */
-/* } */
-
-.Input::placeholder {
-  font-size: 1em;
-}
