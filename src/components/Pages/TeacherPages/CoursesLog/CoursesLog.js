@@ -269,13 +269,13 @@ class CoursesLog extends Component {
                 </td>
               </tr>
             ) : this.state.selectCourseId === '' ? (
-              <tr key={1} className={classes.CoursesLogTableRow}>
+              <tr key={1}>
                 <td style={{ padding: '20px' }} colSpan='5'>
                   Please select a course!
                 </td>
               </tr>
             ) : this.state.courseLog.log.length <= 0 ? (
-              <tr key={1} className={classes.CoursesLogTableRow}>
+              <tr key={1}>
                 <td style={{ padding: '20px' }} colSpan='5'>
                   You haven't added any courselog for this course yet!
                 </td>
@@ -283,7 +283,7 @@ class CoursesLog extends Component {
             ) : (
               this.state.courseLog.log.map((row) => {
                 return (
-                  <tr key={row._id} className={classes.CoursesLogTableRow}>
+                  <tr key={row._id}>
                     <td>{row.date}</td>
                     <td>{row.duration}</td>
                     <td>
@@ -306,7 +306,7 @@ class CoursesLog extends Component {
               })
             )}
             {this.state.addingRow ? (
-              <tr className={classes.CoursesLogTableRow}>
+              <tr>
                 <td>
                   <TableInput
                     type='date'
@@ -371,12 +371,8 @@ class CoursesLog extends Component {
             ) : null}
           </tbody>
         </table>
-        <div className={classes.buttonDiv}>
-          <Button
-            buttonType='red'
-            onClick={() => this.props.history.goBack()}
-            disabled={this.state.addingRow ? true : false}
-          >
+        <div className={classes.ButtonDiv}>
+          <Button buttonType='red' onClick={() => this.props.history.goBack()}>
             Go back
           </Button>
           <Button

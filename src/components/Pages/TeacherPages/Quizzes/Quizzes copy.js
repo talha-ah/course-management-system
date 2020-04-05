@@ -13,7 +13,6 @@ class Quizzes extends Component {
     // Loadings
     pageLoading: true,
     quizLoading: false,
-    addQuizzModal: false,
     isLoading: false,
     // Data
     selectCourseId: '',
@@ -30,70 +29,123 @@ class Quizzes extends Component {
   };
 
   componentDidMount() {
-    fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw res;
-        return res.json();
-      })
-      .then((resData) => {
-        const arrayCourses = [];
-        resData.courses.map((course) => {
-          if (course.status === 'Active') {
-            return arrayCourses.push(course.title);
-          }
-          return true;
-        });
-        this.setState({
-          courses: resData.courses,
-          coursesArray: arrayCourses,
-          pageLoading: false,
-        });
-      })
-      .catch((err) => {
-        try {
-          err.json().then((body) => {
+    if (this.props.history.location.state !== null) {
+      const courseId = this.props.history.location.state.courseId;
+      const courseTitle = this.props.history.location.state.courseTitle;
+
+      fetch(
+        `${process.env.REACT_APP_SERVER_URL}/teacher/getquizzes/${courseId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.props.token,
+          },
+        }
+      )
+        .then((res) => {
+          if (!res.ok) throw res;
+          return res.json();
+        })
+        .then((resData) => {
+          this.setState({
+            selectCourseId: courseId,
+            selectCourseTitle: courseTitle,
+            quizzes: resData.quizzes,
+            pageLoading: false,
+            selectCourseModal: false,
+            isLoading: false,
+          });
+          this.props.notify(true, 'Success', resData.message);
+        })
+        .catch((err) => {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
-        }
+          }
+        });
+    } else {
+      this.setState({
+        modalLoading: true,
+        selectCourseModal: true,
       });
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.selectCourseTitle !== prevState.selectCourseTitle) {
-      this.onSelectCourse();
+      fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.props.token,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw res;
+          return res.json();
+        })
+        .then((resData) => {
+          const arrayCourses = [];
+          resData.courses.map((course) => {
+            if (course.status === 'Active') {
+              return arrayCourses.push(course.title);
+            }
+            return true;
+          });
+          this.setState({
+            courses: resData.courses,
+            coursesArray: arrayCourses,
+            modalLoading: false,
+          });
+        })
+        .catch((err) => {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
+            this.props.notify(
+              true,
+              'Error',
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+            );
+          }
+        });
     }
   }
 
-  onChangeCourse = (e) => {
-    const title = e.target.value;
-    if (title === 'Course List' || title === '') {
-      this.setState({
-        selectCourseId: '',
-      });
+  selectCourseModal = () => {
+    this.setState((prevState) => ({
+      selectCourseModal: !prevState.selectCourseModal,
+    }));
+  };
+
+  onSelectCourseModalCancel = () => {
+    if (this.state.selectCourseId !== '') {
+      this.selectCourseModal();
     } else {
-      this.setState({
-        selectCourseTitle: title,
-      });
+      this.props.history.push('/');
     }
   };
 
+  onChangeCourse = (e) => {
+    const title = e.target.value;
+    this.setState({
+      selectCourseTitle: title,
+    });
+  };
+
   onSelectCourse = () => {
-    this.setState({ quizLoading: true });
+    this.setState({ isLoading: true });
     const courseTitle = this.state.selectCourseTitle;
     var courseId;
 
@@ -121,8 +173,11 @@ class Quizzes extends Component {
         .then((resData) => {
           this.setState({
             selectCourseId: courseId,
+            selectCourseTitle: courseTitle,
             quizzes: resData.quizzes,
-            quizLoading: false,
+            pageLoading: false,
+            selectCourseModal: false,
+            isLoading: false,
           });
           this.props.notify(true, 'Success', resData.message);
         })
@@ -220,6 +275,7 @@ class Quizzes extends Component {
             .then((resData) => {
               this.setState({
                 quizzes: resData.quizzes,
+                addQuizzLoading: false,
                 addQuizzModal: false,
                 isLoading: false,
               });
@@ -263,29 +319,10 @@ class Quizzes extends Component {
       <Spinner />
     ) : (
       <div className={classes.Quizzes}>
-        <div className={classes.Caption}>
-          <span className={classes.CaptionSpan}>
-            {this.state.selectCourseId === '' ? (
-              ''
-            ) : (
-              <>
-                Subject: &nbsp; <strong>{this.state.selectCourseTitle}</strong>
-              </>
-            )}
-          </span>
-          <span className={classes.CaptionSpan}>
-            <SelectInput
-              name='courseTitle'
-              placeholder='Course List'
-              onChange={this.onChangeCourse}
-              disabled=''
-              defaultValue=''
-            >
-              {this.state.coursesArray}
-            </SelectInput>
-          </span>
-        </div>
         <table className={classes.QuizzesTable}>
+          <caption>
+            Subject: <strong>{this.state.selectCourseTitle}</strong>
+          </caption>
           <thead>
             <tr>
               <th>Title</th>
@@ -296,28 +333,10 @@ class Quizzes extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.quizLoading ? (
-              <tr>
-                <td colSpan='5'>
-                  <Spinner />
-                </td>
-              </tr>
-            ) : this.state.selectCourseId === '' ? (
-              <tr key={1}>
-                <td style={{ padding: '20px' }} colSpan='5'>
-                  Please select a course!
-                </td>
-              </tr>
-            ) : this.state.quizzes.quizzes.length <= 0 ? (
-              <tr key={1}>
-                <td style={{ padding: '20px' }} colSpan='5'>
-                  You haven't added any quiz for this course yet!
-                </td>
-              </tr>
-            ) : (
+            {this.state.quizzes.quizzes.length > 0 ? (
               this.state.quizzes.quizzes.map((row) => {
                 return (
-                  <tr key={row._id}>
+                  <tr key={row._id} className={classes.QuizzesTableRow}>
                     <td style={{ padding: '20px' }}>{row.title}</td>
                     <td style={{ padding: '20px' }}>{row.grade}</td>
                     <td style={{ padding: '20px' }}>{row.assessment}</td>
@@ -345,18 +364,21 @@ class Quizzes extends Component {
                   </tr>
                 );
               })
+            ) : (
+              <tr key={1} className={classes.quizzesTableRow}>
+                <td style={{ padding: '20px' }} colSpan='5'>
+                  You haven't added any quiz for this course yet!
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
-        <div className={classes.ButtonDiv}>
-          <Button buttonType='red' onClick={() => this.props.history.goBack()}>
-            Go back
-          </Button>
+        <div className={classes.buttonDiv}>
           <Button
             onClick={this.addQuizzModalHandler}
-            disabled={this.state.isLoading ? true : false}
+            disabled={this.state.addQuizzLoading ? true : false}
           >
-            {this.state.isLoading ? 'Loading' : 'Add Quizz'}
+            {this.state.addQuizzLoading ? 'Loading' : 'Add Quizz'}
           </Button>
         </div>
       </div>
@@ -419,7 +441,7 @@ class Quizzes extends Component {
                     ></Input>
                   </div>
 
-                  <div className={classes.ButtonDiv}>
+                  <div className={classes.buttonDiv}>
                     <Button
                       type='button'
                       buttonType='red'
