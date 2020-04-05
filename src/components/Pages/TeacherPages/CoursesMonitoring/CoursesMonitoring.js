@@ -4,41 +4,50 @@ import classes from './CoursesMonitoring.module.css';
 import Spinner from '../../../UI/Spinner/Spinner';
 import Button from '../../../UI/Button/Button';
 import TextArea from '../../../UI/TextArea/TextArea';
-import Modal from '../../../UI/Modal/Modal';
 import SelectInput from '../../../UI/SelectInput/SelectInput';
 
 class CoursesMonitoring extends Component {
   state = {
+    // Loadings
     pageLoading: true,
-    modalLoading: true,
-    selectCourseModal: true,
+    monitoringLoading: false,
     isLoading: false,
-    modalCourseId: '',
-    modalCourseTitle: '',
+    // Data
+    selectCourseId: '',
+    selectCourseTitle: '',
     courses: '',
     coursesArray: [],
     courseMonitoringId: '',
+    // Inputs
     howFar: '',
     fullCover: '',
     relevantProblems: '',
     assessStandard: '',
-    emergeApplication: ''
+    emergeApplication: '',
+    // RederingObject
+    data: {
+      howFar: 'How far objectives have been achieved?',
+      fullCover: 'Full Coverage of contents.',
+      relevantProblems: 'Relevant Problem Skills Development',
+      assessStandard: 'Assessment Standards',
+      emergeApplication: 'Application of emerging technologies',
+    },
   };
 
   componentDidMount() {
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token
-      }
+        Authorization: 'Bearer ' + this.props.token,
+      },
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw res;
         return res.json();
       })
-      .then(resData => {
+      .then((resData) => {
         const arrayCourses = [];
-        resData.courses.map(course => {
+        resData.courses.map((course) => {
           if (course.status === 'Active') {
             return arrayCourses.push(course.title);
           }
@@ -47,12 +56,12 @@ class CoursesMonitoring extends Component {
         this.setState({
           courses: resData.courses,
           coursesArray: arrayCourses,
-          modalLoading: false
+          pageLoading: false,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         try {
-          err.json().then(body => {
+          err.json().then((body) => {
             this.props.notify(
               true,
               'Error',
@@ -69,34 +78,31 @@ class CoursesMonitoring extends Component {
       });
   }
 
-  selectCourseModal = () => {
-    this.setState(prevState => ({
-      selectCourseModal: !prevState.selectCourseModal
-    }));
-  };
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.selectCourseTitle !== prevState.selectCourseTitle) {
+      this.onSelectCourse();
+    }
+  }
 
-  onModalCancel = () => {
-    if (this.state.modalCourseId !== '') {
-      this.selectCourseModal();
+  onChangeCourse = (e) => {
+    const title = e.target.value;
+    if (title === 'Course List' || title === '') {
+      this.setState({
+        selectCourseId: '',
+      });
     } else {
-      this.props.history.push('/');
+      this.setState({
+        selectCourseTitle: title,
+      });
     }
   };
 
-  onChangeCourse = e => {
-    const title = e.target.value;
-    this.setState({
-      modalCourseTitle: title
-    });
-  };
-
   onSelectCourse = () => {
-    this.setState({ isLoading: true });
-    const courseTitle = this.state.modalCourseTitle;
-
+    this.setState({ monitoringLoading: true });
+    const courseTitle = this.state.selectCourseTitle;
     var courseId;
 
-    this.state.courses.some(course => {
+    this.state.courses.some((course) => {
       if (course.title === courseTitle) {
         courseId = course._id;
         return true;
@@ -110,33 +116,30 @@ class CoursesMonitoring extends Component {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.props.token
-          }
+            Authorization: 'Bearer ' + this.props.token,
+          },
         }
       )
-        .then(res => {
+        .then((res) => {
           if (!res.ok) throw res;
           return res.json();
         })
-        .then(resData => {
+        .then((resData) => {
           this.setState({
-            pageLoading: false,
-            selectCourseModal: false,
-            modalCourseId: courseId,
-            modalCourseTitle: courseTitle,
+            selectCourseId: courseId,
             courseMonitoringId: resData.courseMonitoring._id,
             howFar: resData.courseMonitoring.data.howFar,
             fullCover: resData.courseMonitoring.data.fullCover,
             relevantProblems: resData.courseMonitoring.data.relevantProblems,
             assessStandard: resData.courseMonitoring.data.assessStandard,
             emergeApplication: resData.courseMonitoring.data.emergeApplication,
-            isLoading: false
+            monitoringLoading: false,
           });
           this.props.notify(true, 'Success', resData.message);
         })
-        .catch(err => {
+        .catch((err) => {
           try {
-            err.json().then(body => {
+            err.json().then((body) => {
               this.props.notify(
                 true,
                 'Error',
@@ -156,13 +159,13 @@ class CoursesMonitoring extends Component {
     }
   };
 
-  onChange = e => {
+  onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     this.setState({ [name]: value });
   };
 
-  submitHandler = e => {
+  onMonitoringSubmit = (e) => {
     e.preventDefault();
     const howFar = this.state.howFar;
     const fullCover = this.state.fullCover;
@@ -183,28 +186,28 @@ class CoursesMonitoring extends Component {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.props.token
+            Authorization: 'Bearer ' + this.props.token,
           },
           body: JSON.stringify({
             howFar: howFar,
             fullCover: fullCover,
             relevantProblems: relevantProblems,
             assessStandard: assessStandard,
-            emergeApplication: emergeApplication
-          })
+            emergeApplication: emergeApplication,
+          }),
         }
       )
-        .then(res => {
+        .then((res) => {
           if (!res.ok) throw res;
           return res.json();
         })
-        .then(resData => {
+        .then((resData) => {
           this.props.history.push('/');
           this.props.notify(true, 'Success', resData.message);
         })
-        .catch(err => {
+        .catch((err) => {
           try {
-            err.json().then(body => {
+            err.json().then((body) => {
               this.props.notify(
                 true,
                 'Error',
@@ -230,114 +233,75 @@ class CoursesMonitoring extends Component {
     ) : (
       <div className={classes.CoursesMonitoring}>
         <div className={classes.Caption}>
-          Course Monitoring: {this.state.courseTitle}
+          <span className={classes.CaptionSpan}>
+            Subject:{' '}
+            <strong>
+              {this.state.selectCourseId === ''
+                ? '-?'
+                : this.state.selectCourseTitle}
+            </strong>
+          </span>
+          <span className={classes.CaptionSpan}>
+            <SelectInput
+              name='courseTitle'
+              placeholder='Course List'
+              onChange={this.onChangeCourse}
+              disabled=''
+              defaultValue=''
+            >
+              {this.state.coursesArray}
+            </SelectInput>
+          </span>
         </div>
-        <form method='POST' onSubmit={this.submitHandler}>
-          <div className={classes.InputGroup}>
-            <label className={classes.Label}>
-              How far objectives have been achieved?
-            </label>
-            <TextArea
-              rows='6'
-              onChange={this.onChange}
-              name='howFar'
-              value={this.state.howFar}
-              style={{ minHeight: '132px', maxHeight: '200px' }}
-            />
-          </div>
-          <div className={classes.InputGroup}>
-            <label className={classes.Label}>Full Coverage of contents.</label>
-            <TextArea
-              rows='6'
-              onChange={this.onChange}
-              name='fullCover'
-              value={this.state.fullCover}
-              style={{ minHeight: '132px', maxHeight: '200px' }}
-            />
-          </div>
-          <div className={classes.InputGroup}>
-            <label className={classes.Label}>
-              Relevant Problem Skills Development
-            </label>
-            <TextArea
-              rows='6'
-              onChange={this.onChange}
-              name='relevantProblems'
-              value={this.state.relevantProblems}
-              style={{ minHeight: '132px', maxHeight: '200px' }}
-            />
-          </div>
-          <div className={classes.InputGroup}>
-            <label className={classes.Label}>Assessment Standards</label>
-            <TextArea
-              rows='6'
-              onChange={this.onChange}
-              name='assessStandard'
-              value={this.state.assessStandard}
-              style={{ minHeight: '132px', maxHeight: '200px' }}
-            />
-          </div>
-          <div className={classes.InputGroup}>
-            <label className={classes.Label}>
-              Application of emerging technologies
-            </label>
-            <TextArea
-              rows='6'
-              onChange={this.onChange}
-              name='emergeApplication'
-              value={this.state.emergeApplication}
-              style={{ minHeight: '132px', maxHeight: '200px' }}
-            />
-          </div>
-          <div className={classes.buttonDiv}>
-            <Button type='submit'>Submit Form</Button>
-          </div>
-        </form>
+        {this.state.monitoringLoading ? (
+          <Spinner />
+        ) : this.state.selectCourseId === '' ? (
+          <div className={classes.Centered}>Please select a course!</div>
+        ) : (
+          <form
+            method='POST'
+            onSubmit={this.onMonitoringSubmit}
+            style={{ paddingTop: '25px' }}
+          >
+            {Object.entries(this.state.data).map((row) => {
+              return (
+                <div key={row[0]} className={classes.InputGroup}>
+                  <label className={classes.Label}>{row[1]}</label>
+                  <TextArea
+                    rows='2'
+                    onChange={this.onChange}
+                    name={row[0]}
+                    value={this.state[row[0]]}
+                    style={{
+                      height: '52px',
+                      minHeight: '52px',
+                      maxHeight: '180px',
+                      padding: '2px 6px 2px 10px',
+                    }}
+                  />
+                </div>
+              );
+            })}
+            <div className={classes.buttonDiv}>
+              <Button
+                type='button'
+                buttonType='red'
+                onClick={() => this.props.history.goBack()}
+              >
+                Go back
+              </Button>
+              <Button
+                type='submit'
+                disabled={this.state.isLoading ? true : false}
+              >
+                {this.state.isLoading ? 'Submitting' : 'Submit Form'}
+              </Button>
+            </div>
+          </form>
+        )}
       </div>
     );
-    return (
-      <>
-        {page}
-        {/* ======================================= Modal Starts =================================*/}
-        <Modal visible={this.state.selectCourseModal}>
-          <div className={classes.Modal}>
-            {this.state.modalLoading ? (
-              <Spinner />
-            ) : (
-              <div className={classes.ModalBody}>
-                <div className={classes.ModalContent}>
-                  <div className={classes.ModalContentTitle}>
-                    Select Course!
-                  </div>
-                  <SelectInput
-                    name='courseTitle'
-                    placeholder='Course List'
-                    onChange={this.onChangeCourse}
-                    disabled=''
-                    defaultValue=''
-                  >
-                    {this.state.coursesArray}
-                  </SelectInput>
-                </div>
-                <div className={classes.buttonDiv}>
-                  <Button
-                    type='button'
-                    buttonType='red'
-                    onClick={this.onModalCancel}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type='button' onClick={this.onSelectCourse}>
-                    {this.state.isLoading ? 'Loading' : 'Select'}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        </Modal>
-        {/* =======================================  Modal Ends  ====================================*/}
-      </>
-    );
+    return page;
   }
 }
 

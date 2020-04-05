@@ -11,14 +11,6 @@
     0 0.126rem 0.225rem rgba(122, 123, 151, 0.3);
 }
 
-/* Table Starts */
-
-.CoursesLog table {
-  table-layout: fixed;
-  width: 100%;
-  border-collapse: collapse;
-}
-
 .CoursesLog .Caption {
   display: flex;
   flex-direction: row;
@@ -39,6 +31,13 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+/* Table Starts */
+
+.CoursesLog table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .CoursesLog table thead {

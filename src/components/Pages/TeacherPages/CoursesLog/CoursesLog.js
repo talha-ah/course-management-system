@@ -162,12 +162,11 @@ class CoursesLog extends Component {
   onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    this.setState({
-      [name]: value,
-    });
+    this.setState({ [name]: value });
   };
 
-  onLogAddHandler = () => {
+  onLogAddHandler = (e) => {
+    e.preventDefault();
     const topics = this.state.topics;
     const instruments = this.state.instruments;
     if (topics !== '' && instruments !== '') {
