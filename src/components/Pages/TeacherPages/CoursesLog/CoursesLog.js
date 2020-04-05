@@ -231,12 +231,13 @@ class CoursesLog extends Component {
       <div className={classes.CoursesLog}>
         <div className={classes.Caption}>
           <span className={classes.CaptionSpan}>
-            Subject:{' '}
-            <strong>
-              {this.state.selectCourseId === ''
-                ? '-?'
-                : this.state.selectCourseTitle}
-            </strong>
+            {this.state.selectCourseId === '' ? (
+              ''
+            ) : (
+              <>
+                Subject: &nbsp; <strong>{this.state.selectCourseTitle}</strong>
+              </>
+            )}
           </span>
           <span className={classes.CaptionSpan}>
             <SelectInput

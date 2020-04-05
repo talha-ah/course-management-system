@@ -4,22 +4,24 @@ import classes from './CoursesDescription.module.css';
 import Spinner from '../../../UI/Spinner/Spinner';
 import Button from '../../../UI/Button/Button';
 import TextArea from '../../../UI/TextArea/TextArea';
-import Modal from '../../../UI/Modal/Modal';
 import SelectInput from '../../../UI/SelectInput/SelectInput';
 
 class CoursesDescription extends Component {
   state = {
+    // Loadings
     pageLoading: true,
-    modalLoading: true,
-    selectCourseModal: true,
+    descriptionLoading: false,
     isLoading: false,
-    modalCourseId: '',
-    modalCourseTitle: '',
+    // Data
+    selectCourseId: '',
+    selectCourseTitle: '',
     courses: '',
     coursesArray: [],
     courseDescriptionId: '',
+    // Status
     status: 'new',
     phase: false,
+    // Inputs
     prerequisites: '',
     assignments: '',
     quizzes: '',
@@ -39,6 +41,7 @@ class CoursesDescription extends Component {
     solution: '',
     social: '',
     oralWritten: '',
+    // RenderingObject
     data: {
       phase1: {
         prerequisites: 'Prerequisites by Course(s) and Topics',
@@ -49,7 +52,7 @@ class CoursesDescription extends Component {
         catalog: 'Current Catalog',
         textbook: 'Textbook (or Laboratory Manual for Laboratory Courses)',
         reference: 'Reference Material',
-        goals: 'Course Goals'
+        goals: 'Course Goals',
       },
       phase2: {
         topicsCovered:
@@ -57,26 +60,25 @@ class CoursesDescription extends Component {
         laboratory: 'Laboratory Projects/Experiments Done in the Course',
         programming: 'Programming Assignments Done in the Course',
         classTime: 'Class Time Spent on (in credit hourse)',
-        oralWritten: 'Oral and Written Communications'
-      }
-    }
+        oralWritten: 'Oral and Written Communications',
+      },
+    },
   };
 
   componentDidMount() {
-    console.log(this.props);
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token
-      }
+        Authorization: 'Bearer ' + this.props.token,
+      },
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw res;
         return res.json();
       })
-      .then(resData => {
+      .then((resData) => {
         const arrayCourses = [];
-        resData.courses.map(course => {
+        resData.courses.map((course) => {
           if (course.status === 'Active') {
             return arrayCourses.push(course.title);
           }
@@ -85,12 +87,12 @@ class CoursesDescription extends Component {
         this.setState({
           courses: resData.courses,
           coursesArray: arrayCourses,
-          modalLoading: false
+          pageLoading: false,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         try {
-          err.json().then(body => {
+          err.json().then((body) => {
             this.props.notify(
               true,
               'Error',
@@ -107,40 +109,31 @@ class CoursesDescription extends Component {
       });
   }
 
-  selectCourseModal = () => {
-    this.setState(prevState => ({
-      selectCourseModal: !prevState.selectCourseModal
-    }));
-  };
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.selectCourseTitle !== prevState.selectCourseTitle) {
+      this.onSelectCourse();
+    }
+  }
 
-  onModalCancel = () => {
-    if (this.state.modalCourseId !== '') {
-      this.selectCourseModal();
+  onChangeCourse = (e) => {
+    const title = e.target.value;
+    if (title === 'Course List' || title === '') {
+      this.setState({
+        selectCourseId: '',
+      });
     } else {
-      this.props.history.push('/');
+      this.setState({
+        selectCourseTitle: title,
+      });
     }
   };
 
-  changeCourse = () => {
-    this.setState({
-      selectCourseModal: true
-    });
-  };
-
-  onChangeCourse = e => {
-    const title = e.target.value;
-    this.setState({
-      modalCourseTitle: title
-    });
-  };
-
   onSelectCourse = () => {
-    this.setState({ isLoading: true });
-    const courseTitle = this.state.modalCourseTitle;
-
+    this.setState({ descriptionLoading: true });
+    const courseTitle = this.state.selectCourseTitle;
     var courseId;
 
-    this.state.courses.some(course => {
+    this.state.courses.some((course) => {
       if (course.title === courseTitle) {
         courseId = course._id;
         return true;
@@ -154,20 +147,17 @@ class CoursesDescription extends Component {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.props.token
-          }
+            Authorization: 'Bearer ' + this.props.token,
+          },
         }
       )
-        .then(res => {
+        .then((res) => {
           if (!res.ok) throw res;
           return res.json();
         })
-        .then(resData => {
+        .then((resData) => {
           this.setState({
-            pageLoading: false,
-            selectCourseModal: false,
-            modalCourseId: courseId,
-            modalCourseTitle: courseTitle,
+            selectCourseId: courseId,
             courseDescriptionId: resData.courseDescription._id,
             status: resData.courseDescription.status,
             prerequisites: resData.courseDescription.data.prerequisites,
@@ -190,13 +180,13 @@ class CoursesDescription extends Component {
             social:
               resData.courseDescription.data.classTime.socialAndEthicalIssues,
             oralWritten: resData.courseDescription.data.oralWritten,
-            isLoading: false
+            descriptionLoading: false,
           });
           this.props.notify(true, 'Success', resData.message);
         })
-        .catch(err => {
+        .catch((err) => {
           try {
-            err.json().then(body => {
+            err.json().then((body) => {
               this.props.notify(
                 true,
                 'Error',
@@ -216,14 +206,15 @@ class CoursesDescription extends Component {
     }
   };
 
-  onChange = e => {
+  onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     this.setState({ [name]: value });
   };
 
-  submitPhase1Handler = e => {
+  submitPhase1Handler = (e) => {
     e.preventDefault();
+    this.setState({ isLoading: true });
     if (this.state.status === 'new') {
       const descriptionId = this.state.courseDescriptionId;
       const prerequisites = this.state.prerequisites;
@@ -256,7 +247,7 @@ class CoursesDescription extends Component {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + this.props.token
+              Authorization: 'Bearer ' + this.props.token,
             },
             body: JSON.stringify({
               phase: 'phase1',
@@ -270,21 +261,21 @@ class CoursesDescription extends Component {
               catalog: catalog,
               textbook: textbook,
               reference: reference,
-              goals: goals
-            })
+              goals: goals,
+            }),
           }
         )
-          .then(res => {
+          .then((res) => {
             if (!res.ok) throw res;
             return res.json();
           })
-          .then(resData => {
+          .then((resData) => {
             this.props.history.push('/');
             this.props.notify(true, 'Success', resData.message);
           })
-          .catch(err => {
+          .catch((err) => {
             try {
-              err.json().then(body => {
+              err.json().then((body) => {
                 this.props.notify(
                   true,
                   'Error',
@@ -308,8 +299,9 @@ class CoursesDescription extends Component {
     }
   };
 
-  submitPhase2Handler = e => {
+  submitPhase2Handler = (e) => {
     e.preventDefault();
+    this.setState({ isLoading: true });
     if (this.state.status === 'pending') {
       const descriptionId = this.state.courseDescriptionId;
       const topicsCovered = this.state.topicsCovered;
@@ -336,7 +328,7 @@ class CoursesDescription extends Component {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + this.props.token
+              Authorization: 'Bearer ' + this.props.token,
             },
             body: JSON.stringify({
               phase: 'phase2',
@@ -347,22 +339,21 @@ class CoursesDescription extends Component {
               problem: problem,
               solution: solution,
               social: social,
-              oralWritten: oralWritten
-            })
+              oralWritten: oralWritten,
+            }),
           }
         )
-          .then(res => {
+          .then((res) => {
             if (!res.ok) throw res;
             return res.json();
           })
-          .then(resData => {
-            console.log(resData);
+          .then((resData) => {
             this.props.history.push('/');
             this.props.notify(true, 'Success', resData.message);
           })
-          .catch(err => {
+          .catch((err) => {
             try {
-              err.json().then(body => {
+              err.json().then((body) => {
                 this.props.notify(
                   true,
                   'Error',
@@ -389,7 +380,7 @@ class CoursesDescription extends Component {
   render() {
     var pageContent = !this.state.phase ? (
       <form method='POST' onSubmit={this.submitPhase1Handler}>
-        {Object.entries(this.state.data.phase1).map(row => {
+        {Object.entries(this.state.data.phase1).map((row) => {
           return (
             <div className={classes.InputGroup} key={row[0]}>
               <label className={classes.Label}>{row[1]}</label>
@@ -464,24 +455,33 @@ class CoursesDescription extends Component {
                   onChange={this.onChange}
                   name={row[0]}
                   value={this.state[row[0]]}
-                  style={{ minHeight: '52px', maxHeight: '200px' }}
+                  style={{
+                    height: '52px',
+                    minHeight: '52px',
+                    maxHeight: '180px',
+                    padding: '2px 6px 2px 10px',
+                  }}
                 />
               )}
             </div>
           );
         })}
-        <div className={classes.buttonDiv}>
-          <Button type='button' buttonType='red' onPress={this.changeCourse}>
-            Change Course
+        <div className={classes.ButtonDiv}>
+          <Button
+            type='button'
+            buttonType='red'
+            onClick={() => this.props.history.goBack()}
+          >
+            Go back
           </Button>
-          <Button type='submit'>
+          <Button type='submit' disabled={this.state.isLoading ? true : false}>
             {this.state.isLoading ? 'Submitting' : 'Submit Form'}
           </Button>
         </div>
       </form>
     ) : (
       <form method='POST' onSubmit={this.submitPhase2Handler}>
-        {Object.entries(this.state.data.phase2).map(row => {
+        {Object.entries(this.state.data.phase2).map((row) => {
           return (
             <div className={classes.InputGroup} key={row[0]}>
               <label className={classes.Label}>{row[1]}</label>
@@ -557,17 +557,26 @@ class CoursesDescription extends Component {
                   onChange={this.onChange}
                   name={row[0]}
                   value={this.state[row[0]]}
-                  style={{ minHeight: '52px', maxHeight: '200px' }}
+                  style={{
+                    height: '52px',
+                    minHeight: '52px',
+                    maxHeight: '180px',
+                    padding: '2px 6px 2px 10px',
+                  }}
                 />
               )}
             </div>
           );
         })}
-        <div className={classes.buttonDiv}>
-          <Button type='button' buttonType='red' onPress={this.changeCourse}>
-            Change Course
+        <div className={classes.ButtonDiv}>
+          <Button
+            type='button'
+            buttonType='red'
+            onClick={() => this.props.history.goBack()}
+          >
+            Go back
           </Button>
-          <Button type='submit'>
+          <Button type='submit' disabled={this.state.isLoading ? true : false}>
             {this.state.isLoading ? 'Submitting' : 'Submit Form'}
           </Button>
         </div>
@@ -579,75 +588,60 @@ class CoursesDescription extends Component {
     ) : (
       <div className={classes.CoursesDescription}>
         <div className={classes.Caption}>
-          Course Description: {this.state.modalCourseTitle}
+          <span className={classes.CaptionSpan}>
+            {this.state.selectCourseId === '' ? (
+              ''
+            ) : (
+              <>
+                Subject: &nbsp; <strong>{this.state.selectCourseTitle}</strong>
+              </>
+            )}
+          </span>
+          <span className={classes.CaptionSpan}>
+            <SelectInput
+              name='courseTitle'
+              placeholder='Course List'
+              onChange={this.onChangeCourse}
+              disabled=''
+              defaultValue=''
+            >
+              {this.state.coursesArray}
+            </SelectInput>
+          </span>
         </div>
-        <div className={classes.TabsButtons}>
-          <div
-            className={classes.Button}
-            onClick={() => this.setState({ phase: false })}
-            style={{
-              borderBottom: this.state.phase ? 'none' : '1px solid #3b3e66'
-            }}
-          >
-            Phase 1
-          </div>
-          <div
-            className={classes.Button}
-            onClick={() => this.setState({ phase: true })}
-            style={{
-              borderBottom: this.state.phase ? '1px solid #3b3e66' : 'none'
-            }}
-          >
-            Phase 2
-          </div>
-        </div>
-        {pageContent}
+        {this.state.descriptionLoading ? (
+          <Spinner />
+        ) : this.state.selectCourseId === '' ? (
+          <div className={classes.Centered}>Please select a course!</div>
+        ) : (
+          <>
+            <div className={classes.TabsButtons}>
+              <div
+                className={classes.Button}
+                onClick={() => this.setState({ phase: false })}
+                style={{
+                  borderBottom: this.state.phase ? 'none' : '1px solid #3b3e66',
+                }}
+              >
+                Phase 1
+              </div>
+              <div
+                className={classes.Button}
+                onClick={() => this.setState({ phase: true })}
+                style={{
+                  borderBottom: this.state.phase ? '1px solid #3b3e66' : 'none',
+                }}
+              >
+                Phase 2
+              </div>
+            </div>
+            {pageContent}
+          </>
+        )}
       </div>
     );
 
-    return (
-      <>
-        {page}
-        {/* ======================================= Modal Starts =================================*/}
-        <Modal visible={this.state.selectCourseModal}>
-          <div className={classes.Modal}>
-            {this.state.modalLoading ? (
-              <Spinner />
-            ) : (
-              <div className={classes.ModalBody}>
-                <div className={classes.ModalContent}>
-                  <div className={classes.ModalContentTitle}>
-                    Select Course!
-                  </div>
-                  <SelectInput
-                    name='courseTitle'
-                    placeholder='Course List'
-                    onChange={this.onChangeCourse}
-                    disabled=''
-                    defaultValue=''
-                  >
-                    {this.state.coursesArray}
-                  </SelectInput>
-                </div>
-                <div className={classes.buttonDiv}>
-                  <Button
-                    type='button'
-                    buttonType='red'
-                    onClick={this.onModalCancel}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type='button' onClick={this.onSelectCourse}>
-                    {this.state.isLoading ? 'Loading' : 'Select'}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        </Modal>
-        {/* =======================================  Modal Ends  ====================================*/}
-      </>
-    );
+    return page;
   }
 }
 

@@ -167,6 +167,7 @@ class CoursesMonitoring extends Component {
 
   onMonitoringSubmit = (e) => {
     e.preventDefault();
+    this.setState({ isLoading: true });
     const howFar = this.state.howFar;
     const fullCover = this.state.fullCover;
     const relevantProblems = this.state.relevantProblems;
@@ -234,12 +235,13 @@ class CoursesMonitoring extends Component {
       <div className={classes.CoursesMonitoring}>
         <div className={classes.Caption}>
           <span className={classes.CaptionSpan}>
-            Subject:{' '}
-            <strong>
-              {this.state.selectCourseId === ''
-                ? '-?'
-                : this.state.selectCourseTitle}
-            </strong>
+            {this.state.selectCourseId === '' ? (
+              ''
+            ) : (
+              <>
+                Subject: &nbsp; <strong>{this.state.selectCourseTitle}</strong>
+              </>
+            )}
           </span>
           <span className={classes.CaptionSpan}>
             <SelectInput
