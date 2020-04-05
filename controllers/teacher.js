@@ -1133,6 +1133,91 @@ exports.addAssignment = async (req, res, next) => {
   }
 };
 
+exports.getAssignmentResult = async (req, res, next) => {
+  const teacherId = req.userId;
+  const assignmentDocId = req.params.assignmentDocId;
+  const assignmentId = req.params.assignmentId;
+  try {
+    const assignmentDoc = await Assignment.findById(assignmentDocId);
+
+    if (!assignmentDoc) {
+      const error = new Error('Whoops, could not find the assignment.');
+      error.status = 404;
+      throw error;
+    }
+
+    if (assignmentDoc.teacherId.toString() !== teacherId.toString()) {
+      const error = new Error('Whoops, this is not your assignment!');
+      error.status = 404;
+      throw error;
+    }
+
+    const assignmentIndex = assignmentDoc.assignments.findIndex(a => {
+      return a._id.toString() === assignmentId.toString();
+    });
+
+    const assignment = assignmentDoc.assignments[assignmentIndex];
+
+    if (!assignment) {
+      const error = new Error('Whoops, error in fetching assignment!');
+      error.code = 404;
+      throw error;
+    }
+
+    res
+      .status(200)
+      .json({ message: 'Assignment fetched.', material: assignment });
+  } catch (err) {
+    if (!err.status) err.status = 500;
+    next(err);
+  }
+};
+
+exports.addAssignmentResult = async (req, res, next) => {
+  const teacherId = req.userId;
+  const assignmentDocId = req.params.assignmentDocId;
+  const assignmentId = req.params.assignmentId;
+  const data = req.body.data;
+  try {
+    const assignmentDoc = await Assignment.findById(assignmentDocId);
+
+    if (!assignmentDoc) {
+      const error = new Error('Whoops, could not find the assignment.');
+      error.status = 404;
+      throw error;
+    }
+
+    if (assignmentDoc.teacherId.toString() !== teacherId.toString()) {
+      const error = new Error('Whoops, this is not your assignment!');
+      error.status = 404;
+      throw error;
+    }
+
+    const assignmentIndex = assignmentDoc.assignments.findIndex(a => {
+      return a._id.toString() === assignmentId.toString();
+    });
+
+    const assignment = assignmentDoc.assignments[assignmentIndex];
+
+    if (!assignment) {
+      const error = new Error('Whoops, error in fetching assignment!');
+      error.code = 404;
+      throw error;
+    }
+
+    assignment.result = data;
+    const savedAssignmentDoc = await assignmentDoc.save();
+    const result = savedAssignmentDoc.assignments[assignmentIndex];
+    res.status(200).json({
+      message: 'Marks saved.',
+      savedMaterial: result
+    });
+  } catch (err) {
+    if (!err.status) err.status = 500;
+    next(err);
+  }
+};
+
 exports.getQuizzes = async (req, res, next) => {
   const teacherId = req.userId;
   const courseId = req.params.courseId;
@@ -1254,6 +1339,89 @@ exports.addQuiz = async (req, res, next) => {
   }
 };
 
+exports.getQuizResult = async (req, res, next) => {
+  const teacherId = req.userId;
+  const quizDocId = req.params.quizDocId;
+  const quizId = req.params.quizId;
+  try {
+    const quizDoc = await Quiz.findById(quizDocId);
+
+    if (!quizDoc) {
+      const error = new Error('Whoops, could not find the quiz.');
+      error.status = 404;
+      throw error;
+    }
+
+    if (quizDoc.teacherId.toString() !== teacherId.toString()) {
+      const error = new Error('Whoops, this is not your quiz!');
+      error.status = 404;
+      throw error;
+    }
+
+    const quizIndex = quizDoc.quizzes.findIndex(a => {
+      return a._id.toString() === quizId.toString();
+    });
+
+    const quiz = quizDoc.quizzes[quizIndex];
+
+    if (!quiz) {
+      const error = new Error('Whoops, error in fetching quiz!');
+      error.code = 404;
+      throw error;
+    }
+
+    res.status(200).json({ message: 'Quiz fetched.', material: quiz });
+  } catch (err) {
+    if (!err.status) err.status = 500;
+    next(err);
+  }
+};
+
+exports.addQuizResult = async (req, res, next) => {
+  const teacherId = req.userId;
+  const quizDocId = req.params.quizDocId;
+  const quizId = req.params.quizId;
+  const data = req.body.data;
+  try {
+    const quizDoc = await Quiz.findById(quizDocId);
+
+    if (!quizDoc) {
+      const error = new Error('Whoops, could not find the quiz.');
+      error.status = 404;
+      throw error;
+    }
+
+    if (quizDoc.teacherId.toString() !== teacherId.toString()) {
+      const error = new Error('Whoops, this is not your quiz!');
+      error.status = 404;
+      throw error;
+    }
+
+    const quizIndex = quizDoc.quizzes.findIndex(a => {
+      return a._id.toString() === quizId.toString();
+    });
+
+    const quiz = quizDoc.quizzes[quizIndex];
+
+    if (!quiz) {
+      const error = new Error('Whoops, error in fetching quiz!');
+      error.code = 404;
+      throw error;
+    }
+
+    quiz.result = data;
+    const savedQuizDoc = await quizDoc.save();
+    const result = savedQuizDoc.quizzes[quizIndex];
+    res.status(200).json({
+      message: 'Marks saved.',
+      savedMaterial: result
+    });
+  } catch (err) {
+    if (!err.status) err.status = 500;
+    next(err);
+  }
+};
+
 exports.getPapers = async (req, res, next) => {
   const teacherId = req.userId;
   const courseId = req.params.courseId;
@@ -1371,6 +1539,89 @@ exports.addPaper = async (req, res, next) => {
     if (!err.status) {
       err.status = 500;
     }
+    next(err);
+  }
+};
+
+exports.getPaperResult = async (req, res, next) => {
+  const teacherId = req.userId;
+  const paperDocId = req.params.paperDocId;
+  const paperId = req.params.paperId;
+  try {
+    const paperDoc = await Paper.findById(paperDocId);
+
+    if (!paperDoc) {
+      const error = new Error('Whoops, could not find the paper.');
+      error.status = 404;
+      throw error;
+    }
+
+    if (paperDoc.teacherId.toString() !== teacherId.toString()) {
+      const error = new Error('Whoops, this is not your paper!');
+      error.status = 404;
+      throw error;
+    }
+
+    const paperIndex = paperDoc.papers.findIndex(a => {
+      return a._id.toString() === paperId.toString();
+    });
+
+    const paper = paperDoc.papers[paperIndex];
+
+    if (!paper) {
+      const error = new Error('Whoops, error in fetching paper!');
+      error.code = 404;
+      throw error;
+    }
+
+    res.status(200).json({ message: 'paper fetched.', material: paper });
+  } catch (err) {
+    if (!err.status) err.status = 500;
+    next(err);
+  }
+};
+
+exports.addPaperResult = async (req, res, next) => {
+  const teacherId = req.userId;
+  const paperDocId = req.params.paperDocId;
+  const paperId = req.params.paperId;
+  const data = req.body.data;
+  try {
+    const paperDoc = await Paper.findById(paperDocId);
+
+    if (!paperDoc) {
+      const error = new Error('Whoops, could not find the paper.');
+      error.status = 404;
+      throw error;
+    }
+
+    if (paperDoc.teacherId.toString() !== teacherId.toString()) {
+      const error = new Error('Whoops, this is not your paper!');
+      error.status = 404;
+      throw error;
+    }
+
+    const paperIndex = paperDoc.papers.findIndex(a => {
+      return a._id.toString() === paperId.toString();
+    });
+
+    const paper = paperDoc.papers[paperIndex];
+
+    if (!paper) {
+      const error = new Error('Whoops, error in fetching paper!');
+      error.code = 404;
+      throw error;
+    }
+
+    paper.result = data;
+    const savedPaperDoc = await paperDoc.save();
+    const result = savedPaperDoc.papers[paperIndex];
+    res.status(200).json({
+      message: 'Marks saved.',
+      savedMaterial: result
+    });
+  } catch (err) {
+    if (!err.status) err.status = 500;
     next(err);
   }
 };

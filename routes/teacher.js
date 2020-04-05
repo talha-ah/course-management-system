@@ -200,6 +200,16 @@ router.post(
   ]),
   teacherController.addAssignment
 );
+router.get(
+  '/getassignmentresult/:assignmentDocId/:assignmentId',
+  isAuth,
+  teacherController.getAssignmentResult
+);
+router.post(
+  '/addassignmentresult/:assignmentDocId/:assignmentId',
+  isAuth,
+  teacherController.addAssignmentResult
+);
 
 router.get('/getquizzes/:courseId', isAuth, teacherController.getQuizzes);
 router.post(
@@ -211,6 +221,16 @@ router.post(
   ]),
   teacherController.addQuiz
 );
+router.get(
+  '/getquizresult/:quizDocId/:quizId',
+  isAuth,
+  teacherController.getQuizResult
+);
+router.post(
+  '/addquizresult/:quizDocId/:quizId',
+  isAuth,
+  teacherController.addQuizResult
+);
 
 router.get('/getpapers/:courseId', isAuth, teacherController.getPapers);
 router.post(
@@ -221,6 +241,16 @@ router.post(
     { name: 'solution', maxCount: 1 }
   ]),
   teacherController.addPaper
+);
+router.get(
+  '/getpaperresult/:paperDocId/:paperId',
+  isAuth,
+  teacherController.getPaperResult
+);
+router.post(
+  '/addpaperresult/:paperDocId/:paperId',
+  isAuth,
+  teacherController.addPaperResult
 );
 
 module.exports = router;

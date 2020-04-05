@@ -9,6 +9,7 @@ const logger = require('morgan');
 const loginRoute = require('./routes/login');
 const adminRoutes = require('./routes/admin');
 const teacherRoutes = require('./routes/teacher');
+const classRoutes = require('./routes/class');
 
 // App Intializer
 const app = express();
@@ -36,6 +37,7 @@ app.use(express.static(path.join(__dirname, 'data')));
 app.use('/login', loginRoute);
 app.use('/admin', adminRoutes);
 app.use('/teacher', teacherRoutes);
+app.use('/class', classRoutes);
 
 // Error Handler
 app.use((error, req, res, next) => {

@@ -23,7 +23,8 @@ const papers = new Schema({
       solution: {
         name: { type: String },
         path: { type: String }
-      }
+      },
+      result: { type: Object }
     }
   ]
 });
