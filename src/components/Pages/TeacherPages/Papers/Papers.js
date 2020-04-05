@@ -3,153 +3,101 @@ import React, { Component } from 'react';
 import classes from './Papers.module.css';
 import Spinner from '../../../UI/Spinner/Spinner';
 import Button from '../../../UI/Button/Button';
-import Modal from '../../../UI/Modal/Modal';
 import Input from '../../../UI/Input/Input';
 import SelectInput from '../../../UI/SelectInput/SelectInput';
+import Modal from '../../../UI/Modal/Modal';
 import TableButton from '../../../UI/TableButton/TableButton';
 
 class Papers extends Component {
   state = {
+    // Loadings
     pageLoading: true,
-    modalLoading: false,
-    selectCourseModal: false,
-    isLoading: false,
-    addPaperLoading: false,
+    paperLoading: false,
     addPaperModal: false,
-    modalCourseId: '',
-    modalCourseTitle: '',
+    isLoading: false,
+    // Data
+    selectCourseId: '',
+    selectCourseTitle: '',
     courses: '',
     coursesArray: [],
     papers: '',
+    // Input
     title: '',
     grade: '',
     prePost: 'Mid-Term',
     paper: null,
-    solution: null
+    solution: null,
   };
 
   componentDidMount() {
-    if (this.props.history.location.state !== null) {
-      const courseId = this.props.history.location.state.courseId;
-      const courseTitle = this.props.history.location.state.courseTitle;
-
-      fetch(
-        `${process.env.REACT_APP_SERVER_URL}/teacher/getpapers/${courseId}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.props.token
-          }
-        }
-      )
-        .then(res => {
-          if (!res.ok) throw res;
-          return res.json();
-        })
-        .then(resData => {
-          this.setState({
-            modalCourseId: courseId,
-            modalCourseTitle: courseTitle,
-            papers: resData.papers,
-            pageLoading: false,
-            selectCourseModal: false,
-            isLoading: false
-          });
-          this.props.notify(true, 'Success', resData.message);
-        })
-        .catch(err => {
-          try {
-            err.json().then(body => {
-              this.props.notify(
-                true,
-                'Error',
-                body.error.status + ' ' + body.message
-              );
-            });
-          } catch (e) {
-            this.props.notify(
-              true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-            );
-          }
-        });
-    } else {
-      this.setState({
-        modalLoading: true,
-        selectCourseModal: true
-      });
-      fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + this.props.token
-        }
+    fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.props.token,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw res;
+        return res.json();
       })
-        .then(res => {
-          if (!res.ok) throw res;
-          return res.json();
-        })
-        .then(resData => {
-          const arrayCourses = [];
-          resData.courses.map(course => {
-            if (course.status === 'Active') {
-              return arrayCourses.push(course.title);
-            }
-            return true;
-          });
-          this.setState({
-            courses: resData.courses,
-            coursesArray: arrayCourses,
-            modalLoading: false
-          });
-        })
-        .catch(err => {
-          try {
-            err.json().then(body => {
-              this.props.notify(
-                true,
-                'Error',
-                body.error.status + ' ' + body.message
-              );
-            });
-          } catch (e) {
+      .then((resData) => {
+        const arrayCourses = [];
+        resData.courses.map((course) => {
+          if (course.status === 'Active') {
+            return arrayCourses.push(course.title);
+          }
+          return true;
+        });
+        this.setState({
+          courses: resData.courses,
+          coursesArray: arrayCourses,
+          pageLoading: false,
+        });
+      })
+      .catch((err) => {
+        try {
+          err.json().then((body) => {
             this.props.notify(
               true,
               'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+              body.error.status + ' ' + body.message
             );
-          }
-        });
+          });
+        } catch (e) {
+          this.props.notify(
+            true,
+            'Error',
+            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+          );
+        }
+      });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.selectCourseTitle !== prevState.selectCourseTitle) {
+      this.onSelectCourse();
     }
   }
 
-  selectCourseModal = () => {
-    this.setState(prevState => ({
-      selectCourseModal: !prevState.selectCourseModal
-    }));
-  };
-
-  onSelectCourseModalCancel = () => {
-    if (this.state.modalCourseId !== '') {
-      this.selectCourseModal();
+  onChangeCourse = (e) => {
+    const title = e.target.value;
+    if (title === 'Course List' || title === '') {
+      this.setState({
+        selectCourseId: '',
+      });
     } else {
-      this.props.history.push('/');
+      this.setState({
+        selectCourseTitle: title,
+      });
     }
   };
 
-  onChangeCourse = e => {
-    const title = e.target.value;
-    this.setState({
-      modalCourseTitle: title
-    });
-  };
-
   onSelectCourse = () => {
-    this.setState({ isLoading: true });
-    const courseTitle = this.state.modalCourseTitle;
+    this.setState({ paperLoading: true });
+    const courseTitle = this.state.selectCourseTitle;
     var courseId;
 
-    this.state.courses.some(course => {
+    this.state.courses.some((course) => {
       if (course.title === courseTitle) {
         courseId = course._id;
         return true;
@@ -162,28 +110,25 @@ class Papers extends Component {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.props.token
-          }
+            Authorization: 'Bearer ' + this.props.token,
+          },
         }
       )
-        .then(res => {
+        .then((res) => {
           if (!res.ok) throw res;
           return res.json();
         })
-        .then(resData => {
+        .then((resData) => {
           this.setState({
-            modalCourseId: courseId,
-            modalCourseTitle: courseTitle,
+            selectCourseId: courseId,
             papers: resData.papers,
-            pageLoading: false,
-            selectCourseModal: false,
-            isLoading: false
+            paperLoading: false,
           });
           this.props.notify(true, 'Success', resData.message);
         })
-        .catch(err => {
+        .catch((err) => {
           try {
-            err.json().then(body => {
+            err.json().then((body) => {
               this.props.notify(
                 true,
                 'Error',
@@ -205,27 +150,27 @@ class Papers extends Component {
 
   // Adding paper
 
-  onChange = e => {
+  onChange = (e) => {
     const name = e.target.name;
     if (e.target.files && e.target.files[0]) {
       this.setState({
-        [name]: e.target.files[0]
+        [name]: e.target.files[0],
       });
     } else {
       const value = e.target.value;
       this.setState({
-        [name]: value
+        [name]: value,
       });
     }
   };
 
   addPaperModalHandler = () => {
-    this.setState(prevState => ({
-      addPaperModal: !prevState.addPaperModal
+    this.setState((prevState) => ({
+      addPaperModal: !prevState.addPaperModal,
     }));
   };
 
-  onAddPaperHandler = e => {
+  onAddPaperHandler = (e) => {
     e.preventDefault();
     this.setState({ isLoading: true });
     if (
@@ -264,26 +209,25 @@ class Papers extends Component {
               method: 'POST',
               body: formData,
               headers: {
-                Authorization: 'Bearer ' + this.props.token
-              }
+                Authorization: 'Bearer ' + this.props.token,
+              },
             }
           )
-            .then(res => {
+            .then((res) => {
               if (!res.ok) throw res;
               return res.json();
             })
-            .then(resData => {
+            .then((resData) => {
               this.setState({
                 papers: resData.papers,
-                addPaperLoading: false,
                 addPaperModal: false,
-                isLoading: false
+                isLoading: false,
               });
               this.props.notify(true, 'Success', resData.message);
             })
-            .catch(err => {
+            .catch((err) => {
               try {
-                err.json().then(body => {
+                err.json().then((body) => {
                   this.props.notify(
                     true,
                     'Error',
@@ -319,27 +263,62 @@ class Papers extends Component {
       <Spinner />
     ) : (
       <div className={classes.Papers}>
+        <div className={classes.Caption}>
+          <span className={classes.CaptionSpan}>
+            {this.state.selectCourseId === '' ? (
+              ''
+            ) : (
+              <>
+                Subject: &nbsp; <strong>{this.state.selectCourseTitle}</strong>
+              </>
+            )}
+          </span>
+          <span className={classes.CaptionSpan}>
+            <SelectInput
+              name='courseTitle'
+              placeholder='Course List'
+              onChange={this.onChangeCourse}
+              disabled=''
+              defaultValue=''
+            >
+              {this.state.coursesArray}
+            </SelectInput>
+          </span>
+        </div>
         <table className={classes.PapersTable}>
-          <caption>
-            Subject: <strong>{this.state.modalCourseTitle}</strong>
-          </caption>
           <thead>
             <tr>
               <th>Title</th>
               <th>Grades</th>
               <th>Assessment</th>
-              <th>Paper</th>
-              <th>Solution</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {this.state.papers.papers.length > 0 ? (
-              this.state.papers.papers.map(row => {
+            {this.state.paperLoading ? (
+              <tr>
+                <td colSpan='5'>
+                  <Spinner />
+                </td>
+              </tr>
+            ) : this.state.selectCourseId === '' ? (
+              <tr key={1}>
+                <td colSpan='5'>Please select a course!</td>
+              </tr>
+            ) : this.state.papers.papers.length <= 0 ? (
+              <tr key={1}>
+                <td colSpan='5'>
+                  You haven't added any paper for this course yet!
+                </td>
+              </tr>
+            ) : (
+              this.state.papers.papers.map((row) => {
                 return (
-                  <tr key={row._id} className={classes.papersTableRow}>
-                    <td style={{ padding: '20px' }}>{row.title}</td>
-                    <td style={{ padding: '20px' }}>{row.grade}</td>
-                    <td style={{ padding: '20px' }}>{row.assessment}</td>
+                  <tr key={row._id}>
+                    <td>{row.title}</td>
+                    <td>{row.grade}</td>
+                    <td>{row.assessment}</td>
                     <td>Status</td>
                     <td>
                       <TableButton
@@ -349,12 +328,12 @@ class Papers extends Component {
                             pathname: '/addresult',
                             state: {
                               pageFor: 'Paper',
-                              courseId: this.state.modalCourseId,
-                              courseTitle: this.state.modalCourseTitle,
+                              courseId: this.state.selectCourseId,
+                              courseTitle: this.state.selectCourseTitle,
                               materialId: row._id,
                               materialTitle: row.title,
-                              materialDoc: this.state.papers
-                            }
+                              materialDoc: this.state.papers,
+                            },
                           });
                         }}
                       >
@@ -364,21 +343,24 @@ class Papers extends Component {
                   </tr>
                 );
               })
-            ) : (
-              <tr key={1} className={classes.papersTableRow}>
-                <td style={{ padding: '20px' }} colSpan='5'>
-                  You haven't added any paper for this course yet!
-                </td>
-              </tr>
             )}
           </tbody>
         </table>
-        <div className={classes.buttonDiv}>
+        <div className={classes.ButtonDiv}>
+          <Button buttonType='red' onClick={() => this.props.history.goBack()}>
+            Go back
+          </Button>
           <Button
             onClick={this.addPaperModalHandler}
-            disabled={this.state.addPaperLoading ? true : false}
+            disabled={
+              this.state.isLoading ||
+              this.state.selectCourseId === '' ||
+              this.state.paperLoading
+                ? true
+                : false
+            }
           >
-            {this.state.addPaperLoading ? 'Loading' : 'Add paper'}
+            {this.state.isLoading ? 'Loading' : 'Add Paper'}
           </Button>
         </div>
       </div>
@@ -386,44 +368,6 @@ class Papers extends Component {
     return (
       <>
         {page}
-        {/* ======================================= Select Course Modal Starts =================================*/}
-        <Modal visible={this.state.selectCourseModal}>
-          <div className={classes.Modal}>
-            {this.state.modalLoading ? (
-              <Spinner />
-            ) : (
-              <div className={classes.ModalBody}>
-                <div className={classes.ModalContent}>
-                  <div className={classes.ModalContentTitle}>
-                    Select Course!
-                  </div>
-                  <SelectInput
-                    name='courseTitle'
-                    placeholder='Course List'
-                    onChange={this.onChangeCourse}
-                    disabled=''
-                    defaultValue=''
-                  >
-                    {this.state.coursesArray}
-                  </SelectInput>
-                </div>
-                <div className={classes.buttonDiv}>
-                  <Button
-                    type='button'
-                    buttonType='red'
-                    onClick={this.onSelectCourseModalCancel}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type='button' onClick={this.onSelectCourse}>
-                    {this.state.isLoading ? 'Loading' : 'Select'}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        </Modal>
-        {/* =======================================  Select Course Modal Ends  ====================================*/}
         {/* ======================================= Add paper Modal Starts =================================*/}
         <Modal visible={this.state.addPaperModal}>
           <div className={classes.Modal}>

@@ -119,7 +119,6 @@ class Assignments extends Component {
           return res.json();
         })
         .then((resData) => {
-          console.log(resData);
           this.setState({
             selectCourseId: courseId,
             assignments: resData.assignments,

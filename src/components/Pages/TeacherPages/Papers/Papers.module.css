@@ -11,25 +11,34 @@
     0 0.126rem 0.225rem rgba(122, 123, 151, 0.3);
 }
 
+.Papers .Caption {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px 0 20px;
+  margin: 10px 0 25px 0;
+  text-align: center;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.33;
+  white-space: nowrap;
+}
+
+.Papers .Caption .CaptionSpan {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Table Starts */
 
 .Papers table {
   table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
-}
-
-.Papers caption {
-  padding-top: 20px;
-  text-align: center;
-  margin: 10px 0 25px 0;
-  font-size: 22px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 1.33;
-  text-transform: uppercase;
-  pointer-events: none;
-  white-space: nowrap;
 }
 
 .Papers table thead {
@@ -39,7 +48,15 @@
 }
 
 .Papers table tbody tr {
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.5;
   border-bottom: 1px solid rgba(7, 9, 25, 0.125);
+}
+
+.Papers table tbody tr td {
+  padding: 15px;
 }
 
 .Papers table th {
@@ -56,7 +73,7 @@
 
 /* Table Ends */
 
-.buttonDiv {
+.ButtonDiv {
   display: flex;
   flex-direction: row;
   align-items: center;
