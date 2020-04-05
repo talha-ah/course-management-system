@@ -279,7 +279,6 @@ class Assignments extends Component {
                 addAssignmentModal: false,
                 isLoading: false
               });
-
               this.props.notify(true, 'Success', resData.message);
             })
             .catch(err => {

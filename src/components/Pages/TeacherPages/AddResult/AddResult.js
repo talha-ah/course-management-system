@@ -34,9 +34,19 @@ class AddResult extends Component {
       const resData = await res.json();
 
       const tempMaterialArray = [];
-      this.props.location.state.materialDoc.assignments.map(material => {
-        return tempMaterialArray.push(material.title);
-      });
+      if (this.props.location.state.pageFor === 'Assignment') {
+        this.props.location.state.materialDoc.assignments.map(material => {
+          return tempMaterialArray.push(material.title);
+        });
+      } else if (this.props.location.state.pageFor === 'Quiz') {
+        this.props.location.state.materialDoc.quizzes.map(material => {
+          return tempMaterialArray.push(material.title);
+        });
+      } else if (this.props.location.state.pageFor === 'Paper') {
+        this.props.location.state.materialDoc.papers.map(material => {
+          return tempMaterialArray.push(material.title);
+        });
+      }
 
       this.setState({
         class: resData.class,
@@ -64,6 +74,7 @@ class AddResult extends Component {
       }
     }
   }
+
   componentDidUpdate(prevProps, prevState) {
     if (this.state.materialTitle !== prevState.materialTitle)
       this.getMaterialFromServer();
@@ -83,8 +94,7 @@ class AddResult extends Component {
         return false;
       });
       materialURL = `${process.env.REACT_APP_SERVER_URL}/teacher/getassignmentresult/${this.state.materialsDoc._id}/${materialId}`;
-    }
-    if (this.props.location.state.pageFor === 'Quiz') {
+    } else if (this.props.location.state.pageFor === 'Quiz') {
       this.state.materialsDoc.quizzes.some(material => {
         if (material.title === materialTitle) {
           materialId = material._id;
@@ -93,6 +103,15 @@ class AddResult extends Component {
         return false;
       });
       materialURL = `${process.env.REACT_APP_SERVER_URL}/teacher/getquizresult/${this.state.materialsDoc._id}/${materialId}`;
+    } else if (this.props.location.state.pageFor === 'Paper') {
+      this.state.materialsDoc.papers.some(material => {
+        if (material.title === materialTitle) {
+          materialId = material._id;
+          return true;
+        }
+        return false;
+      });
+      materialURL = `${process.env.REACT_APP_SERVER_URL}/teacher/getpaperresult/${this.state.materialsDoc._id}/${materialId}`;
     }
     try {
       const res = await fetch(materialURL, {
@@ -134,6 +153,7 @@ class AddResult extends Component {
     const formData = new FormData(e.target);
     const data = {};
     var error = false;
+    var materialURL;
 
     for (var [key, value] of formData.entries()) {
       if (value === '' || +value > +this.state.materialGrade) {
@@ -141,20 +161,23 @@ class AddResult extends Component {
       }
       data[key] = value;
     }
-
     if (!error) {
+      if (this.props.location.state.pageFor === 'Assignment') {
+        materialURL = `${process.env.REACT_APP_SERVER_URL}/teacher/addassignmentresult/${this.state.materialsDoc._id}/${this.state.materialId}`;
+      } else if (this.props.location.state.pageFor === 'Quiz') {
+        materialURL = `${process.env.REACT_APP_SERVER_URL}/teacher/addquizresult/${this.state.materialsDoc._id}/${this.state.materialId}`;
+      } else if (this.props.location.state.pageFor === 'Paper') {
+        materialURL = `${process.env.REACT_APP_SERVER_URL}/teacher/addpaperresult/${this.state.materialsDoc._id}/${this.state.materialId}`;
+      }
       try {
-        const res = await fetch(
-          `${process.env.REACT_APP_SERVER_URL}/teacher/addassignmentresult/${this.state.materialsDoc._id}/${this.state.materialId}`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + this.props.token
-            },
-            body: JSON.stringify({ data: data })
-          }
-        );
+        const res = await fetch(materialURL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.props.token
+          },
+          body: JSON.stringify({ data: data })
+        });
         if (!res.ok) throw res;
         const resData = await res.json();
         this.setState({
