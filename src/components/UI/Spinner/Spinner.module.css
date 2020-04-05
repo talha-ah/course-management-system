@@ -1,18 +1,16 @@
-.Loader,
-.Loader:after {
+.Spinner
+/* .Spinner:after  */ {
   border-radius: 50%;
-  width: 10em;
-  height: 10em;
 }
-.Loader {
+.Spinner {
   margin: 60px auto;
-  font-size: 10px;
+  font-size: 6px;
   position: relative;
   text-indent: -9999em;
-  border-top: 1.1em solid rgba(59, 62, 102, 0.2);
-  border-right: 1.1em solid rgba(59, 62, 102, 0.2);
-  border-bottom: 1.1em solid rgba(59, 62, 102, 0.2);
-  border-left: 1.1em solid #3b3e66;
+  border-top: 0.4em solid rgba(59, 62, 102, 0.2);
+  /* border-right: 0.4em solid rgba(59, 62, 102, 0.2); */
+  /* border-bottom: 0.4em solid rgba(59, 62, 102, 0.2); */
+  border-left: 0.4em solid #3b3e66;
   -webkit-transform: translateZ(0);
   -ms-transform: translateZ(0);
   transform: translateZ(0);

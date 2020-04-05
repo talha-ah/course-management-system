@@ -22,21 +22,21 @@ class EditProfile extends React.Component {
     newPassword: '',
     confirmPassword: '',
     file: null,
-    fileName: ''
+    fileName: '',
   };
 
   componentDidMount() {
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/getteacher`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token
-      }
+        Authorization: 'Bearer ' + this.props.token,
+      },
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw res;
         return res.json();
       })
-      .then(resData => {
+      .then((resData) => {
         this.setState({
           pageLoading: false,
           firstName: resData.teacher.firstName,
@@ -47,12 +47,12 @@ class EditProfile extends React.Component {
           address: resData.teacher.address.address,
           country: resData.teacher.address.country,
           city: resData.teacher.address.city,
-          zip: resData.teacher.address.zip
+          zip: resData.teacher.address.zip,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         try {
-          err.json().then(body => {
+          err.json().then((body) => {
             this.props.notify(
               true,
               'Error',
@@ -69,22 +69,22 @@ class EditProfile extends React.Component {
       });
   }
 
-  onChange = e => {
+  onChange = (e) => {
     if (e.target.type === 'file' && e.target.files[0].name) {
       this.setState({
         file: e.target.files[0],
-        fileName: e.target.files[0].name
+        fileName: e.target.files[0].name,
       });
     } else {
       const name = e.target.name;
       const value = e.target.value;
       this.setState({
-        [name]: value
+        [name]: value,
       });
     }
   };
 
-  onProfileUpdate = e => {
+  onProfileUpdate = (e) => {
     e.preventDefault();
 
     this.setState({ isLoading: true });
@@ -99,24 +99,24 @@ class EditProfile extends React.Component {
         address: this.state.address,
         country: this.state.country,
         city: this.state.city,
-        zip: this.state.zip
+        zip: this.state.zip,
       }),
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token
-      }
+        Authorization: 'Bearer ' + this.props.token,
+      },
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw res;
         return res.json();
       })
-      .then(resData => {
+      .then((resData) => {
         this.setState({ isLoading: false });
         this.props.notify(true, 'Success', resData.message);
       })
-      .catch(err => {
+      .catch((err) => {
         try {
-          err.json().then(body => {
+          err.json().then((body) => {
             this.props.notify(
               true,
               'Error',
@@ -133,7 +133,7 @@ class EditProfile extends React.Component {
       });
   };
 
-  onPasswordChange = e => {
+  onPasswordChange = (e) => {
     e.preventDefault();
     this.setState({ isLoading: true });
     if (this.state.newPassword === this.state.confirmPassword) {
@@ -141,24 +141,24 @@ class EditProfile extends React.Component {
         method: 'POST',
         body: JSON.stringify({
           currentPassword: this.state.password,
-          newPassword: this.state.newPassword
+          newPassword: this.state.newPassword,
         }),
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + this.props.token
-        }
+          Authorization: 'Bearer ' + this.props.token,
+        },
       })
-        .then(res => {
+        .then((res) => {
           if (!res.ok) throw res;
           return res.json();
         })
-        .then(resData => {
+        .then((resData) => {
           this.setState({ isLoading: false });
           this.props.notify(true, 'Success', resData.message);
         })
-        .catch(err => {
+        .catch((err) => {
           try {
-            err.json().then(body => {
+            err.json().then((body) => {
               this.props.notify(
                 true,
                 'Error',
@@ -178,7 +178,7 @@ class EditProfile extends React.Component {
     }
   };
 
-  onCVSubmit = e => {
+  onCVSubmit = (e) => {
     e.preventDefault();
 
     this.setState({ isLoading: true });
@@ -194,20 +194,20 @@ class EditProfile extends React.Component {
           method: 'POST',
           body: formData,
           headers: {
-            Authorization: 'Bearer ' + this.props.token
-          }
+            Authorization: 'Bearer ' + this.props.token,
+          },
         })
-          .then(res => {
+          .then((res) => {
             if (!res.ok) throw res;
             return res.json();
           })
-          .then(resData => {
+          .then((resData) => {
             this.setState({ isLoading: false });
             this.props.notify(true, 'Success', resData.message);
           })
-          .catch(err => {
+          .catch((err) => {
             try {
-              err.json().then(body => {
+              err.json().then((body) => {
                 this.props.notify(
                   true,
                   'Error',
@@ -233,7 +233,7 @@ class EditProfile extends React.Component {
 
   render() {
     const page = this.state.pageLoading ? (
-      <Spinner />
+      <Spinner size='Big' />
     ) : (
       <div className={classes.Profile}>
         <div className={classes.Title}>
