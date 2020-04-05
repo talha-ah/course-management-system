@@ -44,10 +44,15 @@
   color: #fff;
 }
 
-.button:disabled {
+.button:disabled,
+.buttonRed:disabled {
   color: #ccc;
   cursor: not-allowed;
   box-shadow: none;
   -webkit-transform: none;
   transform: none;
+}
+
+.buttonRed:disabled {
+  background-color: #fff;
 }

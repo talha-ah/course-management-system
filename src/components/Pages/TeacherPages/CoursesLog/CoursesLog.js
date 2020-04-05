@@ -6,42 +6,42 @@ import Button from '../../../UI/Button/Button';
 import TableButton from '../../../UI/TableButton/TableButton';
 import TableInput from '../../../UI/TableInput/TableInput';
 import TextArea from '../../../UI/TextArea/TextArea';
-import Modal from '../../../UI/Modal/Modal';
 import SelectInput from '../../../UI/SelectInput/SelectInput';
 
 class CoursesLog extends Component {
   state = {
+    // Loadings
     pageLoading: true,
-    modalLoading: true,
-    selectCourseModal: true,
+    logLoading: false,
     isLoading: false,
-    modalCourseId: '',
-    modalCourseTitle: '',
+    // Data
+    selectCourseId: '',
+    selectCourseTitle: '',
     courses: '',
     coursesArray: [],
     courseLog: '',
+    // Adding Log
     addingRow: false,
-    addLogLoading: false,
     date: '',
     duration: '01:30',
     topics: '',
-    instruments: ''
+    instruments: '',
   };
 
   componentDidMount() {
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token
-      }
+        Authorization: 'Bearer ' + this.props.token,
+      },
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw res;
         return res.json();
       })
-      .then(resData => {
+      .then((resData) => {
         const arrayCourses = [];
-        resData.courses.map(course => {
+        resData.courses.map((course) => {
           if (course.status === 'Active') {
             return arrayCourses.push(course.title);
           }
@@ -50,12 +50,12 @@ class CoursesLog extends Component {
         this.setState({
           courses: resData.courses,
           coursesArray: arrayCourses,
-          modalLoading: false
+          pageLoading: false,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         try {
-          err.json().then(body => {
+          err.json().then((body) => {
             this.props.notify(
               true,
               'Error',
@@ -73,6 +73,12 @@ class CoursesLog extends Component {
     this.setInstantDate();
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.selectCourseTitle !== prevState.selectCourseTitle) {
+      this.onSelectCourse();
+    }
+  }
+
   setInstantDate = () => {
     var now = new Date();
     var month = now.getMonth() + 1;
@@ -84,33 +90,25 @@ class CoursesLog extends Component {
     this.setState({ date: today });
   };
 
-  selectCourseModal = (id, title) => {
-    this.setState(prevState => ({
-      selectCourseModal: !prevState.selectCourseModal
-    }));
-  };
-
-  onModalCancel = () => {
-    if (this.state.modalCourseId !== '') {
-      this.selectCourseModal();
+  onChangeCourse = (e) => {
+    const title = e.target.value;
+    if (title === 'Course List' || title === '') {
+      this.setState({
+        selectCourseId: '',
+      });
     } else {
-      this.props.history.push('/');
+      this.setState({
+        selectCourseTitle: title,
+      });
     }
   };
 
-  onChangeCourse = e => {
-    const title = e.target.value;
-    this.setState({
-      modalCourseTitle: title
-    });
-  };
-
   onSelectCourse = () => {
-    this.setState({ isLoading: true });
-    const courseTitle = this.state.modalCourseTitle;
+    this.setState({ logLoading: true });
+    const courseTitle = this.state.selectCourseTitle;
     var courseId;
 
-    this.state.courses.some(course => {
+    this.state.courses.some((course) => {
       if (course.title === courseTitle) {
         courseId = course._id;
         return true;
@@ -123,28 +121,25 @@ class CoursesLog extends Component {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.props.token
-          }
+            Authorization: 'Bearer ' + this.props.token,
+          },
         }
       )
-        .then(res => {
+        .then((res) => {
           if (!res.ok) throw res;
           return res.json();
         })
-        .then(resData => {
+        .then((resData) => {
           this.setState({
-            pageLoading: false,
-            selectCourseModal: false,
-            modalCourseId: courseId,
-            modalCourseTitle: courseTitle,
+            selectCourseId: courseId,
             courseLog: resData.courseLog,
-            isLoading: false
+            logLoading: false,
           });
           this.props.notify(true, 'Success', resData.message);
         })
-        .catch(err => {
+        .catch((err) => {
           try {
-            err.json().then(body => {
+            err.json().then((body) => {
               this.props.notify(
                 true,
                 'Error',
@@ -164,27 +159,19 @@ class CoursesLog extends Component {
     }
   };
 
-  onChange = e => {
+  onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     this.setState({
-      [name]: value
+      [name]: value,
     });
-  };
-
-  insertRowHandler = () => {
-    this.setState(prevState => ({ addingRow: !prevState.addingRow }));
-  };
-
-  addRowCancelHandler = () => {
-    this.setState({ addingRow: false });
   };
 
   onLogAddHandler = () => {
     const topics = this.state.topics;
     const instruments = this.state.instruments;
     if (topics !== '' && instruments !== '') {
-      this.setState({ addLogLoading: true });
+      this.setState({ isLoading: true });
       fetch(
         `${process.env.REACT_APP_SERVER_URL}/teacher/addcourselog/${this.state.courseLog._id}`,
         {
@@ -193,32 +180,32 @@ class CoursesLog extends Component {
             date: this.state.date,
             duration: this.state.duration,
             topics: topics,
-            instruments: instruments
+            instruments: instruments,
           }),
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.props.token
-          }
+            Authorization: 'Bearer ' + this.props.token,
+          },
         }
       )
-        .then(res => {
+        .then((res) => {
           if (!res.ok) throw res;
           return res.json();
         })
-        .then(resData => {
+        .then((resData) => {
           this.setState({
-            addLogLoading: false,
-            addingRow: false
+            isLoading: false,
+            addingRow: false,
           });
           this.onSelectCourse();
           this.props.notify(true, 'Success', resData.message);
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({
-            addLogLoading: false
+            isLoading: false,
           });
           try {
-            err.json().then(body => {
+            err.json().then((body) => {
               this.props.notify(
                 true,
                 'Error',
@@ -243,10 +230,28 @@ class CoursesLog extends Component {
       <Spinner />
     ) : (
       <div className={classes.CoursesLog}>
+        <div className={classes.Caption}>
+          <span className={classes.CaptionSpan}>
+            Subject:{' '}
+            <strong>
+              {this.state.selectCourseId === ''
+                ? '-?'
+                : this.state.selectCourseTitle}
+            </strong>
+          </span>
+          <span className={classes.CaptionSpan}>
+            <SelectInput
+              name='courseTitle'
+              placeholder='Course List'
+              onChange={this.onChangeCourse}
+              disabled=''
+              defaultValue=''
+            >
+              {this.state.coursesArray}
+            </SelectInput>
+          </span>
+        </div>
         <table className={classes.CoursesLogTable}>
-          <caption>
-            Subject: <strong>{this.state.modalCourseTitle}</strong>
-          </caption>
           <thead>
             <tr>
               <th>Date</th>
@@ -257,40 +262,52 @@ class CoursesLog extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.courseLog.log.length > 0 ? (
-              this.state.courseLog.log.map(row => {
+            {this.state.logLoading ? (
+              <tr>
+                <td colSpan='5'>
+                  <Spinner />
+                </td>
+              </tr>
+            ) : this.state.selectCourseId === '' ? (
+              <tr key={1} className={classes.CoursesLogTableRow}>
+                <td style={{ padding: '20px' }} colSpan='5'>
+                  Please select a course!
+                </td>
+              </tr>
+            ) : this.state.courseLog.log.length <= 0 ? (
+              <tr key={1} className={classes.CoursesLogTableRow}>
+                <td style={{ padding: '20px' }} colSpan='5'>
+                  You haven't added any courselog for this course yet!
+                </td>
+              </tr>
+            ) : (
+              this.state.courseLog.log.map((row) => {
                 return (
                   <tr key={row._id} className={classes.CoursesLogTableRow}>
-                    <td style={{ padding: '20px' }}>{row.date}</td>
-                    <td style={{ padding: '20px' }}>{row.duration}</td>
+                    <td>{row.date}</td>
+                    <td>{row.duration}</td>
                     <td>
                       <TextArea
                         defaultValue={row.topics}
                         disabled={true}
                         rows='1'
                         style={{
-                          height: '35px',
-                          minHeight: '35px',
-                          maxHeight: '85px',
-                          border: '0'
+                          height: '22px',
+                          minHeight: '22px',
+                          maxHeight: '66px',
+                          border: '0',
                         }}
                       />
                     </td>
-                    <td style={{ padding: '20px' }}>{row.instruments}</td>
-                    <td style={{ padding: '20px' }}>-</td>
+                    <td>{row.instruments}</td>
+                    <td>-</td>
                   </tr>
                 );
               })
-            ) : (
-              <tr key={1} className={classes.CoursesLogTableRow}>
-                <td style={{ padding: '20px' }} colSpan='5'>
-                  You haven't added any courselog for this course yet!
-                </td>
-              </tr>
             )}
             {this.state.addingRow ? (
-              <tr className={classes.AddRow}>
-                <td style={{ padding: '10px' }}>
+              <tr className={classes.CoursesLogTableRow}>
+                <td>
                   <TableInput
                     type='date'
                     name='date'
@@ -314,11 +331,11 @@ class CoursesLog extends Component {
                     onChange={this.onChange}
                     value={this.state.topics}
                     style={{
-                      height: '35px',
-                      minHeight: '35px',
-                      maxHeight: '85px',
+                      height: '22px',
+                      minHeight: '22px',
+                      maxHeight: '66px',
                       border: '0',
-                      textAlign: 'center'
+                      textAlign: 'center',
                     }}
                   />
                 </td>
@@ -344,7 +361,7 @@ class CoursesLog extends Component {
                     color='#ff9494'
                     title='Cancel'
                     className={classes.Button}
-                    onClick={this.addRowCancelHandler}
+                    onClick={() => this.setState({ addingRow: false })}
                     type='button'
                   >
                     x
@@ -356,57 +373,22 @@ class CoursesLog extends Component {
         </table>
         <div className={classes.buttonDiv}>
           <Button
-            onClick={this.insertRowHandler}
+            buttonType='red'
+            onClick={() => this.props.history.goBack()}
             disabled={this.state.addingRow ? true : false}
           >
-            {this.state.addLogLoading ? 'Loading' : 'Add Log Row'}
+            Go back
+          </Button>
+          <Button
+            onClick={() => this.setState({ addingRow: true })}
+            disabled={this.state.addingRow ? true : false}
+          >
+            {this.state.isLoading ? 'Loading' : 'Add Log Row'}
           </Button>
         </div>
       </div>
     );
-    return (
-      <>
-        {page}
-        {/* ======================================= Modal Starts =================================*/}
-        <Modal visible={this.state.selectCourseModal}>
-          <div className={classes.Modal}>
-            {this.state.modalLoading ? (
-              <Spinner />
-            ) : (
-              <div className={classes.ModalBody}>
-                <div className={classes.ModalContent}>
-                  <div className={classes.ModalContentTitle}>
-                    Select Course!
-                  </div>
-                  <SelectInput
-                    name='courseTitle'
-                    placeholder='Course List'
-                    onChange={this.onChangeCourse}
-                    disabled=''
-                    defaultValue=''
-                  >
-                    {this.state.coursesArray}
-                  </SelectInput>
-                </div>
-                <div className={classes.buttonDiv}>
-                  <Button
-                    type='button'
-                    buttonType='red'
-                    onClick={this.onModalCancel}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type='button' onClick={this.onSelectCourse}>
-                    {this.state.isLoading ? 'Loading' : 'Select'}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        </Modal>
-        {/* =======================================  Modal Ends  ====================================*/}
-      </>
-    );
+    return page;
   }
 }
 
