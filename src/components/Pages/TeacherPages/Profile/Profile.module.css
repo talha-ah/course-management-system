@@ -1,31 +1,41 @@
 .Profile {
-  padding: 32px 40px;
-  margin: 1rem 3rem 3rem 3rem;
+  position: relative;
   color: #3b3e66;
-  background-color: #fff;
+  max-width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 0.375rem;
+  margin: 1rem 3rem 3rem 3rem;
+  padding: 0 2%;
+  /* padding: 32px 40px; */
+  background-color: #fff;
+  box-shadow: 0 0.313rem 0.8rem rgba(122, 123, 151, 0.5),
+    0 0.126rem 0.225rem rgba(122, 123, 151, 0.3);
 }
 
-.Title h4 {
-  text-align: center;
+.Profile .Caption {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 15px;
   margin: 10px 0 25px 0;
+  text-align: center;
   font-size: 22px;
   font-style: normal;
   font-weight: 600;
   line-height: 1.33;
-  text-transform: uppercase;
-  pointer-events: none;
   white-space: nowrap;
 }
 
-.InputDiv {
-  margin-bottom: 1rem;
+.Profile .Caption .CaptionSpan {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
-.InputDiv label {
-  display: inline-block;
-  margin-bottom: 0.5rem;
+.Profile form {
+  margin-top: 10px;
 }
 
 .InputGroup {
@@ -41,12 +51,19 @@
   margin-right: 0px;
 }
 
+.InputDiv label {
+  display: inline-block;
+  margin-top: 1.3rem;
+  margin-bottom: 0.15rem;
+  font-weight: bold;
+}
+
 .ButtonDiv {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin: 25px 0 12px 0;
+  margin: 25px 0;
 }
 
 /* ====================== Upload CV Starts ==================*/
@@ -55,18 +72,20 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-  height: 180px;
+  height: 120px;
+  margin-top: 80px;
+  margin-bottom: 80px;
 }
 
 .cvUpload form {
   position: relative;
-  width: 72.5%;
-  height: 62.5%;
-  color: #3b3e66;
-  background-color: #fff;
+  width: 100%;
+  height: 100%;
   font-size: 0.95rem;
   font-weight: 400;
   line-height: 1.5;
+  color: #3b3e66;
+  background-color: #fff;
   border: 1px solid #d1d2db;
   border-radius: 0.29rem;
   -webkit-transition: border-color 0.15s ease-in-out,
@@ -105,7 +124,26 @@
   pointer-events: none;
 }
 
-.cvUpload form button {
-  margin-top: -30px;
-}
 /* ====================== Upload CV Ends ==================*/
+
+.TabsButtons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.TabsButtons .Button {
+  display: inline-block;
+  box-sizing: border-box;
+  color: #3b3e66;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 0.53rem 2rem;
+  width: 100%;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
