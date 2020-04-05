@@ -304,13 +304,11 @@ class Quizzes extends Component {
               </tr>
             ) : this.state.selectCourseId === '' ? (
               <tr key={1}>
-                <td style={{ padding: '20px' }} colSpan='5'>
-                  Please select a course!
-                </td>
+                <td colSpan='5'>Please select a course!</td>
               </tr>
             ) : this.state.quizzes.quizzes.length <= 0 ? (
               <tr key={1}>
-                <td style={{ padding: '20px' }} colSpan='5'>
+                <td colSpan='5'>
                   You haven't added any quiz for this course yet!
                 </td>
               </tr>
@@ -318,9 +316,9 @@ class Quizzes extends Component {
               this.state.quizzes.quizzes.map((row) => {
                 return (
                   <tr key={row._id}>
-                    <td style={{ padding: '20px' }}>{row.title}</td>
-                    <td style={{ padding: '20px' }}>{row.grade}</td>
-                    <td style={{ padding: '20px' }}>{row.assessment}</td>
+                    <td>{row.title}</td>
+                    <td>{row.grade}</td>
+                    <td>{row.assessment}</td>
                     <td>Status</td>
                     <td>
                       <TableButton
@@ -354,7 +352,13 @@ class Quizzes extends Component {
           </Button>
           <Button
             onClick={this.addQuizzModalHandler}
-            disabled={this.state.isLoading ? true : false}
+            disabled={
+              this.state.isLoading ||
+              this.state.selectCourseId === '' ||
+              this.state.quizLoading
+                ? true
+                : false
+            }
           >
             {this.state.isLoading ? 'Loading' : 'Add Quizz'}
           </Button>

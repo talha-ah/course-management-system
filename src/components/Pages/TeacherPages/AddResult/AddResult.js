@@ -16,7 +16,7 @@ class AddResult extends Component {
     materialGrade: 10,
     materialArray: '',
     materialsDoc: '',
-    result: ''
+    result: '',
   };
 
   async componentDidMount() {
@@ -26,8 +26,8 @@ class AddResult extends Component {
         `${process.env.REACT_APP_SERVER_URL}/class/getclass/${classId}`,
         {
           headers: {
-            Authorization: 'Bearer ' + this.props.token
-          }
+            Authorization: 'Bearer ' + this.props.token,
+          },
         }
       );
       if (!res.ok) throw res;
@@ -35,15 +35,15 @@ class AddResult extends Component {
 
       const tempMaterialArray = [];
       if (this.props.location.state.pageFor === 'Assignment') {
-        this.props.location.state.materialDoc.assignments.map(material => {
+        this.props.location.state.materialDoc.assignments.map((material) => {
           return tempMaterialArray.push(material.title);
         });
       } else if (this.props.location.state.pageFor === 'Quiz') {
-        this.props.location.state.materialDoc.quizzes.map(material => {
+        this.props.location.state.materialDoc.quizzes.map((material) => {
           return tempMaterialArray.push(material.title);
         });
       } else if (this.props.location.state.pageFor === 'Paper') {
-        this.props.location.state.materialDoc.papers.map(material => {
+        this.props.location.state.materialDoc.papers.map((material) => {
           return tempMaterialArray.push(material.title);
         });
       }
@@ -54,11 +54,11 @@ class AddResult extends Component {
         materialId: this.props.location.state.materialId,
         materialTitle: this.props.location.state.materialTitle,
         materialsDoc: this.props.location.state.materialDoc,
-        pageLoading: false
+        pageLoading: false,
       });
     } catch (err) {
       try {
-        err.json().then(body => {
+        err.json().then((body) => {
           this.props.notify(
             true,
             'Error',
@@ -86,7 +86,7 @@ class AddResult extends Component {
     var materialURL;
 
     if (this.props.location.state.pageFor === 'Assignment') {
-      this.state.materialsDoc.assignments.some(material => {
+      this.state.materialsDoc.assignments.some((material) => {
         if (material.title === materialTitle) {
           materialId = material._id;
           return true;
@@ -95,7 +95,7 @@ class AddResult extends Component {
       });
       materialURL = `${process.env.REACT_APP_SERVER_URL}/teacher/getassignmentresult/${this.state.materialsDoc._id}/${materialId}`;
     } else if (this.props.location.state.pageFor === 'Quiz') {
-      this.state.materialsDoc.quizzes.some(material => {
+      this.state.materialsDoc.quizzes.some((material) => {
         if (material.title === materialTitle) {
           materialId = material._id;
           return true;
@@ -104,7 +104,7 @@ class AddResult extends Component {
       });
       materialURL = `${process.env.REACT_APP_SERVER_URL}/teacher/getquizresult/${this.state.materialsDoc._id}/${materialId}`;
     } else if (this.props.location.state.pageFor === 'Paper') {
-      this.state.materialsDoc.papers.some(material => {
+      this.state.materialsDoc.papers.some((material) => {
         if (material.title === materialTitle) {
           materialId = material._id;
           return true;
@@ -116,8 +116,8 @@ class AddResult extends Component {
     try {
       const res = await fetch(materialURL, {
         headers: {
-          Authorization: 'Bearer ' + this.props.token
-        }
+          Authorization: 'Bearer ' + this.props.token,
+        },
       });
       if (!res.ok) throw res;
       const resData = await res.json();
@@ -126,11 +126,11 @@ class AddResult extends Component {
         materialId: materialId,
         materialTitle: resData.material.title,
         materialGrade: resData.material.grade,
-        dataLoading: false
+        dataLoading: false,
       });
     } catch (err) {
       try {
-        err.json().then(body => {
+        err.json().then((body) => {
           this.props.notify(
             true,
             'Error',
@@ -147,7 +147,7 @@ class AddResult extends Component {
     }
   };
 
-  onSubmitHandler = async e => {
+  onSubmitHandler = async (e) => {
     e.preventDefault();
     this.setState({ isLoading: true });
     const formData = new FormData(e.target);
@@ -174,21 +174,21 @@ class AddResult extends Component {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.props.token
+            Authorization: 'Bearer ' + this.props.token,
           },
-          body: JSON.stringify({ data: data })
+          body: JSON.stringify({ data: data }),
         });
         if (!res.ok) throw res;
         const resData = await res.json();
         this.setState({
           result: resData.savedMaterial.result,
-          isLoading: false
+          isLoading: false,
         });
         this.props.notify(true, 'Success', resData.message);
       } catch (err) {
         this.setState({ isLoading: false });
         try {
-          err.json().then(body => {
+          err.json().then((body) => {
             this.props.notify(
               true,
               'Error',
@@ -213,12 +213,12 @@ class AddResult extends Component {
     }
   };
 
-  onChangeCourse = e => {
+  onChangeCourse = (e) => {
     const title = e.target.value;
 
     this.setState({
       dataLoading: true,
-      materialTitle: title
+      materialTitle: title,
     });
   };
 
@@ -237,7 +237,7 @@ class AddResult extends Component {
               style={{
                 width: '150px',
                 marginLeft: '10px',
-                marginRight: '10px'
+                marginRight: '10px',
               }}
               name='materialTitle'
               value={this.state.materialTitle}
@@ -245,7 +245,6 @@ class AddResult extends Component {
             >
               {this.state.materialArray}
             </SelectInput>
-            Marks: {this.state.materialGrade}
           </span>
         </div>
         <form onSubmit={this.onSubmitHandler}>
@@ -256,7 +255,7 @@ class AddResult extends Component {
                 <th colSpan='2'>Name</th>
                 <th>Section</th>
                 <th>Batch</th>
-                <th>Marks</th>
+                <th>Marks / {this.state.materialGrade}</th>
               </tr>
             </thead>
             <tbody>
@@ -268,7 +267,7 @@ class AddResult extends Component {
                 </tr>
               ) : (
                 <>
-                  {Object.entries(this.state.class.students).map(student => {
+                  {Object.entries(this.state.class.students).map((student) => {
                     return (
                       <tr
                         key={student[0]}
