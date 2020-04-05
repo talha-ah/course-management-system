@@ -27,6 +27,8 @@
 }
 
 .CloseButton {
+  background-color: transparent;
+  border: 1px solid #ccc;
   cursor: pointer;
 }
 

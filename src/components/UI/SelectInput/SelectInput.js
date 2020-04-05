@@ -5,9 +5,10 @@ import classes from './SelectInput.module.css';
 const SelectInput = props => {
   return (
     <select
+      className={classes.SelectInput}
       name={props.name}
       onChange={props.onChange}
-      className={classes.SelectInput}
+      style={props.style}
     >
       {props.defaultValue !== '' ? (
         ''

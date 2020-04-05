@@ -6,6 +6,7 @@ import Button from '../../../UI/Button/Button';
 import Modal from '../../../UI/Modal/Modal';
 import Input from '../../../UI/Input/Input';
 import SelectInput from '../../../UI/SelectInput/SelectInput';
+import TableButton from '../../../UI/TableButton/TableButton';
 
 class Assignments extends Component {
   state = {
@@ -328,8 +329,8 @@ class Assignments extends Component {
               <th>Title</th>
               <th>Grades</th>
               <th>Assessment</th>
-              <th>Assignment</th>
-              <th>Solution</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -340,8 +341,27 @@ class Assignments extends Component {
                     <td style={{ padding: '20px' }}>{row.title}</td>
                     <td style={{ padding: '20px' }}>{row.grade}</td>
                     <td style={{ padding: '20px' }}>{row.assessment}</td>
-                    <td>{row.assignment.name}</td>
-                    <td>{row.solution.name}</td>
+                    <td>Status</td>
+                    <td>
+                      <TableButton
+                        title='Add Result'
+                        onClick={() => {
+                          this.props.history.push({
+                            pathname: '/addresult',
+                            state: {
+                              pageFor: 'Assignment',
+                              courseId: this.state.modalCourseId,
+                              courseTitle: this.state.modalCourseTitle,
+                              materialId: row._id,
+                              materialTitle: row.title,
+                              materialDoc: this.state.assignments
+                            }
+                          });
+                        }}
+                      >
+                        +
+                      </TableButton>
+                    </td>
                   </tr>
                 );
               })

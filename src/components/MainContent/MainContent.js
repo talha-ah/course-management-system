@@ -29,6 +29,7 @@ import CoursesMonitoring from '../Pages/TeacherPages/CoursesMonitoring/CoursesMo
 import Assignments from '../Pages/TeacherPages/Assignments/Assignments';
 import Papers from '../Pages/TeacherPages/Papers/Papers';
 import Quizzes from '../Pages/TeacherPages/Quizzes/Quizzes';
+import AddResult from '../Pages/TeacherPages/AddResult/AddResult';
 import Reports from '../Pages/TeacherPages/Reports/Reports';
 
 const MainContent = props => {
@@ -233,6 +234,18 @@ const MainContent = props => {
               path='/quizzes'
               render={({ match, history, location }) => (
                 <Quizzes
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/addresult'
+              render={({ match, history, location }) => (
+                <AddResult
                   match={match}
                   location={location}
                   history={history}

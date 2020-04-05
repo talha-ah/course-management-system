@@ -18,7 +18,8 @@
   display: block;
   box-sizing: border-box;
   width: 100%;
-  padding: 0.53rem 1rem;
+  /* padding: 0 1rem; */
+  padding: 0;
   color: #3b3e66;
   background-color: #fff;
   font-family: inherit;
@@ -40,6 +41,7 @@
   cursor: not-allowed;
 }
 
+.input[type='number']::-webkit-inner-spin-button,
 .input[type='time']::-webkit-inner-spin-button,
 .input[type='time']::-webkit-clear-button,
 .input[type='time']::-webkit-datetime-edit-ampm-field,
