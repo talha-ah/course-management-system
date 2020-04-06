@@ -14,23 +14,23 @@ class AddCourse extends Component {
     coursesArray: [],
     courseTitle: '',
     courseSection: '',
-    courseSession: ''
+    courseSession: '',
   };
 
   componentDidMount() {
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/listcourses`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token
-      }
+        Authorization: 'Bearer ' + this.props.token,
+      },
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw res;
         return res.json();
       })
-      .then(resData => {
+      .then((resData) => {
         const arrayCourses = [];
-        resData.courses.map(course => {
+        resData.courses.map((course) => {
           if (course.status === 'Active') {
             return arrayCourses.push(course.title);
           }
@@ -39,12 +39,12 @@ class AddCourse extends Component {
         this.setState({
           courses: resData.courses,
           coursesArray: arrayCourses,
-          pageLoading: false
+          pageLoading: false,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         try {
-          err.json().then(body => {
+          err.json().then((body) => {
             this.props.notify(
               true,
               'Error',
@@ -61,13 +61,13 @@ class AddCourse extends Component {
       });
   }
 
-  onFormSubmit = e => {
+  onFormSubmit = (e) => {
     e.preventDefault(); // Stop form submit
     this.setState({ isLoading: true });
     const courseTitle = this.state.courseTitle;
     var courseId;
 
-    this.state.courses.some(course => {
+    this.state.courses.some((course) => {
       if (course.title === courseTitle) {
         courseId = course._id;
         return true;
@@ -80,25 +80,24 @@ class AddCourse extends Component {
       body: JSON.stringify({
         courseId: courseId,
         sections: this.state.courseSection,
-        session: this.state.courseSession
+        session: this.state.courseSession,
       }),
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token
-      }
+        Authorization: 'Bearer ' + this.props.token,
+      },
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw res;
         return res.json();
       })
-      .then(resData => {
-        console.log(resData);
+      .then((resData) => {
         this.props.notify(true, 'Success', resData.message);
         this.props.history.push('/');
       })
-      .catch(err => {
+      .catch((err) => {
         try {
-          err.json().then(body => {
+          err.json().then((body) => {
             this.props.notify(
               true,
               'Error',
@@ -115,7 +114,7 @@ class AddCourse extends Component {
       });
   };
 
-  onChange = e => {
+  onChange = (e) => {
     const value = e.target.value;
     const name = e.target.name;
     this.setState({ [name]: value });
