@@ -33,8 +33,8 @@ exports.getTeacher = async (req, res, next) => {
         email: teacher.email,
         dob: teacher.dob,
         address: teacher.address,
-        phone: teacher.phone
-      }
+        phone: teacher.phone,
+      },
     });
   } catch (err) {
     if (!err.status) {
@@ -124,8 +124,8 @@ exports.editProfile = async (req, res, next) => {
         dob: updatedTeacher.dob,
         address: updatedTeacher.address,
         phone: updatedTeacher.phone,
-        cvPath: updatedTeacher.cvUrl
-      }
+        cvPath: updatedTeacher.cvUrl,
+      },
     });
   } catch (err) {
     if (!err.status) {
@@ -186,8 +186,8 @@ exports.editProfilePassword = async (req, res, next) => {
         dob: updatedTeacher.dob,
         address: updatedTeacher.address,
         phone: updatedTeacher.phone,
-        cvPath: updatedTeacher.cvUrl
-      }
+        cvPath: updatedTeacher.cvUrl,
+      },
     });
   } catch (err) {
     if (!err.status) {
@@ -233,8 +233,8 @@ exports.editCV = async (req, res, next) => {
         dob: updatedTeacher.dob,
         address: updatedTeacher.address,
         phone: updatedTeacher.phone,
-        cvPath: updatedTeacher.cvUrl
-      }
+        cvPath: updatedTeacher.cvUrl,
+      },
     });
   } catch (err) {
     if (!err.status) {
@@ -276,7 +276,7 @@ exports.getCourse = async (req, res, next) => {
   try {
     const teacher = await Teacher.findById(teacherId);
     var getCourse;
-    teacher.coursesAssigned.map(course => {
+    teacher.coursesAssigned.map((course) => {
       if (course._id.toString() === courseId.toString()) {
         getCourse = course;
       }
@@ -304,14 +304,14 @@ exports.getCourse = async (req, res, next) => {
         sessionType: course.session,
         sections: getCourse.sections,
         session: getCourse.session,
-        status: getCourse.status
+        status: getCourse.status,
       },
       courseLog: courseLog,
       courseDescription: courseDescription,
       courseMonitoring: courseMonitoring,
       assignments: assignments,
       papers: papers,
-      quizzes: quizzes
+      quizzes: quizzes,
     };
     res.status(200).json({ message: 'Course fetched!', course: updatedCourse });
   } catch (err) {
@@ -345,7 +345,7 @@ exports.getTeacherCourses = async (req, res, next) => {
 
     var updatedCourses = [];
 
-    courses.map(course => {
+    courses.map((course) => {
       updatedCourses.push({
         _id: course._id,
         courseId: course.courseId._id,
@@ -356,14 +356,14 @@ exports.getTeacherCourses = async (req, res, next) => {
         sessionType: course.courseId.session,
         status: course.status,
         sections: course.sections,
-        session: course.session
+        session: course.session,
       });
     });
 
     res.status(200).json({
       message: 'Courses fetched!',
       courses: updatedCourses,
-      totalCourses: totalCourses
+      totalCourses: totalCourses,
     });
   } catch (err) {
     if (!err.status) {
@@ -381,27 +381,24 @@ exports.takeCourse = async (req, res, next) => {
   const session = req.body.session;
   const errors = [];
   try {
-    // if (
-    //   !validator.isAlphanumeric(validator.blacklist(sections, ' ,')) ||
-    //   validator.isEmpty(sections)
-    // ) {
-    //   errors.push('Invalid sections!');
-    // }
-    // if (
-    //   !validator.isAlphanumeric(validator.blacklist(session, ' -')) ||
-    //   validator.isEmpty(session)
-    // ) {
-    //   errors.push('Invalid session!');
-    // }
-    // if (errors.length > 0) {
-    //   var error = new Error(errors);
-    //   error.status = 400;
-    //   throw error;
-    // }
+    if (sections.length <= 0) {
+      errors.push('Invalid sections!');
+    }
+    if (
+      !validator.isNumeric(String(validator.blacklist(session, ' -'))) ||
+      validator.isEmpty(session)
+    ) {
+      errors.push('Invalid session!');
+    }
+    if (errors.length > 0) {
+      var error = new Error(errors);
+      error.status = 400;
+      throw error;
+    }
     const course = await Teacher.find({
       _id: teacherId,
       'coursesAssigned.courseId': courseId,
-      'coursesAssigned.session': session
+      'coursesAssigned.session': session,
     });
 
     if (course.length > 0) {
@@ -412,15 +409,15 @@ exports.takeCourse = async (req, res, next) => {
 
     const courseLog = new CourseLog({
       courseId: courseId,
-      teacherId: teacherId
+      teacherId: teacherId,
     });
     const courseMonitoring = new CourseMonitoring({
       courseId: courseId,
-      teacherId: teacherId
+      teacherId: teacherId,
     });
     const courseDescription = new CourseDescription({
       courseId: courseId,
-      teacherId: teacherId
+      teacherId: teacherId,
     });
 
     const courseLogDoc = await courseLog.save();
@@ -429,15 +426,15 @@ exports.takeCourse = async (req, res, next) => {
 
     const assignment = new Assignment({
       courseId: courseId,
-      teacherId: teacherId
+      teacherId: teacherId,
     });
     const quiz = new Quiz({
       courseId: courseId,
-      teacherId: teacherId
+      teacherId: teacherId,
     });
     const paper = new Paper({
       courseId: courseId,
-      teacherId: teacherId
+      teacherId: teacherId,
     });
 
     const assignmentDoc = await assignment.save();
@@ -462,7 +459,7 @@ exports.takeCourse = async (req, res, next) => {
       courseMonitoring: courseMonitoringDoc._id,
       assignments: assignmentDoc._id,
       quizzes: quizDoc._id,
-      papers: paperDoc._id
+      papers: paperDoc._id,
     });
     const teacherData = await teacher.save();
 
@@ -504,12 +501,12 @@ exports.editCourse = async (req, res, next) => {
 
     const courseArray = [...teacher.coursesAssigned];
 
-    const courseIndex = teacher.coursesAssigned.findIndex(ci => {
+    const courseIndex = teacher.coursesAssigned.findIndex((ci) => {
       return ci._id.toString() === courseId.toString();
     });
 
     var getCourse;
-    teacher.coursesAssigned.map(course => {
+    teacher.coursesAssigned.map((course) => {
       if (course._id.toString() === courseId.toString()) {
         getCourse = course;
       }
@@ -524,7 +521,7 @@ exports.editCourse = async (req, res, next) => {
     res.status(201).json({
       message: 'Course Updated!',
       course: getCourse,
-      updatedTeacher: updatedTeacher
+      updatedTeacher: updatedTeacher,
     });
   } catch (err) {
     if (!err.status) {
@@ -543,7 +540,7 @@ exports.disableCourse = async (req, res, next) => {
 
     var courseArray = [...teacher.coursesAssigned];
 
-    const courseIndex = teacher.coursesAssigned.findIndex(c => {
+    const courseIndex = teacher.coursesAssigned.findIndex((c) => {
       return c._id.toString() === courseId.toString();
     });
 
@@ -557,7 +554,7 @@ exports.disableCourse = async (req, res, next) => {
 
     res.status(201).json({
       message: 'Course disabled!',
-      updatedTeacher: updatedTeacher
+      updatedTeacher: updatedTeacher,
     });
   } catch (err) {
     if (!err.status) {
@@ -575,7 +572,7 @@ exports.removeCourse = async (req, res, next) => {
     const teacher = await Teacher.findByIdAndUpdate(
       teacherId,
       {
-        $pull: { coursesAssigned: { _id: courseId } }
+        $pull: { coursesAssigned: { _id: courseId } },
       }
       // { new: true }
     );
@@ -585,7 +582,7 @@ exports.removeCourse = async (req, res, next) => {
       throw new error();
     }
 
-    const courseIndex = teacher.coursesAssigned.findIndex(c => {
+    const courseIndex = teacher.coursesAssigned.findIndex((c) => {
       return c._id.toString() === courseId.toString();
     });
 
@@ -600,7 +597,7 @@ exports.removeCourse = async (req, res, next) => {
 
     res.status(201).json({
       message: 'Course deleted.',
-      teacher: teacher
+      teacher: teacher,
     });
   } catch (err) {
     if (!err.status) {
@@ -619,7 +616,7 @@ exports.getCourseLog = async (req, res, next) => {
   try {
     const teacher = await Teacher.findById(teacherId);
 
-    const courseIndex = teacher.coursesAssigned.findIndex(c => {
+    const courseIndex = teacher.coursesAssigned.findIndex((c) => {
       return c._id.toString() === courseId.toString();
     });
 
@@ -697,7 +694,7 @@ exports.addCourseLog = async (req, res, next) => {
       date: date,
       duration: duration,
       topics: topics,
-      instruments: instruments
+      instruments: instruments,
     });
 
     const courseLogDoc = await courseLog.save();
@@ -718,7 +715,7 @@ exports.getCourseMonitoring = async (req, res, next) => {
   try {
     const teacher = await Teacher.findById(teacherId);
 
-    const courseIndex = teacher.coursesAssigned.findIndex(c => {
+    const courseIndex = teacher.coursesAssigned.findIndex((c) => {
       return c._id.toString() === courseId.toString();
     });
 
@@ -742,7 +739,7 @@ exports.getCourseMonitoring = async (req, res, next) => {
 
     res.status(200).json({
       message: 'Course Monitoring fetched!',
-      courseMonitoring: courseMonitor
+      courseMonitoring: courseMonitor,
     });
   } catch (err) {
     if (!err.status) {
@@ -805,7 +802,7 @@ exports.addCourseMonitoring = async (req, res, next) => {
 
     res.status(201).json({
       message: 'Course monitoring saved!',
-      courseMonitoring: courseMonitoringDoc
+      courseMonitoring: courseMonitoringDoc,
     });
   } catch (err) {
     if (!err.status) {
@@ -822,7 +819,7 @@ exports.getCourseDescription = async (req, res, next) => {
   try {
     const teacher = await Teacher.findById(teacherId);
 
-    const courseIndex = teacher.coursesAssigned.findIndex(c => {
+    const courseIndex = teacher.coursesAssigned.findIndex((c) => {
       return c._id.toString() === courseId.toString();
     });
 
@@ -846,7 +843,7 @@ exports.getCourseDescription = async (req, res, next) => {
 
     res.status(200).json({
       message: 'Course Description fetched!',
-      courseDescription: courseDescription
+      courseDescription: courseDescription,
     });
   } catch (err) {
     if (!err.status) {
@@ -929,7 +926,7 @@ exports.addCourseDescription = async (req, res, next) => {
 
       res.status(201).json({
         message: 'Course description phase 1 saved!',
-        courseDescription: courseDescriptionDoc
+        courseDescription: courseDescriptionDoc,
       });
     } catch (err) {
       if (!err.status) {
@@ -997,7 +994,7 @@ exports.addCourseDescription = async (req, res, next) => {
 
       res.status(201).json({
         message: 'Course description phase 2 saved!',
-        courseDescription: courseDescriptionDoc
+        courseDescription: courseDescriptionDoc,
       });
     } catch (err) {
       if (!err.status) {
@@ -1017,7 +1014,7 @@ exports.getAssignments = async (req, res, next) => {
   try {
     const teacher = await Teacher.findById(teacherId);
 
-    const courseIndex = teacher.coursesAssigned.findIndex(c => {
+    const courseIndex = teacher.coursesAssigned.findIndex((c) => {
       return c._id.toString() === courseId.toString();
     });
 
@@ -1039,7 +1036,7 @@ exports.getAssignments = async (req, res, next) => {
 
     res.status(200).json({
       message: 'Course Assignments fetched!',
-      assignments: assignments
+      assignments: assignments,
     });
   } catch (err) {
     if (!err.status) {
@@ -1117,7 +1114,7 @@ exports.addAssignment = async (req, res, next) => {
       grade: grade,
       assessment: assessment,
       assignment: { name: assignmentFileName, path: assignmentPath },
-      solution: { name: solutionFileName, path: solutionPath }
+      solution: { name: solutionFileName, path: solutionPath },
     });
 
     const assignmentDoc = await assignment.save();
@@ -1152,7 +1149,7 @@ exports.getAssignmentResult = async (req, res, next) => {
       throw error;
     }
 
-    const assignmentIndex = assignmentDoc.assignments.findIndex(a => {
+    const assignmentIndex = assignmentDoc.assignments.findIndex((a) => {
       return a._id.toString() === assignmentId.toString();
     });
 
@@ -1193,7 +1190,7 @@ exports.addAssignmentResult = async (req, res, next) => {
       throw error;
     }
 
-    const assignmentIndex = assignmentDoc.assignments.findIndex(a => {
+    const assignmentIndex = assignmentDoc.assignments.findIndex((a) => {
       return a._id.toString() === assignmentId.toString();
     });
 
@@ -1210,7 +1207,7 @@ exports.addAssignmentResult = async (req, res, next) => {
     const result = savedAssignmentDoc.assignments[assignmentIndex];
     res.status(200).json({
       message: 'Marks saved.',
-      savedMaterial: result
+      savedMaterial: result,
     });
   } catch (err) {
     if (!err.status) err.status = 500;
@@ -1225,7 +1222,7 @@ exports.getQuizzes = async (req, res, next) => {
   try {
     const teacher = await Teacher.findById(teacherId);
 
-    const courseIndex = teacher.coursesAssigned.findIndex(c => {
+    const courseIndex = teacher.coursesAssigned.findIndex((c) => {
       return c._id.toString() === courseId.toString();
     });
 
@@ -1247,7 +1244,7 @@ exports.getQuizzes = async (req, res, next) => {
 
     res.status(200).json({
       message: 'Course quizzes fetched!',
-      quizzes: quizzes
+      quizzes: quizzes,
     });
   } catch (err) {
     if (!err.status) {
@@ -1325,7 +1322,7 @@ exports.addQuiz = async (req, res, next) => {
       grade: grade,
       assessment: assessment,
       quiz: { name: quizFileName, path: quizPath },
-      solution: { name: solutionFileName, path: solutionPath }
+      solution: { name: solutionFileName, path: solutionPath },
     });
 
     const quizDoc = await quiz.save();
@@ -1358,7 +1355,7 @@ exports.getQuizResult = async (req, res, next) => {
       throw error;
     }
 
-    const quizIndex = quizDoc.quizzes.findIndex(a => {
+    const quizIndex = quizDoc.quizzes.findIndex((a) => {
       return a._id.toString() === quizId.toString();
     });
 
@@ -1397,7 +1394,7 @@ exports.addQuizResult = async (req, res, next) => {
       throw error;
     }
 
-    const quizIndex = quizDoc.quizzes.findIndex(a => {
+    const quizIndex = quizDoc.quizzes.findIndex((a) => {
       return a._id.toString() === quizId.toString();
     });
 
@@ -1414,7 +1411,7 @@ exports.addQuizResult = async (req, res, next) => {
     const result = savedQuizDoc.quizzes[quizIndex];
     res.status(200).json({
       message: 'Marks saved.',
-      savedMaterial: result
+      savedMaterial: result,
     });
   } catch (err) {
     if (!err.status) err.status = 500;
@@ -1429,7 +1426,7 @@ exports.getPapers = async (req, res, next) => {
   try {
     const teacher = await Teacher.findById(teacherId);
 
-    const courseIndex = teacher.coursesAssigned.findIndex(c => {
+    const courseIndex = teacher.coursesAssigned.findIndex((c) => {
       return c._id.toString() === courseId.toString();
     });
 
@@ -1451,7 +1448,7 @@ exports.getPapers = async (req, res, next) => {
 
     res.status(200).json({
       message: 'Course papers fetched!',
-      papers: papers
+      papers: papers,
     });
   } catch (err) {
     if (!err.status) {
@@ -1529,7 +1526,7 @@ exports.addPaper = async (req, res, next) => {
       grade: grade,
       assessment: assessment,
       paper: { name: paperFileName, path: paperPath },
-      solution: { name: solutionFileName, path: solutionPath }
+      solution: { name: solutionFileName, path: solutionPath },
     });
 
     const paperDoc = await paper.save();
@@ -1562,7 +1559,7 @@ exports.getPaperResult = async (req, res, next) => {
       throw error;
     }
 
-    const paperIndex = paperDoc.papers.findIndex(a => {
+    const paperIndex = paperDoc.papers.findIndex((a) => {
       return a._id.toString() === paperId.toString();
     });
 
@@ -1601,7 +1598,7 @@ exports.addPaperResult = async (req, res, next) => {
       throw error;
     }
 
-    const paperIndex = paperDoc.papers.findIndex(a => {
+    const paperIndex = paperDoc.papers.findIndex((a) => {
       return a._id.toString() === paperId.toString();
     });
 
@@ -1618,7 +1615,7 @@ exports.addPaperResult = async (req, res, next) => {
     const result = savedPaperDoc.papers[paperIndex];
     res.status(200).json({
       message: 'Marks saved.',
-      savedMaterial: result
+      savedMaterial: result,
     });
   } catch (err) {
     if (!err.status) err.status = 500;

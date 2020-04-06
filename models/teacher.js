@@ -5,105 +5,107 @@ const Schema = mongoose.Schema;
 const teacherModel = new Schema(
   {
     firstName: {
-      type: String
+      type: String,
     },
     lastName: {
-      type: String
+      type: String,
     },
     teacherCode: {
       type: String,
-      required: true
+      required: true,
     },
     email: {
       type: String,
-      required: true
+      required: true,
     },
     password: {
       type: String,
-      required: true
+      required: true,
     },
     rank: {
       type: String,
-      required: true
+      required: true,
     },
     type: {
-      type: String
+      type: String,
     },
     role: [
       {
         type: String,
-        required: true
-      }
+        required: true,
+      },
     ],
     status: {
       type: String,
-      required: true
+      required: true,
     },
     cvUrl: {
       type: String,
-      required: true
+      required: true,
     },
     dpURL: {
       type: String,
-      required: true
+      required: true,
     },
     dob: {
-      type: String
+      type: String,
     },
     address: {
       address: { type: String },
       country: { type: String },
       city: { type: String },
-      zip: { type: String }
+      zip: { type: String },
     },
     phone: {
-      type: Number
+      type: Number,
     },
     courses: {
       type: Schema.Types.ObjectId,
-      ref: 'Course'
+      ref: 'Course',
     },
     coursesAssigned: [
       {
         courseId: {
           type: Schema.Types.ObjectId,
-          ref: 'Course'
+          ref: 'Course',
         },
-        sections: {
-          type: String
-        },
+        sections: [
+          {
+            type: Array,
+          },
+        ],
         session: {
-          type: String
+          type: String,
         },
         status: {
-          type: String
+          type: String,
         },
         courseLog: {
           type: Schema.Types.ObjectId,
-          ref: 'Courselog'
+          ref: 'Courselog',
         },
         courseMonitoring: {
           type: Schema.Types.ObjectId,
-          ref: 'Coursemonitoring'
+          ref: 'Coursemonitoring',
         },
         courseDescription: {
           type: Schema.Types.ObjectId,
-          ref: 'Coursedescription'
+          ref: 'Coursedescription',
         },
         quizzes: {
           type: Schema.Types.ObjectId,
-          ref: 'Quizzes'
+          ref: 'Quizzes',
         },
         assignments: {
           type: Schema.Types.ObjectId,
-          ref: 'Assignments'
+          ref: 'Assignments',
         },
         papers: {
           type: Schema.Types.ObjectId,
-          ref: 'Papers'
-        }
-      }
-    ]
+          ref: 'Papers',
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
