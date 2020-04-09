@@ -9,9 +9,9 @@ const Teacher = require('../models/teacher');
 exports.signUp = async (req, res, next) => {
   const teacherEmail = req.body.email;
   const teacherCode = req.body.code;
-  const rank = req.body.rank;
+  const teacherRank = req.body.rank;
 
-  const type = 'Admin';
+  const teacherType = 'Admin';
   const role = ['Admin', 'Teacher'];
   const password = 'password';
   const status = 'Pending';
@@ -23,13 +23,13 @@ exports.signUp = async (req, res, next) => {
     if (!validator.isEmail(teacherEmail)) {
       errors.push('Invalid teacher email!');
     }
-    if (!validator.isAlphanumeric(teacherCode)) {
-      errors.push('Invalid teacher code!');
+    if (!validator.isAlphanumeric(validator.blacklist(teacherCode, ' '))) {
+      errors.push('Invalid code!');
     }
-    if (!validator.isAlphanumeric(rank)) {
+    if (!validator.isAlphanumeric(validator.blacklist(teacherRank, ' '))) {
       errors.push('Invalid teacher rank!');
     }
-    if (!validator.isAlpha(teacherType)) {
+    if (!validator.isAlphanumeric(validator.blacklist(teacherType, ' '))) {
       errors.push('Invalid teacher type!');
     }
     if (errors.length > 0) {
@@ -45,20 +45,20 @@ exports.signUp = async (req, res, next) => {
       password: hashedPassword,
       teacherCode: teacherCode,
       status: status,
-      rank: rank,
-      type: type,
+      rank: teacherRank,
+      type: teacherType,
       dpURL: dpURL,
       cvUrl: cvUrl,
       role: role,
     });
 
-    const updatedTeacher = await teacher.save();
-    if (!updatedTeacher) {
+    const savedAdmin = await teacher.save();
+    if (!savedAdmin) {
       const err = new Error('User creation failed!');
       err.code = 404;
       throw err;
     }
-    res.status(200).json({ message: 'User Created!', teacher: updatedTeacher });
+    res.status(200).json({ message: 'User Created!', admin: savedAdmin });
   } catch (err) {
     if (!err.status) {
       err.status = 500;

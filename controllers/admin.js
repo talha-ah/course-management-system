@@ -80,12 +80,12 @@ exports.getTeachers = async (req, res, next) => {
     }
 
     var totalteachers = 0;
-    teachers.map(teacher => totalteachers++);
+    teachers.map((teacher) => totalteachers++);
 
     res.status(200).json({
       message: 'Teachers fetched!',
       teachers: teachers,
-      totalTeachers: totalteachers
+      totalTeachers: totalteachers,
     });
   } catch (err) {
     if (err.status) {
@@ -100,8 +100,8 @@ exports.getTeacher = async (req, res, next) => {};
 exports.createTeacher = async (req, res, next) => {
   const teacherEmail = req.body.email;
   const teacherCode = req.body.code;
-  const rank = req.body.rank;
-  const type = req.body.type;
+  const teacherRank = req.body.rank;
+  const teacherType = req.body.type;
 
   const role = ['Teacher'];
   const password = 'password';
@@ -114,13 +114,13 @@ exports.createTeacher = async (req, res, next) => {
     if (!validator.isEmail(teacherEmail)) {
       errors.push('Invalid teacher email!');
     }
-    if (!validator.isAlphanumeric(teacherCode)) {
-      errors.push('Invalid teacher code!');
+    if (!validator.isAlphanumeric(validator.blacklist(teacherCode, ' '))) {
+      errors.push('Invalid code!');
     }
-    if (!validator.isAlphanumeric(rank)) {
+    if (!validator.isAlphanumeric(validator.blacklist(teacherRank, ' '))) {
       errors.push('Invalid teacher rank!');
     }
-    if (!validator.isAlpha(teacherType)) {
+    if (!validator.isAlphanumeric(validator.blacklist(teacherType, ' '))) {
       errors.push('Invalid teacher type!');
     }
     if (errors.length > 0) {
@@ -136,20 +136,20 @@ exports.createTeacher = async (req, res, next) => {
       password: hashedPassword,
       teacherCode: teacherCode,
       status: status,
-      rank: rank,
-      type: type,
+      rank: teacherRank,
+      type: teacherType,
       dpURL: dpURL,
       cvUrl: cvUrl,
-      role: role
+      role: role,
     });
 
-    const updatedTeacher = await teacher.save();
-    if (!updatedTeacher) {
+    const savedTeacher = await teacher.save();
+    if (!savedTeacher) {
       const err = new Error('User creation failed!');
       err.code = 404;
       throw err;
     }
-    res.status(200).json({ message: 'User Created!', teacher: updatedTeacher });
+    res.status(200).json({ message: 'User Created!', teacher: savedTeacher });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -162,7 +162,7 @@ exports.deactivateTeacher = (req, res, next) => {
   const teacherId = req.params.teacherid;
 
   Teacher.findById(teacherId)
-    .then(teacher => {
+    .then((teacher) => {
       if (!teacher) {
         const error = new Error('Error in finding the user!');
         error.code = 404;
@@ -171,7 +171,7 @@ exports.deactivateTeacher = (req, res, next) => {
       teacher.status = 'Inactive';
       return teacher.save();
     })
-    .then(updatedTeacher => {
+    .then((updatedTeacher) => {
       if (!updatedTeacher) {
         const error = new Error('Error in saving the user!');
         error.code = 404;
@@ -179,7 +179,7 @@ exports.deactivateTeacher = (req, res, next) => {
       }
       res.send({ user: updatedTeacher });
     })
-    .catch(err => {
+    .catch((err) => {
       if (err.status) {
         err.status = 500;
       }
@@ -191,7 +191,7 @@ exports.reactivateTeacher = (req, res, next) => {
   const teacherId = req.params.teacherid;
 
   Teacher.findById(teacherId)
-    .then(teacher => {
+    .then((teacher) => {
       if (!teacher) {
         const error = new Error('Error in finding the user!');
         error.code = 404;
@@ -200,7 +200,7 @@ exports.reactivateTeacher = (req, res, next) => {
       teacher.status = 'Active';
       return teacher.save();
     })
-    .then(updatedTeacher => {
+    .then((updatedTeacher) => {
       if (!updatedTeacher) {
         const error = new Error('Error in saving the user!');
         error.code = 404;
@@ -208,7 +208,7 @@ exports.reactivateTeacher = (req, res, next) => {
       }
       res.send({ user: updatedTeacher });
     })
-    .catch(err => {
+    .catch((err) => {
       if (err.status) {
         err.status = 500;
       }
@@ -229,12 +229,12 @@ exports.getCourses = async (req, res, next) => {
     }
 
     var totalCourses = 0;
-    courses.map(course => totalCourses++);
+    courses.map((course) => totalCourses++);
 
     res.status(200).json({
       message: 'Courses fetched!',
       courses: courses,
-      totalCourses: totalCourses
+      totalCourses: totalCourses,
     });
   } catch (err) {
     if (err.status) {
@@ -286,7 +286,7 @@ exports.createCourse = async (req, res, next) => {
 
     const courseFound = await Course.findOne({
       title: courseTitle,
-      code: courseCode
+      code: courseCode,
     });
     if (courseFound) {
       var error = new Error('Course already exists!');
@@ -300,7 +300,7 @@ exports.createCourse = async (req, res, next) => {
       credits: courseCredits,
       type: courseType,
       session: courseSession,
-      status: status
+      status: status,
     });
 
     const courseData = await course.save();
@@ -420,7 +420,7 @@ exports.deleteCourse = (req, res, next) => {
   // Delete from all places
 
   Course.findByIdAndDelete(courseId)
-    .then(course => {
+    .then((course) => {
       if (!course) {
         const error = new Error('Error in deleting the course!');
         error.code = 404;
@@ -428,7 +428,7 @@ exports.deleteCourse = (req, res, next) => {
       }
       res.send({ course: course });
     })
-    .catch(err => {
+    .catch((err) => {
       if (!err.status) {
         err.status = 500;
       }
