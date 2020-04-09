@@ -7,30 +7,30 @@ const sgMail = require('@sendgrid/mail');
 const Teacher = require('../models/teacher');
 
 exports.signUp = async (req, res, next) => {
-  const email = req.body.email;
+  const teacherEmail = req.body.email;
   const teacherCode = req.body.code;
   const rank = req.body.rank;
-  const teacherType = req.body.type;
 
-  const password = 'DefaultPassword';
+  const type = 'Admin';
   const role = ['Admin', 'Teacher'];
+  const password = 'password';
   const status = 'Pending';
   const dpURL = 'undefined';
   const cvUrl = 'undefined';
 
   const errors = [];
   try {
-    if (!validator.isEmail(email)) {
-      errors.push('Invalid email!');
+    if (!validator.isEmail(teacherEmail)) {
+      errors.push('Invalid teacher email!');
     }
-    if (!validator.isAlphanumeric(validator.blacklist(teacherCode, ' '))) {
-      errors.push('Invalid code!');
+    if (!validator.isAlphanumeric(teacherCode)) {
+      errors.push('Invalid teacher code!');
     }
-    if (!validator.isAlphanumeric(validator.blacklist(rank, ' '))) {
-      errors.push('Invalid rank!');
+    if (!validator.isAlphanumeric(rank)) {
+      errors.push('Invalid teacher rank!');
     }
-    if (!validator.isAlpha(validator.blacklist(teacherType, ' '))) {
-      errors.push('Invalid type!');
+    if (!validator.isAlpha(teacherType)) {
+      errors.push('Invalid teacher type!');
     }
     if (errors.length > 0) {
       var error = new Error(errors);
@@ -40,25 +40,25 @@ exports.signUp = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const admin = new Teacher({
+    const teacher = new Teacher({
       email: teacherEmail,
       password: hashedPassword,
       teacherCode: teacherCode,
       status: status,
       rank: rank,
-      type: teacherType,
+      type: type,
       dpURL: dpURL,
       cvUrl: cvUrl,
       role: role,
     });
 
-    const savedAdmin = await admin.save();
-    if (!savedAdmin) {
+    const updatedTeacher = await teacher.save();
+    if (!updatedTeacher) {
       const err = new Error('User creation failed!');
       err.code = 404;
       throw err;
     }
-    res.status(200).json({ message: 'User Created!', admin: savedAdmin });
+    res.status(200).json({ message: 'User Created!', teacher: updatedTeacher });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
