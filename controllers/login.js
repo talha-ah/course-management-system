@@ -23,13 +23,13 @@ exports.signUp = async (req, res, next) => {
     if (!validator.isEmail(email)) {
       errors.push('Invalid email!');
     }
-    if (!validator.isAlphanumeric(teacherCode)) {
+    if (!validator.isAlphanumeric(validator.blacklist(teacherCode, ' '))) {
       errors.push('Invalid code!');
     }
-    if (!validator.isAlphanumeric(rank)) {
+    if (!validator.isAlphanumeric(validator.blacklist(rank, ' '))) {
       errors.push('Invalid rank!');
     }
-    if (!validator.isAlpha(teacherType)) {
+    if (!validator.isAlpha(validator.blacklist(teacherType, ' '))) {
       errors.push('Invalid type!');
     }
     if (errors.length > 0) {
