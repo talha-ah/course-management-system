@@ -69,11 +69,7 @@ const teacherModel = new Schema(
           type: Schema.Types.ObjectId,
           ref: 'Course',
         },
-        sections: [
-          {
-            type: Array,
-          },
-        ],
+        sections: { type: Array, default: [] },
         session: {
           type: String,
         },

@@ -1,9 +1,11 @@
 const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const logger = require('morgan');
+const morgan = require('morgan'); // logger
+const helmet = require('helmet'); // headers
 
 // Routes Imports
 const loginRoute = require('./routes/login');
@@ -16,15 +18,19 @@ const app = express();
 
 // Debuggers
 mongoose.set('debug', true);
-app.use(logger('dev'));
 
 // create a write stream (in append mode)
-// var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {
+  flags: 'a',
+});
 
-// // setup the logger
-// app.use(morgan('combined', { stream: accessLogStream }))
-
+app.use(
+  process.env.PORT
+    ? morgan('combined', { stream: accessLogStream })
+    : morgan('dev')
+);
 app.use(cors());
+app.use(helmet());
 
 // JSON BodyParser
 app.use(bodyParser.json()); // application/json
@@ -56,9 +62,9 @@ mongoose
     `mongodb+srv://${process.env.MONGO_URI_USERNAME}:${process.env.MONGO_URI_PASSWORD}@node-5ioaz.mongodb.net/${process.env.MONGO_URI_DATABASE}?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }
   )
-  .then(result => {
+  .then((result) => {
     app.listen(PORT, () => console.log(`App listening at ${PORT}`));
   })
-  .catch(err => {
+  .catch((err) => {
     console.log('[App.Mongoose]', err);
   });
