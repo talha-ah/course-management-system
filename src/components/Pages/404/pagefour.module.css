@@ -3,6 +3,7 @@
 .site {
   height: 80vh;
   min-height: 100%;
+  color: #3b3e66;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;

@@ -123,6 +123,7 @@
 
 .ModalContent {
   width: 100%;
+  text-align: center;
 }
 
 .ModalContentTitle {
@@ -159,4 +160,19 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
+}
+
+.InputGroup:nth-child(3) {
+  margin-top: 19px;
+}
+
+.InputGroup input[type='date']::-webkit-datetime-edit-text,
+.InputGroup input[type='date']::-webkit-datetime-edit-month-field,
+.InputGroup input[type='date']::-webkit-datetime-edit-day-field {
+  display: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -o-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
 }

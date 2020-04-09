@@ -14,7 +14,7 @@ class CoursesList extends Component {
     totalCourses: 0,
     disableModal: false,
     modalCourseId: '',
-    modalCourseTitle: ''
+    modalCourseTitle: '',
   };
 
   componentDidMount() {
@@ -25,23 +25,23 @@ class CoursesList extends Component {
     fetch(`${process.env.REACT_APP_SERVER_URL}/admin/courses`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token
-      }
+        Authorization: 'Bearer ' + this.props.token,
+      },
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw res;
         return res.json();
       })
-      .then(resData => {
+      .then((resData) => {
         this.setState({
           courses: resData.courses,
           totalCourses: resData.totalCourses,
-          pageLoading: false
+          pageLoading: false,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         try {
-          err.json().then(body => {
+          err.json().then((body) => {
             this.props.notify(
               true,
               'Error',
@@ -60,31 +60,31 @@ class CoursesList extends Component {
 
   onDisableCourse = () => {
     this.setState({
-      isLoading: true
+      isLoading: true,
     });
     fetch(
       `${process.env.REACT_APP_SERVER_URL}/admin//deactivatecourse/${this.state.modalCourseId}`,
       {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + this.props.token
-        }
+          Authorization: 'Bearer ' + this.props.token,
+        },
       }
     )
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw res;
         return res.json();
       })
-      .then(resData => {
+      .then((resData) => {
         this.setState({
           isLoading: false,
-          disableModal: false
+          disableModal: false,
         });
         this.fetchCourse();
       })
-      .catch(err => {
+      .catch((err) => {
         try {
-          err.json().then(body => {
+          err.json().then((body) => {
             console.log(body);
             console.log('message = ' + body.message);
           });
@@ -101,14 +101,14 @@ class CoursesList extends Component {
 
   disableModalHandler = (id, title) => {
     if (id && title) {
-      this.setState(prevState => ({
+      this.setState((prevState) => ({
         disableModal: !prevState.disableModal,
         modalCourseId: id,
-        modalCourseTitle: title
+        modalCourseTitle: title,
       }));
     } else {
-      this.setState(prevState => ({
-        disableModal: !prevState.disableModal
+      this.setState((prevState) => ({
+        disableModal: !prevState.disableModal,
       }));
     }
   };
@@ -131,7 +131,7 @@ class CoursesList extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.courses.map(course => {
+            {this.state.courses.map((course) => {
               return (
                 <tr key={course._id}>
                   <td colSpan='2'>{course.title}</td>
@@ -143,7 +143,7 @@ class CoursesList extends Component {
                     <TableButton
                       disabled={course.status === 'Active' ? '' : 'disabled'}
                       title='Disable Course'
-                      color='#ff9494'
+                      buttonType='red'
                       onClick={() =>
                         this.disableModalHandler(course._id, course.title)
                       }

@@ -358,7 +358,7 @@ class CoursesLog extends Component {
                     +
                   </TableButton>
                   <TableButton
-                    color='#ff9494'
+                    buttonType='red'
                     title='Cancel'
                     className={classes.Button}
                     onClick={() => this.setState({ addingRow: false })}

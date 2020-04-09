@@ -4,11 +4,11 @@ import { withRouter } from 'react-router-dom';
 import Button from '../../UI/Button/Button';
 import classes from './pagefour.module.css';
 
-const onClickHandler = props => {
+const onClickHandler = (props) => {
   props.history.replace('/');
 };
 
-const Error404 = props => {
+const Error404 = (props) => {
   return (
     <div className={classes.site}>
       <h1>

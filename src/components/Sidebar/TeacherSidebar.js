@@ -9,7 +9,8 @@ import {
   faBookReader,
   faBookOpen,
   faClipboard,
-  faPollH
+  faPollH,
+  faBook,
 } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './Sidebar.module.css';
@@ -42,7 +43,7 @@ const TeacherSidebar = () => {
         </li>
         <li className={classes.SidebarNavItem}>
           <NavLink exact to='/' className={classes.SidebarNavLink}>
-            <FontAwesomeIcon icon={faFileAlt} />
+            <FontAwesomeIcon icon={faBook} />
             Courses
           </NavLink>
         </li>

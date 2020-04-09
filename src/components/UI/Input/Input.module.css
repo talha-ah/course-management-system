@@ -48,12 +48,12 @@
 .input[type='time']::-webkit-datetime-edit-ampm-field,
 .input[type='date']::-webkit-inner-spin-button,
 .input[type='date']::-webkit-clear-button,
-.input[type='datatime']::-webkit-datetime-edit,
+/* .input[type='datatime']::-webkit-datetime-edit,
 .input[type='datatime']::-webkit-datetime-edit-fields-wrapper,
 .input[type='datatime']::-webkit-datetime-edit-text,
 .input[type='datatime']::-webkit-datetime-edit-month-field,
 .input[type='datatime']::-webkit-datetime-edit-day-field,
-.input[type='datatime']::-webkit-datetime-edit-year-field,
+.input[type='datatime']::-webkit-datetime-edit-year-field, */
 .input[type='date']::-webkit-calendar-picker-indicator {
   display: none;
   -webkit-appearance: none;

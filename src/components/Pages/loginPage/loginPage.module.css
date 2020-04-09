@@ -1,40 +1,26 @@
-/* .Login {
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: 50% 50%;
-  grid-template-areas: 'LeftAuth RightAuth';
-} */
-
-.RightLogin {
-  /* grid-area: RightAuth; */
-  color: #ffffff;
-  background-color: #112239;
-  height: 100vh;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
-.LeftLogin {
+.Login {
+  background-color: #fff;
   padding: 0;
   margin: 0;
   width: 100vw;
   height: 100vh;
-  /* grid-area: LeftAuth; */
-  background-color: #ffffff;
   display: flex;
   flex-direction: column;
-  align-items: center; /* vertically - Cross Axis */
-  justify-content: center; /* horizontally - Main Axis */
+  align-items: center;
+  justify-content: center;
+  outline: 1px dashed #98abb9;
+  outline-offset: -5px;
 }
 
 .Form {
   display: flex;
   flex-direction: column;
-  align-items: center; /* vertically - Cross Axis */
-  justify-content: center; /* horizontally - Main Axis */
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  padding: 3% 4%;
+  box-shadow: 0 0.313rem 0.8rem rgba(122, 123, 151, 0.5),
+    0 0.126rem 0.225rem rgba(122, 123, 151, 0.3);
 }
 
 .Forget {
@@ -42,4 +28,8 @@
   font-weight: 600;
   color: #0366d6;
   cursor: pointer;
+}
+
+.Forget:hover {
+  text-decoration: underline;
 }

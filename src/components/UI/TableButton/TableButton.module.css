@@ -1,23 +1,15 @@
 .Button {
   display: inline-block;
+  text-align: center;
   position: relative;
   color: #fff;
   background-color: #3b3e66;
-  height: 24px;
-  width: 24px;
+  padding: 0.1em 0.4em;
   border: 2px solid transparent;
-  margin-right: 5px;
-  border-radius: 50%;
+  border-radius: 10%;
   outline: none;
   cursor: pointer;
   transition: all 0.2s ease-out;
-}
-
-.Button:hover {
-  -webkit-transform: translateY(-2px);
-  transform: translateY(-2px);
-  box-shadow: 0 0.22rem 0.525rem rgba(60, 68, 177, 0.4),
-    0 0.0625rem 0.385rem rgba(60, 68, 177, 0.54);
 }
 
 .Button .tooltiptext {

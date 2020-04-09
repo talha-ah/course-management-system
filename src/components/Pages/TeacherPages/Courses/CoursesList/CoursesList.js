@@ -8,6 +8,9 @@ import TableButton from '../../../../UI/TableButton/TableButton';
 import SelectInput from '../../../../UI/SelectInput/SelectInput';
 import Modal from '../../.././../UI/Modal/Modal';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+
 class CoursesList extends Component {
   state = {
     // Loadings
@@ -25,13 +28,14 @@ class CoursesList extends Component {
     selectCourseTitle: '',
     // Inputs
     courseTitle: '',
-    courseSections: [],
-    courseSession: '',
-    A: false,
-    B: false,
-    C: false,
-    E1: false,
-    E2: false,
+    courseSession: new Date().toISOString().substr(0, 10),
+    courseSectionsObject: {
+      A: false,
+      B: false,
+      C: false,
+      E1: false,
+      E2: false,
+    },
     // Tabs
     tab: false,
   };
@@ -182,7 +186,13 @@ class CoursesList extends Component {
     const name = e.target.name;
 
     if (e.target.type === 'checkbox') {
-      this.setState({ [name]: e.target.checked });
+      this.setState((prevState) => ({
+        ...prevState,
+        courseSectionsObject: {
+          ...prevState.courseSectionsObject,
+          [name]: !prevState.courseSectionsObject[name],
+        },
+      }));
     } else {
       this.setState({ [name]: value });
     }
@@ -191,10 +201,14 @@ class CoursesList extends Component {
   onAddCourseFormSubmit = (e) => {
     e.preventDefault();
     this.setState({ isLoading: true });
+    const courseSections = [];
+
+    Object.entries(this.state.courseSectionsObject).map((sec) =>
+      sec[1] ? courseSections.push(sec[0]) : ''
+    );
 
     const courseTitle = this.state.courseTitle;
-    const courseSession = this.state.courseSession;
-    const courseSections = this.state.courseSections;
+    const courseSession = new Date(this.state.courseSession).getFullYear();
     var courseId;
 
     this.state.adminCourses.some((course) => {
@@ -204,22 +218,6 @@ class CoursesList extends Component {
       }
       return false;
     });
-
-    if (this.state.A) {
-      courseSections.push('A');
-    }
-    if (this.state.B) {
-      courseSections.push('B');
-    }
-    if (this.state.C) {
-      courseSections.push('C');
-    }
-    if (this.state.E1) {
-      courseSections.push('E1');
-    }
-    if (this.state.E2) {
-      courseSections.push('E2');
-    }
 
     if (
       courseTitle !== '' &&
@@ -231,8 +229,8 @@ class CoursesList extends Component {
         method: 'POST',
         body: JSON.stringify({
           courseId: courseId,
-          sections: this.state.courseSections,
-          session: this.state.courseSession,
+          sections: courseSections,
+          session: courseSession,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -244,7 +242,19 @@ class CoursesList extends Component {
           return res.json();
         })
         .then((resData) => {
-          this.setState({ addCourseModal: false, isLoading: false });
+          this.setState({
+            addCourseModal: false,
+            courseTitle: '',
+            courseSession: '',
+            courseSectionsObject: {
+              A: false,
+              B: false,
+              C: false,
+              E1: false,
+              E2: false,
+            },
+            isLoading: false,
+          });
           this.props.notify(true, 'Success', resData.message);
           this.fetchTeacherCourses();
         })
@@ -366,12 +376,12 @@ class CoursesList extends Component {
                       <TableButton
                         title='Disable Course'
                         disabled={course.status === 'Active' ? '' : 'disabled'}
-                        color='#ff9494'
+                        buttonType='red'
                         onClick={() =>
                           this.disableModalHandler(course._id, course.title)
                         }
                       >
-                        x
+                        <FontAwesomeIcon icon={faTrashAlt} size='sm' />
                       </TableButton>
                     </td>
                   </tr>
@@ -442,7 +452,7 @@ class CoursesList extends Component {
                 <div className={classes.ModalContentTitle}>Add Course</div>
                 <form onSubmit={this.onAddCourseFormSubmit}>
                   <div className={classes.InputGroup}>
-                    <label htmlFor='courseTitle'>Course Title</label>
+                    <label htmlFor='courseTitle'>Title</label>
                     <SelectInput
                       name='courseTitle'
                       placeholder='Course Title'
@@ -454,17 +464,17 @@ class CoursesList extends Component {
                     </SelectInput>
                   </div>
                   <div className={classes.InputGroup}>
-                    <label htmlFor='courseSession'>Course Session</label>
+                    <label htmlFor='courseSession'>Session From</label>
                     <Input
-                      type='text'
+                      type='date'
                       name='courseSession'
-                      placeholder='Course Session'
                       value={this.state.courseSession}
                       onChange={this.onChange}
+                      max='2999-12-31'
                     />
                   </div>
                   <div className={classes.InputGroup}>
-                    <label htmlFor='courseSection'>Course Section</label>
+                    <label htmlFor='courseSection'>Sections</label>
                     <div className={classes.CheckBoxes} name='courseSection'>
                       <div>
                         <input

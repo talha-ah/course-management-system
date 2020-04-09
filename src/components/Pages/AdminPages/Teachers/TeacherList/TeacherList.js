@@ -10,30 +10,30 @@ class TeacherList extends Component {
     pageLoading: true,
     isLoading: false,
     teachers: '',
-    totalTeachers: 0
+    totalTeachers: 0,
   };
 
   componentDidMount() {
     fetch(`${process.env.REACT_APP_SERVER_URL}/admin/teachers`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token
-      }
+        Authorization: 'Bearer ' + this.props.token,
+      },
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw res;
         return res.json();
       })
-      .then(resData => {
+      .then((resData) => {
         this.setState({
           teachers: resData.teachers,
           totalTeachers: resData.totalTeachers,
-          pageLoading: false
+          pageLoading: false,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         try {
-          err.json().then(body => {
+          err.json().then((body) => {
             this.props.notify(
               true,
               'Error',
@@ -54,7 +54,7 @@ class TeacherList extends Component {
     this.props.history.push('/addteacher');
   };
 
-  teacherHandler = id => {
+  teacherHandler = (id) => {
     console.log(id);
   };
 
@@ -75,7 +75,7 @@ class TeacherList extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.teachers.map(teacher => {
+            {this.state.teachers.map((teacher) => {
               return (
                 <tr key={teacher._id}>
                   <td onClick={() => this.teacherHandler(teacher._id)}>
@@ -86,7 +86,7 @@ class TeacherList extends Component {
                   <td>{teacher.status}</td>
                   <td>
                     <TableButton title='Add Materials'>+</TableButton>
-                    <TableButton title='Disable teacher' color='#ff9494'>
+                    <TableButton title='Disable teacher' buttonType='red'>
                       x
                     </TableButton>
                   </td>

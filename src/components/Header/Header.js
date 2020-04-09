@@ -2,7 +2,12 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDotCircle, faUser, faBell } from '@fortawesome/free-solid-svg-icons';
+import {
+  faDotCircle,
+  faUser,
+  faBell,
+  faSignOutAlt,
+} from '@fortawesome/free-solid-svg-icons';
 
 import classes from './Header.module.css';
 import * as actionTypes from '../../store/actions';
@@ -14,8 +19,8 @@ class Header extends Component {
     notifications: {
       0: 1,
       1: 2,
-      2: 3
-    }
+      2: 3,
+    },
   };
 
   componentDidMount() {
@@ -25,7 +30,7 @@ class Header extends Component {
     document.removeEventListener('mousedown', this.handleClickOutside);
   }
 
-  handleClickOutside = event => {
+  handleClickOutside = (event) => {
     if (this.state.profileDropDown) {
       if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
         this.setState({ profileDropDown: false });
@@ -38,21 +43,21 @@ class Header extends Component {
     }
   };
 
-  dropDownHandler = e => {
+  dropDownHandler = (e) => {
     if (e.target.getAttribute('name') === 'profile') {
-      this.setState(prevState => ({
+      this.setState((prevState) => ({
         profileDropDown: !prevState.profileDropDown,
-        notificationDropDown: false
+        notificationDropDown: false,
       }));
     } else if (e.target.getAttribute('name') === 'bell') {
-      this.setState(prevState => ({
+      this.setState((prevState) => ({
         notificationDropDown: !prevState.notificationDropDown,
-        profileDropDown: false
+        profileDropDown: false,
       }));
     }
   };
 
-  switchSidebarHandler = e => {
+  switchSidebarHandler = (e) => {
     this.props.history.push('/');
     this.props.switchSidebar();
   };
@@ -62,12 +67,12 @@ class Header extends Component {
       width: '0px',
       height: '0px',
       visibility: 'hidden',
-      opacity: '0'
+      opacity: '0',
     };
     let visibleStyles = {
       minWidth: '12rem',
       visibility: 'visible',
-      opacity: '1'
+      opacity: '1',
     };
 
     return (
@@ -91,11 +96,11 @@ class Header extends Component {
           <li
             className={[
               classes.headerNavItemFloat,
-              classes.headerDropDownParent
+              classes.headerDropDownParent,
             ].join(' ')}
             name='bell'
-            onClick={event => this.dropDownHandler(event)}
-            ref={node => (this.wrapperRef2 = node)}
+            onClick={(event) => this.dropDownHandler(event)}
+            ref={(node) => (this.wrapperRef2 = node)}
           >
             <FontAwesomeIcon icon={faBell} />
             <div
@@ -110,7 +115,7 @@ class Header extends Component {
                 <h6>Notifications</h6>
               </div>
               <ul className={classes.headerDropDownUl}>
-                {Object.entries(this.state.notifications).map(noti => (
+                {Object.entries(this.state.notifications).map((noti) => (
                   <li key={noti[0]} className={classes.headerDropDownItem}>
                     <div>
                       <FontAwesomeIcon icon={faDotCircle} />
@@ -124,11 +129,11 @@ class Header extends Component {
           <li
             className={[
               classes.headerNavItem,
-              classes.headerDropDownParent
+              classes.headerDropDownParent,
             ].join(' ')}
             name='profile'
-            onClick={event => this.dropDownHandler(event)}
-            ref={node => (this.wrapperRef = node)}
+            onClick={(event) => this.dropDownHandler(event)}
+            ref={(node) => (this.wrapperRef = node)}
           >
             <FontAwesomeIcon icon={faUser} />
             <div
@@ -146,18 +151,17 @@ class Header extends Component {
                   onClick={() => this.props.history.push('/profile')}
                 >
                   <div>
-                    <FontAwesomeIcon icon={faDotCircle} />
+                    <FontAwesomeIcon icon={faUser} />
                     My Profile
                   </div>
                 </li>
-
                 <hr />
                 <li
                   className={classes.headerDropDownItem}
                   onClick={this.props.logoutHandler}
                 >
                   <div>
-                    <FontAwesomeIcon icon={faDotCircle} />
+                    <FontAwesomeIcon icon={faSignOutAlt} />
                     Logout
                   </div>
                 </li>
@@ -170,9 +174,9 @@ class Header extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    switchSidebar: () => dispatch({ type: actionTypes.SWITCH_SIDEBAR })
+    switchSidebar: () => dispatch({ type: actionTypes.SWITCH_SIDEBAR }),
   };
 };
 

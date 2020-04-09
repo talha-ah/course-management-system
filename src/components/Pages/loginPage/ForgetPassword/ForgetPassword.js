@@ -7,10 +7,10 @@ import Button from '../../../UI/Button/Button';
 
 class SignIn extends Component {
   state = {
-    email: ''
+    email: '',
   };
 
-  onChange = e => {
+  onChange = (e) => {
     e.preventDefault();
     const name = e.target.name;
     const value = e.target.value;
@@ -18,27 +18,27 @@ class SignIn extends Component {
     this.setState({ [name]: value });
   };
 
-  onFormSubmit = e => {
+  onFormSubmit = (e) => {
     e.preventDefault();
 
     fetch(`${process.env.REACT_APP_SERVER_URL}/login/forgetpassword`, {
       method: 'POST',
       body: JSON.stringify({ email: this.state.email }),
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw res;
         return res.json();
       })
-      .then(resData => {
+      .then((resData) => {
         console.log(resData);
         this.props.history.push('/');
       })
-      .catch(error => {
+      .catch((error) => {
         try {
-          error.json().then(body => {
+          error.json().then((body) => {
             console.log(body);
             console.log('message = ' + body.message);
           });

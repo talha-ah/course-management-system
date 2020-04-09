@@ -4,7 +4,7 @@ import classes from './Notify.module.css';
 
 class Notify extends Component {
   state = {
-    notifyVis: false
+    notifyVis: false,
   };
 
   componentDidMount() {
@@ -27,7 +27,7 @@ class Notify extends Component {
   render() {
     var styles = {
       color: '',
-      borderColor: ''
+      borderColor: '',
     };
 
     switch (this.props.type) {
@@ -36,8 +36,8 @@ class Notify extends Component {
         styles.borderColor = '#4F8A10';
         break;
       case 'Error':
-        styles.color = '#FF9494';
-        styles.borderColor = '#FF9494';
+        styles.color = '#DE2545';
+        styles.borderColor = '#DE2545';
         break;
       default:
     }
@@ -48,7 +48,7 @@ class Notify extends Component {
         style={{
           color: styles.color,
           border: `1px solid ${styles.borderColor}`,
-          zIndex: this.state.notifyVis ? '3' : '-3'
+          zIndex: this.state.notifyVis ? '3' : '-3',
         }}
       >
         <div className={classes.NotifyTitleBar}>

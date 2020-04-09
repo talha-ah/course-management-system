@@ -10,8 +10,8 @@
   width: 680px;
   padding: 10px 10px;
   color: #fff;
-  background-color: #ff9494;
-  box-shadow: 0 0.313rem 0.719rem #ff9494, 0 0.156rem 0.125rem #ff9494;
+  background-color: #de2545;
+  box-shadow: 0 0.313rem 0.719rem #de2545, 0 0.156rem 0.125rem #de2545;
 }
 
 .ErrorBoundary hr {
