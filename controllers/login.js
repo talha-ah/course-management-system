@@ -5,6 +5,67 @@ const sgMail = require('@sendgrid/mail');
 
 const Teacher = require('../models/teacher');
 
+exports.signUp = async (req, res, next) => {
+  const email = req.body.email;
+  const teacherCode = req.body.code;
+  const rank = req.body.rank;
+  const type = req.body.type;
+
+  const password = 'DefaultPassword';
+  const role = ['Admin', 'Teacher'];
+  const status = 'Pending';
+  const dpURL = 'undefined';
+  const cvUrl = 'undefined';
+
+  const errors = [];
+  try {
+    if (!validator.isEmail(email)) {
+      errors.push('Invalid email!');
+    }
+    if (!validator.isAlphanumeric(teacherCode)) {
+      errors.push('Invalid code!');
+    }
+    if (!validator.isAlphanumeric(rank)) {
+      errors.push('Invalid rank!');
+    }
+    if (!validator.isAlpha(teacherType)) {
+      errors.push('Invalid type!');
+    }
+    if (errors.length > 0) {
+      var error = new Error(errors);
+      error.status = 400;
+      throw error;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const admin = new Teacher({
+      email: teacherEmail,
+      password: hashedPassword,
+      teacherCode: teacherCode,
+      status: status,
+      rank: rank,
+      type: type,
+      dpURL: dpURL,
+      cvUrl: cvUrl,
+      role: role,
+    });
+
+    const savedAdmin = await admin.save();
+    if (!savedAdmin) {
+      const err = new Error('User creation failed!');
+      err.code = 404;
+      throw err;
+    }
+    res.status(200).json({ message: 'User Created!', admin: savedAdmin });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
 exports.login = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -24,7 +85,7 @@ exports.login = async (req, res, next) => {
       throw error;
     }
     var isAdmin = false;
-    teacher.role.forEach(rol => {
+    teacher.role.forEach((rol) => {
       if (rol === 'Admin') {
         isAdmin = true;
       }
@@ -38,7 +99,7 @@ exports.login = async (req, res, next) => {
     res.status(200).json({
       message: 'Logged In Successfully!',
       userId: teacher._id,
-      token: token + ' ' + tokenAppend
+      token: token + ' ' + tokenAppend,
     });
   } catch (err) {
     if (!err.status) {
@@ -61,7 +122,7 @@ exports.forgetPassword = async (req, res, next) => {
     from: 'test@example.com',
     subject: 'Sending with Twilio SendGrid is Fun',
     text: 'and easy to do anywhere, even with Node.js',
-    html: '<strong>and easy to do anywhere, even with Node.js</strong>'
+    html: '<strong>and easy to do anywhere, even with Node.js</strong>',
   };
   //ES8
   try {
