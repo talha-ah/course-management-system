@@ -10,7 +10,7 @@ exports.signUp = async (req, res, next) => {
   const email = req.body.email;
   const teacherCode = req.body.code;
   const rank = req.body.rank;
-  const type = req.body.type;
+  const teacherType = req.body.type;
 
   const password = 'DefaultPassword';
   const role = ['Admin', 'Teacher'];
@@ -46,7 +46,7 @@ exports.signUp = async (req, res, next) => {
       teacherCode: teacherCode,
       status: status,
       rank: rank,
-      type: type,
+      type: teacherType,
       dpURL: dpURL,
       cvUrl: cvUrl,
       role: role,
