@@ -17,6 +17,7 @@ import AdminAddCourse from '../Pages/AdminPages/Courses/AddCourse/AddCourse';
 import AdminTeacher from '../Pages/AdminPages/Teachers/Teacher/Teacher';
 import AdminTeachers from '../Pages/AdminPages/Teachers/TeacherList/TeacherList';
 import AdminAddTeacher from '../Pages/AdminPages/Teachers/AddTeacher/AddTeacher';
+import AdminReports from '../Pages/AdminPages/Reports/Reports';
 
 // Teacher Imports
 import ProfilePage from '../Pages/TeacherPages/Profile/Profile';
@@ -32,7 +33,7 @@ import Quizzes from '../Pages/TeacherPages/Quizzes/Quizzes';
 import AddResult from '../Pages/TeacherPages/AddResult/AddResult';
 import Reports from '../Pages/TeacherPages/Reports/Reports';
 
-const MainContent = props => {
+const MainContent = (props) => {
   return (
     <div className={classes.CMS}>
       {props.isAdmin ? <AdminSidebar /> : <TeacherSidebar />}
@@ -110,6 +111,18 @@ const MainContent = props => {
               path='/addteacher'
               render={({ match, history, location }) => (
                 <AdminAddTeacher
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/reports'
+              render={({ match, history, location }) => (
+                <AdminReports
                   match={match}
                   location={location}
                   history={history}
@@ -274,9 +287,9 @@ const MainContent = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    isAdmin: state.adminSidebar
+    isAdmin: state.adminSidebar,
   };
 };
 

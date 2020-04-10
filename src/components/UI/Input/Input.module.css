@@ -43,6 +43,7 @@
   cursor: not-allowed;
 }
 
+.input[type='number']::-webkit-inner-spin-button,
 .input[type='time']::-webkit-inner-spin-button,
 .input[type='time']::-webkit-clear-button,
 .input[type='time']::-webkit-datetime-edit-ampm-field,
@@ -62,20 +63,3 @@
   -ms-appearance: none;
   appearance: none;
 }
-
-/* 
-.input::placeholder {
-  font-weight: bold;
-  color: #dedfe5;
-  opacity: 1;
-}
-
-.input:-ms-input-placeholder {
-  color: #dedfe5;
-  font-weight: bold;
-}
-
-.input::-ms-input-placeholder {
-  color: #dedfe5;
-  font-weight: bold;
-} */

@@ -47,6 +47,7 @@ class CoursesList extends Component {
         });
       })
       .catch((err) => {
+        this.setState({ contentLoading: false });
         try {
           err.json().then((body) => {
             this.props.notify(
@@ -90,6 +91,9 @@ class CoursesList extends Component {
         this.fetchCourse();
       })
       .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
         try {
           err.json().then((body) => {
             this.props.notify(
@@ -232,7 +236,7 @@ class CoursesList extends Component {
               <th colSpan='4'>
                 {this.state.tab ? 'Inactive Courses' : 'Active Courses'}
               </th>
-              <th colSpan='3'>
+              <th colSpan='4'>
                 {this.state.tab ? inactiveCourses : activeCourses}
               </th>
             </tr>
@@ -241,6 +245,11 @@ class CoursesList extends Component {
         <div className={classes.ButtonDiv}>
           <Button onClick={this.addCoursePageHandler}>Add Course</Button>
         </div>
+      </div>
+    );
+    return (
+      <>
+        {page}
         {/* ===================================  Disable Course Modal Starts ===============================*/}
         <Modal visible={this.state.disableModal}>
           <div className={classes.Modal}>
@@ -272,9 +281,8 @@ class CoursesList extends Component {
           </div>
         </Modal>
         {/* ===================================  Disable Course Modal Ends ===============================*/}
-      </div>
+      </>
     );
-    return page;
   }
 }
 

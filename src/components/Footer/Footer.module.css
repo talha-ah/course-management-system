@@ -1,23 +1,21 @@
-.footer {
+.Footer {
   grid-area: footer;
   position: relative;
   height: 47px;
   padding: 0 2.5rem;
   background: #fff;
-  border-width: 1px 0 0 0;
-  -webkit-box-shadow: inset 5px 0px 5px -5px rgba(136, 152, 170, 0.15);
-  -moz-box-shadow: inset 5px 0px 5px -5px rgba(136, 152, 170, 0.15);
-  box-shadow: inset 5px 0px 5px -5px rgba(136, 152, 170, 0.15);
+  /* z-index: 1;
+  box-shadow: inset 5px 0 5px -5px rgba(136,152,170,.15); */
   -webkit-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
   transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
 }
 
-.footerNavSpan {
+.FooterNavSpan {
   font-weight: bold;
   text-transform: uppercase;
 }
 
-.footerNav {
+.FooterNav {
   list-style: none;
   font-size: 12px;
   color: #777777;
@@ -30,16 +28,16 @@
   justify-content: flex-start; /* horizontally  */
 }
 
-.footerNavItem {
+.FooterNavItem {
   margin: 0 10px;
 }
 
-.footerNavItem a {
+.FooterNavItem a {
   text-decoration: none;
   color: #777777;
 }
 
-.footerNavItem a:hover,
-.footerNavItem a:active {
+.FooterNavItem a:hover,
+.FooterNavItem a:active {
   text-decoration: none;
 }

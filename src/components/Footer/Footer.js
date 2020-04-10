@@ -4,17 +4,17 @@ import classes from './Footer.module.css';
 
 const Footer = () => {
   return (
-    <div className={classes.footer}>
-      <ul className={classes.footerNav}>
-        <li className={classes.footerNavItem}>
+    <div className={classes.Footer}>
+      <ul className={classes.FooterNav}>
+        <li className={classes.FooterNavItem}>
           <a href='/terms'>Terms of Use</a>
         </li>
-        <li className={classes.footerNavItem}>
+        <li className={classes.FooterNavItem}>
           <a href='/support'>Support</a>
         </li>
-        <li className={classes.footerNavItem}>
+        <li className={classes.FooterNavItem}>
           <div>
-            © 2019 <span className={classes.footerNavSpan}>DCS, GCU</span>{' '}
+            © 2019 <span className={classes.FooterNavSpan}>DCS, GCU</span>{' '}
             <span>All rights reserved</span>
           </div>
         </li>

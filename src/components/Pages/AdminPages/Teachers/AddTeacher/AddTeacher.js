@@ -8,70 +8,77 @@ import SelectInput from '../../../../UI/SelectInput/SelectInput';
 
 class AddTeacher extends Component {
   state = {
+    // Loadings
     pageLoading: true,
     isLoading: false,
+    // Inputs
     teacherEmail: '',
     teacherCode: '',
     teacherRank: '',
-    teacherType: 'Permanent'
+    teacherType: 'Permanent',
   };
 
   componentDidMount() {
     this.setState({ pageLoading: false });
   }
 
-  onFormSubmit = e => {
+  onFormSubmit = (e) => {
     e.preventDefault();
-    this.setState({ isLoading: true });
-    fetch(`${process.env.REACT_APP_SERVER_URL}/admin/createteacher`, {
-      method: 'POST',
-      body: JSON.stringify({
-        email: this.state.teacherEmail,
-        code: this.state.teacherCode,
-        rank: this.state.teacherRank,
-        type: this.state.teacherType
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token
-      }
-    })
-      .then(res => {
-        if (!res.ok) throw res;
-        return res.json();
+    const email = this.state.teacherEmail;
+    const code = this.state.teacherCode;
+    const rank = this.state.teacherRank;
+    const type = this.state.teacherType;
+    if (email !== '' && code !== '' && rank !== '' && type !== '') {
+      this.setState({ isLoading: true });
+
+      fetch(`${process.env.REACT_APP_SERVER_URL}/admin/createteacher`, {
+        method: 'POST',
+        body: JSON.stringify({
+          email: email,
+          code: code,
+          rank: rank,
+          type: type,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.props.token,
+        },
       })
-      .then(resData => {
-        this.setState({ isLoading: false });
-        this.props.notify(true, 'Success', resData.message);
-        this.props.history.push('/teachers');
-      })
-      .catch(err => {
-        try {
-          err.json().then(body => {
+        .then((res) => {
+          if (!res.ok) throw res;
+          return res.json();
+        })
+        .then((resData) => {
+          this.setState({ isLoading: false });
+          this.props.notify(true, 'Success', resData.message);
+          this.props.history.push('/teachers');
+        })
+        .catch((err) => {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
-        }
-      });
+          }
+        });
+    } else {
+      this.props.notify(true, 'Error', 'Fields should not be empty!');
+    }
   };
 
-  onChange = e => {
+  onChange = (e) => {
     const value = e.target.value;
     const name = e.target.name;
     this.setState({ [name]: value });
-  };
-
-  onFormCancel = e => {
-    this.props.history.goBack();
   };
 
   render() {
@@ -79,8 +86,13 @@ class AddTeacher extends Component {
       <Spinner />
     ) : (
       <div className={classes.AddTeacher}>
-        <div className={classes.Title}>
-          <h4>Add Teacher</h4>
+        <div className={classes.Caption}>
+          <span className={classes.CaptionSpan}>
+            <strong>
+              Add Teacher{' '}
+              <small>(Default password for new teachers is: 'password')</small>
+            </strong>
+          </span>
         </div>
         <form
           className={classes.Form}
@@ -90,7 +102,7 @@ class AddTeacher extends Component {
           <div className={classes.InputDiv}>
             <label htmlFor='teacherEmail'>Teacher Email</label>
             <Input
-              type='text'
+              type='email'
               name='teacherEmail'
               placeholder='Teacher Email'
               value={this.state.teacherEmail}
@@ -108,7 +120,9 @@ class AddTeacher extends Component {
             />
           </div>
           <div className={classes.InputDiv}>
-            <label htmlFor='teacherRank'>Teacher Rank</label>
+            <label htmlFor='teacherRank'>
+              Teacher Rank <small>(e.g. Assistant Professor)</small>
+            </label>
             <Input
               type='text'
               name='teacherRank'
@@ -132,11 +146,15 @@ class AddTeacher extends Component {
           </div>
 
           <div className={classes.ButtonDiv}>
-            <Button type='button' onClick={this.onFormCancel} color='#f83245'>
+            <Button
+              type='button'
+              buttonType='red'
+              onClick={() => this.props.history.goBack()}
+            >
               Cancel
             </Button>
             <Button type='submit'>
-              {this.state.isLoading ? 'Loading...' : 'Create'}
+              {this.state.isLoading ? 'Creating...' : 'Create'}
             </Button>
           </div>
         </form>

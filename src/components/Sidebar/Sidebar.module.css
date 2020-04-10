@@ -7,9 +7,10 @@
   left: 0;
   max-width: 250px;
   width: 100%;
+  background-color: #fff;
   padding: 1rem 0 0 0;
   margin: 0;
-  background-color: #fff;
+  z-index: 1;
   border-width: 0 1px 0 0;
   box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15);
 }
