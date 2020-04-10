@@ -379,15 +379,13 @@ exports.takeCourse = async (req, res, next) => {
   const courseId = req.body.courseId;
   const sections = req.body.sections;
   const session = req.body.session;
+  console.log(session);
   const errors = [];
   try {
     if (sections.length <= 0) {
       errors.push('Invalid sections!');
     }
-    if (
-      !validator.isNumeric(String(validator.blacklist(session, ' -'))) ||
-      validator.isEmpty(session)
-    ) {
+    if (!validator.isNumeric(String(session)) || validator.isEmpty(session)) {
       errors.push('Invalid session!');
     }
     if (errors.length > 0) {
