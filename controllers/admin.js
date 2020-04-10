@@ -215,33 +215,31 @@ exports.createTeacher = async (req, res, next) => {
   }
 };
 
-exports.deactivateTeacher = (req, res, next) => {
-  const teacherId = req.params.teacherid;
-
-  Teacher.findById(teacherId)
-    .then((teacher) => {
-      if (!teacher) {
-        const error = new Error('Error in finding the user!');
-        error.code = 404;
-        throw new error();
-      }
-      teacher.status = 'Inactive';
-      return teacher.save();
-    })
-    .then((updatedTeacher) => {
-      if (!updatedTeacher) {
-        const error = new Error('Error in saving the user!');
-        error.code = 404;
-        throw new error();
-      }
-      res.send({ user: updatedTeacher });
-    })
-    .catch((err) => {
-      if (err.status) {
-        err.status = 500;
-      }
-      next(err);
-    });
+exports.deactivateTeacher = async (req, res, next) => {
+  const teacherId = req.params.teacherId;
+  try {
+    const teacher = await Teacher.findById(teacherId);
+    if (!teacher) {
+      const error = new Error('Error in finding the user!');
+      error.code = 404;
+      throw new error();
+    }
+    teacher.status = 'Inactive';
+    const updatedTeacher = await teacher.save();
+    if (!updatedTeacher) {
+      const error = new Error('Error in saving the user!');
+      error.code = 404;
+      throw new error();
+    }
+    res
+      .status(201)
+      .json({ message: 'Teacher deactivated!', user: updatedTeacher });
+  } catch (err) {
+    if (err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
 };
 
 exports.reactivateTeacher = (req, res, next) => {
@@ -312,12 +310,8 @@ exports.createCourse = async (req, res, next) => {
   const status = 'Active';
 
   const errors = [];
-
   try {
-    if (
-      !validator.isAlphanumeric(validator.blacklist(courseTitle, ' ')) ||
-      !validator.isLength(courseTitle, { min: 5 })
-    ) {
+    if (!validator.isAlphanumeric(validator.blacklist(courseTitle, ' '))) {
       errors.push('Invalid course title!');
     }
     if (!validator.isAlphanumeric(courseCode)) {
@@ -344,6 +338,7 @@ exports.createCourse = async (req, res, next) => {
     const courseFound = await Course.findOne({
       title: courseTitle,
       code: courseCode,
+      session: courseSession,
     });
     if (courseFound) {
       var error = new Error('Course already exists!');

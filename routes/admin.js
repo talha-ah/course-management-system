@@ -14,7 +14,11 @@ router.post('/editadminpassword', isAuth, adminController.editAdminPassword);
 router.get('/teachers', isAuth, adminController.getTeachers);
 router.get('/teacher/:teacherId', isAuth, adminController.getTeacher);
 router.post('/createteacher', isAuth, adminController.createTeacher);
-router.post('/deactiveteacher', isAuth, adminController.deactivateTeacher);
+router.get(
+  '/deactiveteacher/:teacherId',
+  isAuth,
+  adminController.deactivateTeacher
+);
 router.post('/reactivateteacher', isAuth, adminController.reactivateTeacher);
 
 // courses
