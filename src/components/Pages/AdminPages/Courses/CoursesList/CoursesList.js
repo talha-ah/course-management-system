@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './CoursesList.module.css';
 import Spinner from '../../../../UI/Spinner/Spinner';
@@ -8,11 +10,14 @@ import Modal from '../../../../UI/Modal/Modal';
 
 class CoursesList extends Component {
   state = {
-    isLoading: false,
+    // Loadings
     pageLoading: true,
+    contentLoading: false,
+    disableModal: false,
+    isLoading: false,
+    // Data
     courses: '',
     totalCourses: 0,
-    disableModal: false,
     modalCourseId: '',
     modalCourseTitle: '',
   };
@@ -22,6 +27,7 @@ class CoursesList extends Component {
   }
 
   fetchCourse = () => {
+    this.setState({ contentLoading: true });
     fetch(`${process.env.REACT_APP_SERVER_URL}/admin/courses`, {
       headers: {
         'Content-Type': 'application/json',
@@ -37,6 +43,7 @@ class CoursesList extends Component {
           courses: resData.courses,
           totalCourses: resData.totalCourses,
           pageLoading: false,
+          contentLoading: false,
         });
       })
       .catch((err) => {
@@ -63,7 +70,7 @@ class CoursesList extends Component {
       isLoading: true,
     });
     fetch(
-      `${process.env.REACT_APP_SERVER_URL}/admin//deactivatecourse/${this.state.modalCourseId}`,
+      `${process.env.REACT_APP_SERVER_URL}/admin/deactivatecourse/${this.state.modalCourseId}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -77,20 +84,26 @@ class CoursesList extends Component {
       })
       .then((resData) => {
         this.setState({
-          isLoading: false,
           disableModal: false,
+          isLoading: false,
         });
         this.fetchCourse();
       })
       .catch((err) => {
         try {
           err.json().then((body) => {
-            console.log(body);
-            console.log('message = ' + body.message);
+            this.props.notify(
+              true,
+              'Error',
+              body.error.status + ' ' + body.message
+            );
           });
         } catch (e) {
-          console.log('Error parsing promise');
-          console.log(err);
+          this.props.notify(
+            true,
+            'Error',
+            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+          );
         }
       });
   };
@@ -114,58 +127,121 @@ class CoursesList extends Component {
   };
 
   render() {
+    var activeCourses = 0;
+    var inactiveCourses = 0;
+
     const page = this.state.pageLoading ? (
       <Spinner />
     ) : (
       <div className={classes.CoursesList}>
+        <div className={classes.Caption}>
+          <span className={classes.CaptionSpan}>Course List</span>
+          <span className={classes.CaptionSpan}>
+            Total Courses: {this.state.totalCourses}
+          </span>
+        </div>
+        <div className={classes.TabsButtons}>
+          <div
+            className={classes.Button}
+            onClick={() => this.setState({ tab: false })}
+            style={{
+              borderBottom: !this.state.tab ? '1px solid #3b3e66' : '',
+            }}
+          >
+            Active Courses
+          </div>
+          <div
+            className={classes.Button}
+            onClick={() => this.setState({ tab: true })}
+            style={{
+              borderBottom: this.state.tab ? '1px solid #3b3e66' : 'none',
+            }}
+          >
+            Inactive Courses
+          </div>
+        </div>
         <table className={classes.CoursesListTable}>
-          <caption>Course List</caption>
           <thead>
             <tr>
-              <th colSpan='2'>Title</th>
               <th>Code</th>
-              <th>Type</th>
+              <th colSpan='2'>Title</th>
               <th>Credits</th>
+              <th>Type</th>
+              <th>Session</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {this.state.courses.map((course) => {
-              return (
-                <tr key={course._id}>
-                  <td colSpan='2'>{course.title}</td>
-                  <td>{course.code}</td>
-                  <td>{course.type}</td>
-                  <td>{course.credits}</td>
-                  <td>{course.status}</td>
-                  <td>
-                    <TableButton
-                      disabled={course.status === 'Active' ? '' : 'disabled'}
-                      title='Disable Course'
-                      buttonType='red'
-                      onClick={() =>
-                        this.disableModalHandler(course._id, course.title)
-                      }
-                    >
-                      x
-                    </TableButton>
-                  </td>
-                </tr>
-              );
-            })}
+            {this.state.contentLoading ? (
+              <tr>
+                <td colSpan='7'>
+                  <Spinner />
+                </td>
+              </tr>
+            ) : this.state.totalCourses <= 0 ? (
+              <tr>
+                <td colSpan='7'>You don't have any courses.</td>
+              </tr>
+            ) : (
+              this.state.courses.map((course) => {
+                if (this.state.tab) {
+                  if (course.status === 'Active') {
+                    return true;
+                  } else {
+                    inactiveCourses++;
+                  }
+                } else {
+                  if (course.status === 'Inactive') {
+                    return true;
+                  } else {
+                    activeCourses++;
+                  }
+                }
+                return (
+                  <tr key={course._id}>
+                    <td>
+                      <strong>{course.code}</strong>
+                    </td>
+                    <td colSpan='2' className={classes.CourseTitle}>
+                      {course.title}
+                    </td>
+                    <td>{course.credits}</td>
+                    <td>{course.type}</td>
+                    <td>{course.session}</td>
+                    <td>{course.status}</td>
+                    <td>
+                      <TableButton
+                        title='Disable Course'
+                        disabled={course.status === 'Active' ? '' : 'disabled'}
+                        buttonType='red'
+                        onClick={() =>
+                          this.disableModalHandler(course._id, course.title)
+                        }
+                      >
+                        <FontAwesomeIcon icon={faTrashAlt} size='sm' />
+                      </TableButton>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
           <tfoot>
             <tr>
-              <th colSpan='4'>Total courses</th>
-              <th colSpan='3'>{this.state.totalCourses}</th>
+              <th colSpan='4'>
+                {this.state.tab ? 'Inactive Courses' : 'Active Courses'}
+              </th>
+              <th colSpan='3'>
+                {this.state.tab ? inactiveCourses : activeCourses}
+              </th>
             </tr>
           </tfoot>
         </table>
-        <div className={classes.buttonDiv}>
+        <div className={classes.ButtonDiv}>
           <Button onClick={this.addCoursePageHandler}>Add Course</Button>
         </div>
-        {/* ===================================  Modal ===============================*/}
+        {/* ===================================  Disable Course Modal Starts ===============================*/}
         <Modal visible={this.state.disableModal}>
           <div className={classes.Modal}>
             <div className={classes.ModalBody}>
@@ -180,7 +256,7 @@ class CoursesList extends Component {
                   </p>
                 </div>
               </div>
-              <div className={classes.buttonDiv}>
+              <div className={classes.ButtonDiv}>
                 <Button type='button' onClick={this.disableModalHandler}>
                   Cancel
                 </Button>
@@ -189,12 +265,13 @@ class CoursesList extends Component {
                   buttonType='red'
                   onClick={this.onDisableCourse}
                 >
-                  Disable
+                  {this.state.isLoading ? 'Disabling' : 'Disable'}
                 </Button>
               </div>
             </div>
           </div>
         </Modal>
+        {/* ===================================  Disable Course Modal Ends ===============================*/}
       </div>
     );
     return page;

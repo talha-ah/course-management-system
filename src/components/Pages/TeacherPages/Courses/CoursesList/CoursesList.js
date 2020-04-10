@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './CoursesList.module.css';
 import Spinner from '../../../../UI/Spinner/Spinner';
@@ -7,9 +9,6 @@ import Button from '../../../../UI/Button/Button';
 import TableButton from '../../../../UI/TableButton/TableButton';
 import SelectInput from '../../../../UI/SelectInput/SelectInput';
 import Modal from '../../.././../UI/Modal/Modal';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 class CoursesList extends Component {
   state = {
@@ -340,7 +339,7 @@ class CoursesList extends Component {
               </tr>
             ) : this.state.totalCourses <= 0 ? (
               <tr>
-                <td colSpan='6'>You don't have any courses.</td>
+                <td colSpan='7'>You don't have any courses.</td>
               </tr>
             ) : (
               this.state.courses.map((course) => {
@@ -426,18 +425,15 @@ class CoursesList extends Component {
                 </div>
               </div>
               <div className={classes.ButtonDiv}>
-                <Button
-                  type='button'
-                  onClick={this.onDisableCourse}
-                  buttonType='red'
-                >
-                  {this.state.isLoading ? 'Disabling' : 'Disable'}
+                <Button type='button' onClick={this.disableModalHandler}>
+                  Cancel
                 </Button>
                 <Button
                   type='button'
-                  onClick={() => this.disableModalHandler()}
+                  buttonType='red'
+                  onClick={this.onDisableCourse}
                 >
-                  Cancel
+                  {this.state.isLoading ? 'Disabling' : 'Disable'}
                 </Button>
               </div>
             </div>
@@ -523,7 +519,6 @@ class CoursesList extends Component {
                       </div>
                     </div>
                   </div>
-
                   <div className={classes.ButtonDiv}>
                     <Button
                       type='button'

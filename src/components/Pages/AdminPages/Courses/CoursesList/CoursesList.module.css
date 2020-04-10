@@ -11,26 +11,55 @@
     0 0.126rem 0.225rem rgba(122, 123, 151, 0.3);
 }
 
+.CoursesList .Caption {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8em 1.4em 0 1.4em;
+  margin: 10px 0 25px 0;
+  text-align: center;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.33;
+  white-space: nowrap;
+}
+
+.CoursesList .Caption .CaptionSpan {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.TabsButtons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.TabsButtons .Button {
+  display: inline-block;
+  box-sizing: border-box;
+  color: #3b3e66;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 0.53rem 2rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
 /* Table Starts */
 
 .CoursesList table {
   table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
-}
-
-.CoursesList caption {
-  padding-top: 20px;
-
-  text-align: center;
-  margin: 10px 0 25px 0;
-  font-size: 22px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 1.33;
-  text-transform: uppercase;
-  pointer-events: none;
-  white-space: nowrap;
 }
 
 .CoursesList table thead {
@@ -43,30 +72,51 @@
   border-bottom: 1px solid rgba(7, 9, 25, 0.125);
 }
 
+.CoursesList table tbody tr td {
+  padding: 15px;
+}
+
 .CoursesList table tbody tr:hover {
   background-color: #f4f5fd;
 }
 
-.CoursesList th,
-.CoursesList td {
-  padding: 20px;
+.CoursesList table th {
+  padding: 20px 0;
 }
 
 .CoursesList table tfoot {
   border-bottom: 2px solid rgba(7, 9, 25, 0.125);
 }
 
-/* Table Ends */
-
-.buttonDiv {
-  margin-top: 25px;
-  margin-bottom: 25px;
+.CourseTitle {
+  text-align: left;
+  /* cursor: pointer; */
 }
 
-/* =================== Modal Start =============== */
+/* Table Ends */
+
+.ButtonDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 25px 0;
+}
+
+.ButtonDiv button {
+  margin-left: 25px;
+}
+
+.ButtonDiv button:nth-child(1) {
+  margin-left: 0;
+}
+
+/* Modal Starts */
+
 .Modal {
   background-color: #fff;
   width: 600px;
+  color: #3b3e66;
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 0.375rem;
 }
@@ -79,6 +129,11 @@
   justify-content: center;
 }
 
+.ModalContent {
+  width: 100%;
+  text-align: center;
+}
+
 .ModalContentTitle {
   text-align: center;
   margin-bottom: 25px;
@@ -89,4 +144,43 @@
   text-transform: uppercase;
   pointer-events: none;
   white-space: nowrap;
+}
+
+/* Add Course */
+.InputGroup {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.InputGroup > input,
+.InputGroup > select,
+.InputGroup > div {
+  width: 70%;
+  max-width: 70%;
+}
+
+.CheckBoxes {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.InputGroup:nth-child(3) {
+  margin-top: 19px;
+}
+
+.InputGroup input[type='date']::-webkit-datetime-edit-text,
+.InputGroup input[type='date']::-webkit-datetime-edit-month-field,
+.InputGroup input[type='date']::-webkit-datetime-edit-day-field {
+  display: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -o-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
 }

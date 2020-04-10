@@ -121,6 +121,7 @@ class EditProfile extends React.Component {
         this.props.notify(true, 'Success', resData.message);
       })
       .catch((err) => {
+        this.setState({ isLoading: false });
         try {
           err.json().then((body) => {
             this.props.notify(
@@ -160,10 +161,17 @@ class EditProfile extends React.Component {
           return res.json();
         })
         .then((resData) => {
-          this.setState({ isLoading: false });
+          this.setState({
+            tab: 'info',
+            isLoading: false,
+            password: '',
+            newPassword: '',
+            confirmPassword: '',
+          });
           this.props.notify(true, 'Success', resData.message);
         })
         .catch((err) => {
+          this.setState({ isLoading: false });
           try {
             err.json().then((body) => {
               this.props.notify(
@@ -181,6 +189,7 @@ class EditProfile extends React.Component {
           }
         });
     } else {
+      this.setState({ isLoading: false });
       this.props.notify(
         true,
         'Error',
@@ -213,10 +222,16 @@ class EditProfile extends React.Component {
             return res.json();
           })
           .then((resData) => {
-            this.setState({ isLoading: false });
+            this.setState({
+              tab: 'info',
+              isLoading: false,
+              file: null,
+              fileName: '',
+            });
             this.props.notify(true, 'Success', resData.message);
           })
           .catch((err) => {
+            this.setState({ isLoading: false });
             try {
               err.json().then((body) => {
                 this.props.notify(
@@ -235,9 +250,11 @@ class EditProfile extends React.Component {
             }
           });
       } else {
+        this.setState({ isLoading: false });
         this.props.notify(true, 'Error', 'File too big!');
       }
     } else {
+      this.setState({ isLoading: false });
       this.props.notify(true, 'Error', 'No File attached!');
     }
   };
@@ -402,7 +419,7 @@ class EditProfile extends React.Component {
             <div className={classes.cvUpload}>
               <form
                 method='POST'
-                onSubmit={this.onCVSubmit}
+                // onSubmit={this.onCVSubmit}
                 // encType='multipart/form-data'
               >
                 <Input
@@ -425,6 +442,7 @@ class EditProfile extends React.Component {
               <Button
                 type='submit'
                 disabled={this.state.isLoading ? true : false}
+                onClick={this.onCVSubmit}
               >
                 {this.state.isLoading ? 'Uploading...' : 'Upload CV'}
               </Button>

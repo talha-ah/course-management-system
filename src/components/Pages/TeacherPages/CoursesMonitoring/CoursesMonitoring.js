@@ -284,7 +284,7 @@ class CoursesMonitoring extends Component {
                 </div>
               );
             })}
-            <div className={classes.buttonDiv}>
+            <div className={classes.ButtonDiv}>
               <Button
                 type='button'
                 buttonType='red'

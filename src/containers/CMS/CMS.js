@@ -18,7 +18,7 @@ class CMS extends Component {
     isAdmin: false,
     notify: false,
     notifyType: '',
-    notifyMessage: ''
+    notifyMessage: '',
   };
 
   componentDidMount() {
@@ -44,7 +44,7 @@ class CMS extends Component {
       token: token,
       userId: userId,
       isAdmin: isAdmin,
-      pageLoading: false
+      pageLoading: false,
     });
     const remainingMilliseconds =
       new Date(expiry).getTime() - new Date().getTime();
@@ -60,14 +60,14 @@ class CMS extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: authData.email,
-        password: authData.password
-      })
+        password: authData.password,
+      }),
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw res;
         return res.json();
       })
-      .then(result => {
+      .then((result) => {
         var isAdmin = false;
         const check = result.token.split(' ')[1];
         if (check === 'yes') {
@@ -78,7 +78,7 @@ class CMS extends Component {
           token: result.token,
           userId: result.userId,
           isAdmin: isAdmin,
-          isLoading: false
+          isLoading: false,
         });
         this.transitNotify(true, 'Success', result.message);
         localStorage.setItem('userId', result.userId);
@@ -89,11 +89,11 @@ class CMS extends Component {
         this.autoLogoutHandler(expiry);
         // window.location.reload();
       })
-      .catch(error => {
+      .catch((error) => {
         try {
-          error.json().then(body => {
+          error.json().then((body) => {
             this.setState({
-              isLoading: false
+              isLoading: false,
             });
             this.transitNotify(
               true,
@@ -103,7 +103,7 @@ class CMS extends Component {
           });
         } catch (e) {
           this.setState({
-            isLoading: false
+            isLoading: false,
           });
           this.transitNotify(
             true,
@@ -119,7 +119,7 @@ class CMS extends Component {
       this.setState({
         notify: false,
         notifyType: '',
-        notifyMessage: ''
+        notifyMessage: '',
       });
     }, 3000);
   };
@@ -128,12 +128,12 @@ class CMS extends Component {
     this.setState({
       notify: notify,
       notifyType: notifyType,
-      notifyMessage: notifyMessage
+      notifyMessage: notifyMessage,
     });
     this.defaultNotify();
   };
 
-  autoLogoutHandler = expiry => {
+  autoLogoutHandler = (expiry) => {
     setTimeout(() => {
       this.logoutHandler();
       this.transitNotify(true, 'Success', 'AutoLogout was successfull.');
@@ -146,7 +146,7 @@ class CMS extends Component {
       isAuth: false,
       token: '',
       userId: false,
-      isAdmin: false
+      isAdmin: false,
     });
     localStorage.removeItem('userId');
     localStorage.removeItem('token');
@@ -156,14 +156,14 @@ class CMS extends Component {
 
   render() {
     var route = this.state.pageLoading ? (
-      <Spinner />
+      <Spinner size='Big' />
     ) : this.state.isAuth ? (
       <MainContent
         authData={{
           isAdmin: this.state.isAdmin,
           token: this.state.token,
           userId: this.state.userId,
-          notify: this.transitNotify
+          notify: this.transitNotify,
         }}
         logoutHandler={this.logoutHandler}
       />
@@ -172,7 +172,7 @@ class CMS extends Component {
         <Route
           path='/'
           exact
-          render={props => (
+          render={(props) => (
             <Login
               {...props}
               loginHandler={this.loginHandler}
@@ -183,7 +183,7 @@ class CMS extends Component {
         <Route
           path='/recover'
           exact
-          render={props => (
+          render={(props) => (
             <ForgetPassword {...props} isLoading={this.state.isLoading} />
           )}
         />

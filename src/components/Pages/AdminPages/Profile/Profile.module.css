@@ -1,31 +1,41 @@
 .Profile {
-  padding: 32px 40px 12px 40px;
-  margin: 1rem 3rem 3rem 3rem;
+  position: relative;
   color: #3b3e66;
-  background-color: #fff;
+  max-width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 0.375rem;
+  margin: 1rem 3rem 3rem 3rem;
+  padding: 0 2%;
+  /* padding: 32px 40px; */
+  background-color: #fff;
+  box-shadow: 0 0.313rem 0.8rem rgba(122, 123, 151, 0.5),
+    0 0.126rem 0.225rem rgba(122, 123, 151, 0.3);
 }
 
-.Title h4 {
+.Profile .Caption {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 15px;
+  margin: 10px 0 25px 0;
   text-align: center;
-  margin: 10px 0 15px 0;
   font-size: 22px;
   font-style: normal;
   font-weight: 600;
   line-height: 1.33;
-  text-transform: uppercase;
-  pointer-events: none;
   white-space: nowrap;
 }
 
-.InputDiv {
-  margin-bottom: 1rem;
+.Profile .Caption .CaptionSpan {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
-.InputDiv label {
-  display: inline-block;
-  margin-bottom: 0.5rem;
+.Profile form {
+  margin-top: 10px;
 }
 
 .InputGroup {
@@ -41,10 +51,47 @@
   margin-right: 0px;
 }
 
+.InputDiv label {
+  display: inline-block;
+  margin-top: 1.3rem;
+  margin-bottom: 0.15rem;
+  font-weight: bold;
+}
+
 .ButtonDiv {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin: 12px 0 12px 0;
+  margin: 25px 0;
+}
+
+.ButtonDiv button {
+  margin-left: 25px;
+}
+
+.ButtonDiv button:nth-child(1) {
+  margin-left: 0;
+}
+
+.TabsButtons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.TabsButtons .Button {
+  display: inline-block;
+  box-sizing: border-box;
+  color: #3b3e66;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 0.53rem 2rem;
+  width: 100%;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  cursor: pointer;
 }

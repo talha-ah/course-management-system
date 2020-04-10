@@ -81,6 +81,14 @@
   margin: 25px 0;
 }
 
+.ButtonDiv button {
+  margin-left: 25px;
+}
+
+.ButtonDiv button:nth-child(1) {
+  margin-left: 0;
+}
+
 /* Modal Starts */
 
 .Modal {

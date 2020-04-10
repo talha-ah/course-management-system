@@ -25,11 +25,10 @@
   box-sizing: border-box;
   color: #3b3e3b;
   background-color: #fff;
-  margin-right: 20px;
   padding: 0.53rem 1.3rem;
   font-size: 0.95rem;
   line-height: 1.5;
-  border: 2px solid #de2545;
+  border: 2px solid #e81123;
   border-radius: 0.2rem;
   outline: none;
   cursor: pointer;
@@ -37,10 +36,10 @@
 }
 
 .buttonRed:hover {
-  /* -webkit-transform: translateY(-2px); */
-  /* transform: translateY(-2px); */
-  /* box-shadow: 0 0.22rem 0.525rem #de2545, 0 0.0625rem 0.385rem #de2545; */
-  background-color: #de2545;
+  -webkit-transform: translateY(-2px);
+  transform: translateY(-2px);
+  box-shadow: 0 0.22rem 0.525rem #e81123, 0 0.0625rem 0.385rem #e81123;
+  background-color: #e81123;
   color: #fff;
 }
 
