@@ -385,7 +385,10 @@ exports.takeCourse = async (req, res, next) => {
     if (sections.length <= 0) {
       errors.push('Invalid sections!');
     }
-    if (!validator.isNumeric(String(session)) || validator.isEmpty(session)) {
+    if (
+      !validator.isNumeric(String(session)) ||
+      validator.isEmpty(String(session))
+    ) {
       errors.push('Invalid session!');
     }
     if (errors.length > 0) {
