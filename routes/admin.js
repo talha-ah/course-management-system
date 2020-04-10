@@ -8,6 +8,7 @@ const isAuth = require('../utils/isAuth');
 // /admin
 router.get('/getadmin', isAuth, adminController.getAdmin);
 router.post('/editadmin', isAuth, adminController.editAdmin);
+router.post('/editadminpassword', isAuth, adminController.editAdminPassword);
 
 // teachers
 router.get('/teachers', isAuth, adminController.getTeachers);

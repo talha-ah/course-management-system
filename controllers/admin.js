@@ -33,14 +33,14 @@ exports.getAdmin = async (req, res, next) => {
 };
 
 exports.editAdmin = async (req, res, next) => {
-  const adminId = req.params.adminId;
+  const adminId = req.userId;
 
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
   const email = req.body.email;
 
   try {
-    const admin = await Admin.findById(adminId);
+    const admin = await Teacher.findById(adminId);
     if (!admin) {
       const error = new Error('User could not be found!');
       error.status = 400;
@@ -50,15 +50,72 @@ exports.editAdmin = async (req, res, next) => {
     admin.firstName = firstName;
     admin.lastName = lastName;
     admin.email = email;
-    const updateAdmin = await admin.save();
+    const updatedAdmin = await admin.save();
 
-    if (!updateAdmin) {
+    if (!updatedAdmin) {
       const error = new Error('User could not be saved!');
       error.status = 400;
       throw error;
     }
 
-    res.status(201).json({ message: 'User saved!', user: updatedAdmin });
+    res.status(201).json({ message: 'Profile updated!', user: updatedAdmin });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.editAdminPassword = async (req, res, next) => {
+  const teacherId = req.userId;
+  const currentPassword = req.body.currentPassword;
+  const newPassword = req.body.newPassword;
+
+  const errors = [];
+  try {
+    if (
+      !validator.isLength(newPassword, { min: 6 }) ||
+      validator.isEmpty(newPassword)
+    ) {
+      errors.push('New Password should be more than 6 characters!');
+    }
+    if (errors.length > 0) {
+      var error = new Error(errors);
+      error.status = 400;
+      throw error;
+    }
+
+    const teacher = await Teacher.findById(teacherId);
+    if (!teacher) {
+      const err = new Error('Could not find user.');
+      err.status = 404;
+      throw err;
+    }
+
+    const passwordCheck = await bcrypt.compare(
+      currentPassword,
+      teacher.password
+    );
+    if (!passwordCheck) {
+      var error = new Error('Wrong current password!');
+      error.status = 403;
+      throw error;
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    teacher.password = hashedPassword;
+
+    const updatedTeacher = await teacher.save();
+
+    res.status(201).json({
+      message: 'Password updated!',
+      teacher: {
+        firstName: updatedTeacher.firstName,
+        lastName: updatedTeacher.lastName,
+        email: updatedTeacher.email,
+      },
+    });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
