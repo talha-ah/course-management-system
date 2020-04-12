@@ -7,7 +7,7 @@ import {
   faUser,
   faBookReader,
   faClipboard,
-  faPollH
+  faPollH,
 } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './Sidebar.module.css';
@@ -21,7 +21,12 @@ const Sidebar = () => {
       </NavLink>
       <ul className={classes.SidebarNav}>
         <li className={classes.SidebarNavItem}>
-          <NavLink to='/profile' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/profile'
+            className={classes.SidebarNavLink}
+            activeLink
+          >
             <FontAwesomeIcon icon={faUser} />
             Profile
           </NavLink>
@@ -38,13 +43,18 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink to='/' className={classes.SidebarNavLink}>
+          <NavLink exact to='/' className={classes.SidebarNavLink} activeLink>
             <FontAwesomeIcon icon={faFileAlt} />
             Courses
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink to='/addcourse' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/addcourse'
+            className={classes.SidebarNavLink}
+            activeLink
+          >
             <FontAwesomeIcon icon={faFileMedicalAlt} />
             Add Course
           </NavLink>
@@ -62,19 +72,34 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink to='/teachers' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/teachers'
+            className={classes.SidebarNavLink}
+            activeLink
+          >
             <FontAwesomeIcon icon={faPollH} />
             Teachers
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink to='/addteacher' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/addteacher'
+            className={classes.SidebarNavLink}
+            activeLink
+          >
             <FontAwesomeIcon icon={faBookReader} />
             Add Teacher
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink to='/reports' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/reports'
+            className={classes.SidebarNavLink}
+            activeLink
+          >
             <FontAwesomeIcon icon={faClipboard} />
             Reports
           </NavLink>

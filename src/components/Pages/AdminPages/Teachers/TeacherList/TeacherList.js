@@ -222,7 +222,9 @@ class TeacherList extends Component {
                     <td>
                       <TableButton
                         title='Disable teacher'
-                        disabled={teacher.status === 'Active' ? '' : 'disabled'}
+                        disabled={
+                          teacher.status === 'Inactive' ? 'disabled' : ''
+                        }
                         buttonType='red'
                         onClick={() => {
                           this.setState({

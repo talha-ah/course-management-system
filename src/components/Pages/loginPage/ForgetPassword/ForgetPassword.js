@@ -70,7 +70,7 @@ class SignIn extends Component {
           />
           <br />
           <Button type='submit'>
-            {this.props.isLoading ? 'Loading' : 'Send'}
+            {this.props.isLoading ? 'Sending...' : 'Send'}
           </Button>
           <br />
           <div onClick={this.onLoginHandler} className={classes.LogIn}>

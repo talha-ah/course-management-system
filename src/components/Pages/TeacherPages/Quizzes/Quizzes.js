@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTable } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './Quizzes.module.css';
 import Spinner from '../../../UI/Spinner/Spinner';
@@ -337,7 +339,7 @@ class Quizzes extends Component {
                           });
                         }}
                       >
-                        +
+                        <FontAwesomeIcon icon={faTable} size='sm' />
                       </TableButton>
                     </td>
                   </tr>

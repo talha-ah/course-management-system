@@ -24,7 +24,12 @@ const TeacherSidebar = () => {
       </NavLink>
       <ul className={classes.SidebarNav}>
         <li className={classes.SidebarNavItem}>
-          <NavLink exact to='/profile' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/profile'
+            className={classes.SidebarNavLink}
+            activeClassName={classes.activeLink}
+          >
             <FontAwesomeIcon icon={faUser} />
             Profile
           </NavLink>
@@ -42,7 +47,12 @@ const TeacherSidebar = () => {
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink exact to='/' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/'
+            className={classes.SidebarNavLink}
+            activeClassName={classes.activeLink}
+          >
             <FontAwesomeIcon icon={faBook} />
             Courses
           </NavLink>
@@ -64,6 +74,7 @@ const TeacherSidebar = () => {
             exact
             to='/coursesdescription'
             className={classes.SidebarNavLink}
+            activeClassName={classes.activeLink}
           >
             <FontAwesomeIcon icon={faFileAlt} />
             Course Description
@@ -74,13 +85,19 @@ const TeacherSidebar = () => {
             exact
             to='/coursesmonitoring'
             className={classes.SidebarNavLink}
+            activeClassName={classes.activeLink}
           >
             <FontAwesomeIcon icon={faFileMedicalAlt} />
             Course Monitoring
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink exact to='/courseslog' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/courseslog'
+            className={classes.SidebarNavLink}
+            activeClassName={classes.activeLink}
+          >
             <FontAwesomeIcon icon={faClipboardList} />
             Course Log
           </NavLink>
@@ -98,25 +115,45 @@ const TeacherSidebar = () => {
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink exact to='/quizzes' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/quizzes'
+            className={classes.SidebarNavLink}
+            activeClassName={classes.activeLink}
+          >
             <FontAwesomeIcon icon={faPollH} />
             Quizzes
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink exact to='/assignments' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/assignments'
+            className={classes.SidebarNavLink}
+            activeClassName={classes.activeLink}
+          >
             <FontAwesomeIcon icon={faBookReader} />
             Assignments
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink exact to='/papers' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/papers'
+            className={classes.SidebarNavLink}
+            activeClassName={classes.activeLink}
+          >
             <FontAwesomeIcon icon={faBookOpen} />
             Papers
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink exact to='/reports' className={classes.SidebarNavLink}>
+          <NavLink
+            exact
+            to='/reports'
+            className={classes.SidebarNavLink}
+            activeClassName={classes.activeLink}
+          >
             <FontAwesomeIcon icon={faClipboard} />
             Reports
           </NavLink>

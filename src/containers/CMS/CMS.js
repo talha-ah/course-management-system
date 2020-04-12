@@ -10,8 +10,10 @@ import Notify from '../../components/UI/Notify/Notify';
 
 class CMS extends Component {
   state = {
-    isLoading: false,
+    // Loadings
     pageLoading: true,
+    isLoading: false,
+    // Data
     isAuth: false,
     token: '',
     userId: false,
@@ -31,6 +33,7 @@ class CMS extends Component {
     }
     if (new Date(expiry) <= new Date()) {
       this.logoutHandler();
+      this.setState({ pageLoading: false });
       return;
     }
 
