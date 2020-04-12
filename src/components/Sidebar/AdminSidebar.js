@@ -25,7 +25,7 @@ const Sidebar = () => {
             exact
             to='/profile'
             className={classes.SidebarNavLink}
-            activeLink
+            activeClassName={classes.activeLink}
           >
             <FontAwesomeIcon icon={faUser} />
             Profile
@@ -43,7 +43,12 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
-          <NavLink exact to='/' className={classes.SidebarNavLink} activeLink>
+          <NavLink
+            exact
+            to='/'
+            className={classes.SidebarNavLink}
+            activeClassName={classes.activeLink}
+          >
             <FontAwesomeIcon icon={faFileAlt} />
             Courses
           </NavLink>
@@ -53,7 +58,7 @@ const Sidebar = () => {
             exact
             to='/addcourse'
             className={classes.SidebarNavLink}
-            activeLink
+            activeClassName={classes.activeLink}
           >
             <FontAwesomeIcon icon={faFileMedicalAlt} />
             Add Course
@@ -76,7 +81,7 @@ const Sidebar = () => {
             exact
             to='/teachers'
             className={classes.SidebarNavLink}
-            activeLink
+            activeClassName={classes.activeLink}
           >
             <FontAwesomeIcon icon={faPollH} />
             Teachers
@@ -87,7 +92,7 @@ const Sidebar = () => {
             exact
             to='/addteacher'
             className={classes.SidebarNavLink}
-            activeLink
+            activeClassName={classes.activeLink}
           >
             <FontAwesomeIcon icon={faBookReader} />
             Add Teacher
@@ -98,7 +103,7 @@ const Sidebar = () => {
             exact
             to='/reports'
             className={classes.SidebarNavLink}
-            activeLink
+            activeClassName={classes.activeLink}
           >
             <FontAwesomeIcon icon={faClipboard} />
             Reports
