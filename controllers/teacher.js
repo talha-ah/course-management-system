@@ -379,7 +379,6 @@ exports.takeCourse = async (req, res, next) => {
   const courseId = req.body.courseId;
   const sections = req.body.sections;
   const session = req.body.session;
-  console.log(session);
   const errors = [];
   try {
     if (sections.length <= 0) {
@@ -1053,6 +1052,8 @@ exports.addAssignment = async (req, res, next) => {
 
   const title = req.body.title;
   const grade = req.body.grade;
+  const batch = req.body.batch;
+  const section = req.body.section;
   const assessment = req.body.prePost;
   var assignmentPath = req.files['assignment'][0].path;
   const assignmentFileName = req.files['assignment'][0].originalname;
@@ -1066,6 +1067,15 @@ exports.addAssignment = async (req, res, next) => {
       validator.isEmpty(title)
     ) {
       errors.push('Invalid title!');
+    }
+    if (
+      !validator.isAlphanumeric(validator.blacklist(batch, ' -')) ||
+      validator.isEmpty(batch)
+    ) {
+      errors.push('Invalid session!');
+    }
+    if (!validator.isAlphanumeric(section) || validator.isEmpty(batch)) {
+      errors.push('Invalid section!');
     }
     if (
       !validator.isNumeric(String(grade)) ||
@@ -1113,6 +1123,8 @@ exports.addAssignment = async (req, res, next) => {
     assignment.assignments.push({
       title: title,
       grade: grade,
+      batch: batch,
+      section: section,
       assessment: assessment,
       assignment: { name: assignmentFileName, path: assignmentPath },
       solution: { name: solutionFileName, path: solutionPath },
@@ -1261,6 +1273,8 @@ exports.addQuiz = async (req, res, next) => {
 
   const title = req.body.title;
   const grade = req.body.grade;
+  const batch = req.body.batch;
+  const section = req.body.section;
   const assessment = req.body.prePost;
   var quizPath = req.files['quiz'][0].path;
   const quizFileName = req.files['quiz'][0].originalname;
@@ -1274,6 +1288,15 @@ exports.addQuiz = async (req, res, next) => {
       validator.isEmpty(title)
     ) {
       errors.push('Invalid title!');
+    }
+    if (
+      !validator.isAlphanumeric(validator.blacklist(batch, ' -')) ||
+      validator.isEmpty(batch)
+    ) {
+      errors.push('Invalid session!');
+    }
+    if (!validator.isAlphanumeric(section) || validator.isEmpty(batch)) {
+      errors.push('Invalid section!');
     }
     if (
       !validator.isNumeric(String(grade)) ||
@@ -1321,6 +1344,8 @@ exports.addQuiz = async (req, res, next) => {
     quiz.quizzes.push({
       title: title,
       grade: grade,
+      batch: batch,
+      section: section,
       assessment: assessment,
       quiz: { name: quizFileName, path: quizPath },
       solution: { name: solutionFileName, path: solutionPath },
@@ -1465,6 +1490,8 @@ exports.addPaper = async (req, res, next) => {
 
   const title = req.body.title;
   const grade = req.body.grade;
+  const batch = req.body.batch;
+  const section = req.body.section;
   const assessment = req.body.prePost;
   var paperPath = req.files['paper'][0].path;
   const paperFileName = req.files['paper'][0].originalname;
@@ -1478,6 +1505,15 @@ exports.addPaper = async (req, res, next) => {
       validator.isEmpty(title)
     ) {
       errors.push('Invalid title!');
+    }
+    if (
+      !validator.isAlphanumeric(validator.blacklist(batch, ' -')) ||
+      validator.isEmpty(batch)
+    ) {
+      errors.push('Invalid session!');
+    }
+    if (!validator.isAlphanumeric(section) || validator.isEmpty(batch)) {
+      errors.push('Invalid section!');
     }
     if (
       !validator.isNumeric(String(grade)) ||
@@ -1525,6 +1561,8 @@ exports.addPaper = async (req, res, next) => {
     paper.papers.push({
       title: title,
       grade: grade,
+      batch: batch,
+      section: section,
       assessment: assessment,
       paper: { name: paperFileName, path: paperPath },
       solution: { name: solutionFileName, path: solutionPath },

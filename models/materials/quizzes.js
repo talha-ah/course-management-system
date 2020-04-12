@@ -5,28 +5,30 @@ const Schema = mongoose.Schema;
 const quizzes = new Schema({
   courseId: {
     type: Schema.Types.ObjectId,
-    ref: 'Course'
+    ref: 'Course',
   },
   teacherId: {
     type: Schema.Types.ObjectId,
-    ref: 'Teacher'
+    ref: 'Teacher',
   },
   quizzes: [
     {
       title: { type: String },
       grade: { type: String },
+      batch: '',
+      section: '',
       assessment: { type: String },
       quiz: {
         name: { type: String },
-        path: { type: String }
+        path: { type: String },
       },
       solution: {
         name: { type: String },
-        path: { type: String }
+        path: { type: String },
       },
-      result: { type: Object }
-    }
-  ]
+      result: { type: Object },
+    },
+  ],
 });
 
 module.exports = mongoose.model('Quizzes', quizzes);
