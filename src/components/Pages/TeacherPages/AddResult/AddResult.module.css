@@ -75,8 +75,10 @@
   font-weight: 400;
   text-align: center;
   cursor: text;
-  /* border: 0; */
-  /* border-bottom: 1px solid #ccc; */
+  border: 0;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 2px;
+  outline: 0;
 }
 
 .AddResult .MarksInput[type='number']::-webkit-inner-spin-button {

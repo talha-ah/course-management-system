@@ -33,18 +33,23 @@ class SignIn extends Component {
         return res.json();
       })
       .then((resData) => {
-        console.log(resData);
         this.props.history.push('/');
       })
-      .catch((error) => {
+      .catch((err) => {
         try {
-          error.json().then((body) => {
-            console.log(body);
-            console.log('message = ' + body.message);
+          err.json().then((body) => {
+            this.props.notify(
+              true,
+              'Error',
+              body.error.status + ' ' + body.message
+            );
           });
         } catch (e) {
-          console.log('Error parsing promise');
-          console.log(error);
+          this.props.notify(
+            true,
+            'Error',
+            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+          );
         }
       });
   };

@@ -22,11 +22,14 @@ class Quizzes extends Component {
     selectCourseTitle: '',
     courses: '',
     coursesArray: [],
+    sections: [],
+    session: '',
     quizzes: '',
     // Input
     title: '',
     grade: '',
     prePost: 'Pre-Mid',
+    selectSection: '',
     quizz: null,
     solution: null,
   };
@@ -98,10 +101,12 @@ class Quizzes extends Component {
     this.setState({ quizLoading: true });
     const courseTitle = this.state.selectCourseTitle;
     var courseId;
+    var courseSelect;
 
     this.state.courses.some((course) => {
       if (course.title === courseTitle) {
         courseId = course._id;
+        courseSelect = course;
         return true;
       }
       return false;
@@ -124,6 +129,8 @@ class Quizzes extends Component {
           this.setState({
             selectCourseId: courseId,
             quizzes: resData.quizzes,
+            sections: courseSelect.sections,
+            session: courseSelect.session,
             quizLoading: false,
           });
           this.props.notify(true, 'Success', resData.message);
@@ -179,13 +186,16 @@ class Quizzes extends Component {
       this.state.quizz !== null &&
       this.state.solution !== null &&
       this.state.title !== '' &&
-      this.state.grade !== ''
+      this.state.grade !== '' &&
+      this.state.selectSection !== '' &&
+      this.state.selectSection !== 'Section'
     ) {
       const title = this.state.title;
       const grade = this.state.grade;
       const prePost = this.state.prePost;
       const quizz = this.state.quizz;
       const solution = this.state.solution;
+      const section = this.state.selectSection;
 
       if (quizz.size < 5000000 && solution.size < 5000000) {
         if (
@@ -201,6 +211,8 @@ class Quizzes extends Component {
           const formData = new FormData();
           formData.append('title', title);
           formData.append('grade', grade);
+          formData.append('section', section);
+          formData.append('batch', this.state.session);
           formData.append('prePost', prePost);
           formData.append('quiz', quizz);
           formData.append('solution', solution);
@@ -222,6 +234,11 @@ class Quizzes extends Component {
             .then((resData) => {
               this.setState({
                 quizzes: resData.quizzes,
+                title: '',
+                grade: '',
+                prePost: 'Pre-Mid',
+                quizz: null,
+                solution: null,
                 addQuizzModal: false,
                 isLoading: false,
               });
@@ -293,7 +310,7 @@ class Quizzes extends Component {
               <th>Title</th>
               <th>Grades</th>
               <th>Assessment</th>
-              <th>Status</th>
+              <th>Section</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -321,7 +338,7 @@ class Quizzes extends Component {
                     <td>{row.title}</td>
                     <td>{row.grade}</td>
                     <td>{row.assessment}</td>
-                    <td>Status</td>
+                    <td>{row.section}</td>
                     <td>
                       <TableButton
                         title='Add Result'
@@ -335,6 +352,7 @@ class Quizzes extends Component {
                               materialId: row._id,
                               materialTitle: row.title,
                               materialDoc: this.state.quizzes,
+                              session: this.state.session,
                             },
                           });
                         }}
@@ -402,6 +420,18 @@ class Quizzes extends Component {
                     <label htmlFor='prePost'>Time</label>
                     <SelectInput name='prePost' onChange={this.onChange}>
                       {['Pre-Mid', 'Post-Mid']}
+                    </SelectInput>
+                  </div>
+                  <div className={classes.InputGroup}>
+                    <label htmlFor='selectSection'>Section</label>
+                    <SelectInput
+                      name='selectSection'
+                      placeholder='Section'
+                      onChange={this.onChange}
+                      disabled=''
+                      defaultValue=''
+                    >
+                      {this.state.sections[0] ? this.state.sections[0] : []}
                     </SelectInput>
                   </div>
                   <div className={classes.InputGroup}>

@@ -53,7 +53,7 @@ class SignIn extends Component {
           />
           <br />
           <Button type='submit'>
-            {this.props.isLoading ? 'Logging in...' : 'Login'}
+            {this.props.isLoading ? '...' : 'Login'}
           </Button>
           <br />
           <div className={classes.Forget} onClick={this.ForgetHandler}>

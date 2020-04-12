@@ -7,23 +7,58 @@ import SelectInput from '../../../UI/SelectInput/SelectInput';
 
 class AddResult extends Component {
   state = {
+    // Loadings
     pageLoading: true,
-    dataLoading: true,
+    contentLoading: true,
     isLoading: false,
+    // Data
     class: '',
     materialId: '',
     materialTitle: '',
     materialGrade: 10,
     materialArray: '',
     materialsDoc: '',
+    selectSection: '',
+    selectSession: '',
     result: '',
   };
 
   async componentDidMount() {
-    const classId = '5e8818614bf86a28fc0b6615';
+    const tempMaterialArray = [];
+    if (this.props.location.state.pageFor === 'Assignment') {
+      this.props.location.state.materialDoc.assignments.map((material) => {
+        return tempMaterialArray.push(material.title);
+      });
+    } else if (this.props.location.state.pageFor === 'Quiz') {
+      this.props.location.state.materialDoc.quizzes.map((material) => {
+        return tempMaterialArray.push(material.title);
+      });
+    } else if (this.props.location.state.pageFor === 'Paper') {
+      this.props.location.state.materialDoc.papers.map((material) => {
+        return tempMaterialArray.push(material.title);
+      });
+    }
+    this.setState({
+      materialArray: tempMaterialArray,
+      materialId: this.props.location.state.materialId,
+      materialTitle: this.props.location.state.materialTitle,
+      materialsDoc: this.props.location.state.materialDoc,
+      selectSession: this.props.location.state.session,
+      pageLoading: false,
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.materialTitle !== prevState.materialTitle)
+      this.getMaterialFromServer();
+    if (this.state.selectSection !== prevState.selectSection) this.fetchClass();
+  }
+
+  fetchClass = async () => {
+    const session = this.state.selectSession.substring(0, 4);
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_SERVER_URL}/class/getclass/${classId}`,
+        `${process.env.REACT_APP_SERVER_URL}/class/getclass/${session}/${this.state.selectSection}`,
         {
           headers: {
             Authorization: 'Bearer ' + this.props.token,
@@ -32,29 +67,9 @@ class AddResult extends Component {
       );
       if (!res.ok) throw res;
       const resData = await res.json();
-
-      const tempMaterialArray = [];
-      if (this.props.location.state.pageFor === 'Assignment') {
-        this.props.location.state.materialDoc.assignments.map((material) => {
-          return tempMaterialArray.push(material.title);
-        });
-      } else if (this.props.location.state.pageFor === 'Quiz') {
-        this.props.location.state.materialDoc.quizzes.map((material) => {
-          return tempMaterialArray.push(material.title);
-        });
-      } else if (this.props.location.state.pageFor === 'Paper') {
-        this.props.location.state.materialDoc.papers.map((material) => {
-          return tempMaterialArray.push(material.title);
-        });
-      }
-
       this.setState({
         class: resData.class,
-        materialArray: tempMaterialArray,
-        materialId: this.props.location.state.materialId,
-        materialTitle: this.props.location.state.materialTitle,
-        materialsDoc: this.props.location.state.materialDoc,
-        pageLoading: false,
+        contentLoading: false,
       });
     } catch (err) {
       try {
@@ -73,14 +88,10 @@ class AddResult extends Component {
         );
       }
     }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.materialTitle !== prevState.materialTitle)
-      this.getMaterialFromServer();
-  }
+  };
 
   getMaterialFromServer = async () => {
+    this.setState({ contentLoading: true });
     const materialTitle = this.state.materialTitle;
     var materialId;
     var materialURL;
@@ -126,7 +137,8 @@ class AddResult extends Component {
         materialId: materialId,
         materialTitle: resData.material.title,
         materialGrade: resData.material.grade,
-        dataLoading: false,
+        selectSection: resData.material.section,
+        contentLoading: false,
       });
     } catch (err) {
       try {
@@ -176,7 +188,9 @@ class AddResult extends Component {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + this.props.token,
           },
-          body: JSON.stringify({ data: data }),
+          body: JSON.stringify({
+            data: data,
+          }),
         });
         if (!res.ok) throw res;
         const resData = await res.json();
@@ -215,9 +229,7 @@ class AddResult extends Component {
 
   onChangeCourse = (e) => {
     const title = e.target.value;
-
     this.setState({
-      dataLoading: true,
       materialTitle: title,
     });
   };
@@ -230,6 +242,11 @@ class AddResult extends Component {
         <div className={classes.Caption}>
           <span>
             Subject: <strong>{this.props.location.state.courseTitle}</strong>
+          </span>
+          <span className={classes.CaptionSpan}>
+            {this.state.selectSection === ''
+              ? ''
+              : `Section: ${this.state.selectSection} - ${this.state.selectSession}`}
           </span>
           <span className={classes.CaptionSpan}>
             {this.props.location.state.pageFor}:
@@ -253,49 +270,54 @@ class AddResult extends Component {
               <tr>
                 <th>Roll Number</th>
                 <th colSpan='2'>Name</th>
-                <th>Section</th>
-                <th>Batch</th>
                 <th>Marks / {this.state.materialGrade}</th>
               </tr>
             </thead>
             <tbody>
-              {this.state.dataLoading ? (
+              {this.state.contentLoading ? (
                 <tr>
-                  <td colSpan='6'>
+                  <td colSpan='4'>
                     <Spinner />
                   </td>
                 </tr>
               ) : (
                 <>
-                  {Object.entries(this.state.class.students).map((student) => {
-                    return (
-                      <tr
-                        key={student[0]}
-                        className={classes.AssignmentsTableRow}
-                      >
-                        <td>
-                          <strong>{student[1].rollNumber}</strong>
-                        </td>
-                        <td style={{ textAlign: 'left' }} colSpan='2'>
-                          {student[1].fullName}
-                        </td>
-                        <td>{this.state.class.section}</td>
-                        <td>{this.state.class.batch}</td>
-                        <td>
-                          <input
-                            className={classes.MarksInput}
-                            type='number'
-                            name={student[1].rollNumber}
-                            defaultValue={
-                              this.state.result
-                                ? this.state.result[student[1].rollNumber]
-                                : ''
-                            }
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {!this.state.class.students ? (
+                    <tr>
+                      <td colSpan='4'>
+                        <Spinner />
+                      </td>
+                    </tr>
+                  ) : (
+                    Object.entries(this.state.class.students).map((student) => {
+                      return (
+                        <tr
+                          key={student[0]}
+                          className={classes.AssignmentsTableRow}
+                        >
+                          <td>
+                            <strong>{student[1].rollNumber}</strong>
+                          </td>
+                          <td style={{ textAlign: 'left' }} colSpan='2'>
+                            {student[1].fullName}
+                          </td>
+                          {/* <td>{this.state.class.batch}</td> */}
+                          <td>
+                            <input
+                              className={classes.MarksInput}
+                              type='number'
+                              name={student[1].rollNumber}
+                              defaultValue={
+                                this.state.result
+                                  ? this.state.result[student[1].rollNumber]
+                                  : ''
+                              }
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </>
               )}
             </tbody>
