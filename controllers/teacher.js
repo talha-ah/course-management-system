@@ -378,15 +378,16 @@ exports.takeCourse = async (req, res, next) => {
 
   const courseId = req.body.courseId;
   const sections = req.body.sections;
-  const session = req.body.session;
+  const session2 = req.body.session;
   const errors = [];
   try {
     if (sections.length <= 0) {
       errors.push('Invalid sections!');
     }
     if (
-      !validator.isNumeric(String(session)) ||
-      validator.isEmpty(String(session))
+      !validator.isNumeric(String(session2)) ||
+      validator.isEmpty(String(session2)) ||
+      session2 < 2010
     ) {
       errors.push('Invalid session!');
     }
@@ -395,6 +396,8 @@ exports.takeCourse = async (req, res, next) => {
       error.status = 400;
       throw error;
     }
+
+    const session = session2 + '-' + (session2 + 4);
     const course = await Teacher.find({
       _id: teacherId,
       'coursesAssigned.courseId': courseId,

@@ -6,28 +6,28 @@ const courseModel = new Schema(
   {
     title: {
       type: String,
-      required: true
+      required: true,
     },
     code: {
       type: String,
-      required: true
+      required: true,
     },
     credits: {
       type: Number,
-      required: true
+      required: true,
     },
     type: {
       type: String,
-      required: true
+      required: true,
     },
     session: {
       type: String,
-      required: true
+      required: true,
     },
     status: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   { timestamps: true }
 );
