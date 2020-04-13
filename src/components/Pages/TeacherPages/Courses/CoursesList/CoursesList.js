@@ -222,6 +222,7 @@ class CoursesList extends Component {
       courseTitle !== '' &&
       courseTitle !== 'Course List' &&
       courseSession !== '' &&
+      courseSession >= 2010 &&
       courseSections.length > 0
     ) {
       fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/takecourse`, {
@@ -244,7 +245,7 @@ class CoursesList extends Component {
           this.setState({
             addCourseModal: false,
             courseTitle: '',
-            courseSession: '',
+            courseSession: new Date().toISOString().substr(0, 10),
             courseSectionsObject: {
               A: false,
               B: false,

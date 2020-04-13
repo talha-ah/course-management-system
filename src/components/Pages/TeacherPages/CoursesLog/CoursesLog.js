@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faWindowClose, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './CoursesLog.module.css';
 import Spinner from '../../../UI/Spinner/Spinner';
@@ -43,7 +45,7 @@ class CoursesLog extends Component {
         const arrayCourses = [];
         resData.courses.map((course) => {
           if (course.status === 'Active') {
-            return arrayCourses.push(course.title);
+            return arrayCourses.push(course.title + '-' + course.session);
           }
           return true;
         });
@@ -105,11 +107,13 @@ class CoursesLog extends Component {
 
   onSelectCourse = () => {
     this.setState({ logLoading: true });
-    const courseTitle = this.state.selectCourseTitle;
+    const courseTitle1 = this.state.selectCourseTitle;
+    const courseTitle = courseTitle1.split('-')[0];
+    const batch = courseTitle1.split('-')[1] + '-' + courseTitle1.split('-')[2];
     var courseId;
 
     this.state.courses.some((course) => {
-      if (course.title === courseTitle) {
+      if (course.title === courseTitle && course.session === batch) {
         courseId = course._id;
         return true;
       }
@@ -355,16 +359,17 @@ class CoursesLog extends Component {
                     onClick={this.onLogAddHandler}
                     type='button'
                   >
-                    +
+                    <FontAwesomeIcon icon={faPlusSquare} size='sm' />
                   </TableButton>
                   <TableButton
+                    style={{ marginLeft: '0.4em' }}
                     buttonType='red'
                     title='Cancel'
                     className={classes.Button}
                     onClick={() => this.setState({ addingRow: false })}
                     type='button'
                   >
-                    x
+                    <FontAwesomeIcon icon={faWindowClose} size='sm' />
                   </TableButton>
                 </td>
               </tr>
@@ -372,12 +377,15 @@ class CoursesLog extends Component {
           </tbody>
         </table>
         <div className={classes.ButtonDiv}>
-          <Button buttonType='red' onClick={() => this.props.history.goBack()}>
-            Go back
-          </Button>
           <Button
             onClick={() => this.setState({ addingRow: true })}
-            disabled={this.state.addingRow ? true : false}
+            disabled={
+              this.state.addingRow ||
+              this.state.selectCourseTitle === '' ||
+              this.state.selectCourseTitle === 'Course List'
+                ? true
+                : false
+            }
           >
             {this.state.isLoading ? 'Loading' : 'Add Log Row'}
           </Button>

@@ -10,7 +10,7 @@ const TableButton = (props) => {
       disabled={props.disabled}
       type={props.type}
       onClick={props.onClick}
-      style={{ backgroundColor: color }}
+      style={{ ...props.style, backgroundColor: color }}
     >
       {props.children}
       {props.title ? (

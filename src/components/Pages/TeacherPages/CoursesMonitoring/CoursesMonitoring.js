@@ -49,7 +49,7 @@ class CoursesMonitoring extends Component {
         const arrayCourses = [];
         resData.courses.map((course) => {
           if (course.status === 'Active') {
-            return arrayCourses.push(course.title);
+            return arrayCourses.push(course.title + '-' + course.session);
           }
           return true;
         });
@@ -99,11 +99,13 @@ class CoursesMonitoring extends Component {
 
   onSelectCourse = () => {
     this.setState({ monitoringLoading: true });
-    const courseTitle = this.state.selectCourseTitle;
+    const courseTitle1 = this.state.selectCourseTitle;
+    const courseTitle = courseTitle1.split('-')[0];
+    const batch = courseTitle1.split('-')[1] + '-' + courseTitle1.split('-')[2];
     var courseId;
 
     this.state.courses.some((course) => {
-      if (course.title === courseTitle) {
+      if (course.title === courseTitle && course.session === batch) {
         courseId = course._id;
         return true;
       }
@@ -285,13 +287,6 @@ class CoursesMonitoring extends Component {
               );
             })}
             <div className={classes.ButtonDiv}>
-              <Button
-                type='button'
-                buttonType='red'
-                onClick={() => this.props.history.goBack()}
-              >
-                Go back
-              </Button>
               <Button
                 type='submit'
                 disabled={this.state.isLoading ? true : false}

@@ -7,22 +7,21 @@
   left: 0;
   max-width: 250px;
   width: 100%;
-  background-color: #fff;
-  /* background-color: #f8f9ff; */
+  /* background-color: #fff; */
+  background-color: #f8f9ff;
   padding: 1rem 0 0 0;
   margin: 0;
   z-index: 1;
   border-width: 0 1px 0 0;
-  box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15);
+  /* box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15); */
 }
 
 .SidebarBrand {
   display: block;
-  font-size: 1.25rem;
+  /* font-size: 1.25rem; */
   color: #3b3e66;
   line-height: inherit;
   white-space: nowrap;
-  padding-bottom: 1rem;
   text-align: center;
 }
 
@@ -87,4 +86,11 @@
   border: 0;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   width: 200px;
+}
+
+/* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-height: 690px) {
+  .Sidebar {
+    overflow-y: scroll;
+  }
 }

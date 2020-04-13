@@ -49,7 +49,7 @@ class Quizzes extends Component {
         const arrayCourses = [];
         resData.courses.map((course) => {
           if (course.status === 'Active') {
-            return arrayCourses.push(course.title);
+            return arrayCourses.push(course.title + '-' + course.session);
           }
           return true;
         });
@@ -99,18 +99,21 @@ class Quizzes extends Component {
 
   onSelectCourse = () => {
     this.setState({ quizLoading: true });
-    const courseTitle = this.state.selectCourseTitle;
+    const courseTitle1 = this.state.selectCourseTitle;
+    const courseTitle = courseTitle1.split('-')[0];
+    const batch = courseTitle1.split('-')[1] + '-' + courseTitle1.split('-')[2];
     var courseId;
     var courseSelect;
 
     this.state.courses.some((course) => {
-      if (course.title === courseTitle) {
+      if (course.title === courseTitle && course.session === batch) {
         courseId = course._id;
         courseSelect = course;
         return true;
       }
       return false;
     });
+
     if (courseTitle !== '' && courseTitle !== 'Course List') {
       fetch(
         `${process.env.REACT_APP_SERVER_URL}/teacher/getquizzes/${courseId}`,
@@ -367,9 +370,6 @@ class Quizzes extends Component {
           </tbody>
         </table>
         <div className={classes.ButtonDiv}>
-          <Button buttonType='red' onClick={() => this.props.history.goBack()}>
-            Go back
-          </Button>
           <Button
             onClick={this.addQuizzModalHandler}
             disabled={
@@ -431,7 +431,7 @@ class Quizzes extends Component {
                       disabled=''
                       defaultValue=''
                     >
-                      {this.state.sections[0] ? this.state.sections[0] : []}
+                      {this.state.sections ? this.state.sections : []}
                     </SelectInput>
                   </div>
                   <div className={classes.InputGroup}>
