@@ -130,6 +130,10 @@ class CoursesList extends Component {
     }
   };
 
+  onCourseFetch = (id) => {
+    this.props.history.push(`/course/${id}`);
+  };
+
   render() {
     var activeCourses = 0;
     var inactiveCourses = 0;
@@ -207,7 +211,11 @@ class CoursesList extends Component {
                     <td>
                       <strong>{course.code}</strong>
                     </td>
-                    <td colSpan='2' className={classes.CourseTitle}>
+                    <td
+                      colSpan='2'
+                      className={classes.CourseTitle}
+                      onClick={this.onCourseFetch.bind(this, course._id)}
+                    >
                       {course.title}
                     </td>
                     <td>{course.credits}</td>

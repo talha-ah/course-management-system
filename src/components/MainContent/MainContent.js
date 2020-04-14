@@ -14,6 +14,7 @@ import Error404 from '../../components/Pages/404/404';
 import AdminProfile from '../Pages/AdminPages/Profile/Profile';
 import AdminCoursesList from '../Pages/AdminPages/Courses/CoursesList/CoursesList';
 import AdminAddCourse from '../Pages/AdminPages/Courses/AddCourse/AddCourse';
+import AdminCourse from '../Pages/AdminPages/Courses/Course/Course';
 import AdminTeacher from '../Pages/AdminPages/Teachers/Teacher/Teacher';
 import AdminTeachers from '../Pages/AdminPages/Teachers/TeacherList/TeacherList';
 import AdminAddTeacher from '../Pages/AdminPages/Teachers/AddTeacher/AddTeacher';
@@ -69,12 +70,23 @@ const MainContent = (props) => {
                 />
               )}
             />
-
             <Route
               exact
               path='/addcourse'
               render={({ match, history, location }) => (
                 <AdminAddCourse
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/course/:courseId'
+              render={({ match, history, location }) => (
+                <AdminCourse
                   match={match}
                   location={location}
                   history={history}

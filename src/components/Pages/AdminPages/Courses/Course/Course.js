@@ -1,27 +1,76 @@
 import React, { Component } from 'react';
 
-import classes from './AddCourse.module.css';
+import classes from './Course.module.css';
 import Spinner from '../../../../UI/Spinner/Spinner';
-import Button from '../../../../UI/Button/Button';
 import Input from '../../../../UI/Input/Input';
+import Button from '../../../../UI/Button/Button';
 import SelectInput from '../../../../UI/SelectInput/SelectInput';
 
-class AddCourse extends Component {
+class Course extends Component {
   state = {
     // Loadings
     pageLoading: true,
-    isLoading: false,
+    updateLoading: false,
+    deleteLoading: false,
     // Data
+    courseId: '',
+    // Inputs
     courseTitle: '',
     courseCode: '',
     courseCredits: 3,
     courseType: 'Compulsory',
     courseSession: 'Fall',
+    courseStatus: '',
   };
 
   componentDidMount() {
-    this.setState({ pageLoading: false });
+    const courseId = this.props.match.params.courseId;
+    fetch(`${process.env.REACT_APP_SERVER_URL}/admin/course/${courseId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.props.token,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw res;
+        return res.json();
+      })
+      .then((resData) => {
+        this.setState({
+          courseId: courseId,
+          courseTitle: resData.course.title,
+          courseCode: resData.course.code,
+          courseCredits: resData.course.credits,
+          courseType: resData.course.type,
+          courseSession: resData.course.session,
+          courseStatus: resData.course.status,
+          pageLoading: false,
+        });
+      })
+      .catch((err) => {
+        try {
+          err.json().then((body) => {
+            this.props.notify(
+              true,
+              'Error',
+              body.error.status + ' ' + body.message
+            );
+          });
+        } catch (e) {
+          this.props.notify(
+            true,
+            'Error',
+            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+          );
+        }
+      });
   }
+
+  onChange = (e) => {
+    const value = e.target.value;
+    const name = e.target.name;
+    this.setState({ [name]: value });
+  };
 
   onFormSubmit = (e) => {
     e.preventDefault();
@@ -38,21 +87,24 @@ class AddCourse extends Component {
       type !== '' &&
       session !== ''
     ) {
-      this.setState({ isLoading: true });
-      fetch(`${process.env.REACT_APP_SERVER_URL}/admin/createcourse`, {
-        method: 'POST',
-        body: JSON.stringify({
-          title: title,
-          code: code,
-          credits: credits,
-          type: type,
-          session: session,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + this.props.token,
-        },
-      })
+      this.setState({ updateLoading: true });
+      fetch(
+        `${process.env.REACT_APP_SERVER_URL}/admin/editcourse/${this.state.courseId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.props.token,
+          },
+          body: JSON.stringify({
+            title: title,
+            code: code,
+            credits: credits,
+            type: type,
+            session: session,
+          }),
+        }
+      )
         .then((res) => {
           if (!res.ok) throw res;
           return res.json();
@@ -62,7 +114,7 @@ class AddCourse extends Component {
           this.props.notify(true, 'Success', resData.message);
         })
         .catch((err) => {
-          this.setState({ isLoading: false });
+          this.setState({ updateLoading: false });
           try {
             err.json().then((body) => {
               this.props.notify(
@@ -84,20 +136,18 @@ class AddCourse extends Component {
     }
   };
 
-  onChange = (e) => {
-    const value = e.target.value;
-    const name = e.target.name;
-    this.setState({ [name]: value });
+  onDeleteHandler = () => {
+    this.setState({ deleteLoading: true });
   };
 
   render() {
     const page = this.state.pageLoading ? (
       <Spinner />
     ) : (
-      <div className={classes.AddCourse}>
+      <div className={classes.Course}>
         <div className={classes.Caption}>
           <span className={classes.CaptionSpan}>
-            <strong>Add Course</strong>
+            <strong>Edit Course</strong>
           </span>
         </div>
         <form
@@ -161,7 +211,6 @@ class AddCourse extends Component {
               {['Fall', 'Summer']}
             </SelectInput>
           </div>
-
           <div className={classes.ButtonDiv}>
             <Button
               type='button'
@@ -172,9 +221,13 @@ class AddCourse extends Component {
             </Button>
             <Button
               type='submit'
-              disabled={this.state.isLoading ? true : false}
+              disabled={
+                this.state.updateLoading || this.state.courseStatus !== 'Active'
+                  ? true
+                  : false
+              }
             >
-              {this.state.isLoading ? 'Creating...' : 'Create Course'}
+              {this.state.updateLoading ? 'Updating...' : 'Update Course'}
             </Button>
           </div>
         </form>
@@ -184,4 +237,4 @@ class AddCourse extends Component {
   }
 }
 
-export default AddCourse;
+export default Course;
