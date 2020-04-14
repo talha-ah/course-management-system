@@ -28,7 +28,7 @@
   padding: 0.53rem 1.3rem;
   font-size: 0.95rem;
   line-height: 1.5;
-  border: 2px solid #e81123;
+  border: 2px solid #c72222;
   border-radius: 0.2rem;
   outline: none;
   cursor: pointer;
@@ -38,8 +38,8 @@
 .buttonRed:hover {
   -webkit-transform: translateY(-2px);
   transform: translateY(-2px);
-  box-shadow: 0 0.22rem 0.525rem #e81123, 0 0.0625rem 0.385rem #e81123;
-  background-color: #e81123;
+  box-shadow: 0 0.22rem 0.525rem #c72222, 0 0.0625rem 0.385rem #c72222;
+  background-color: #c72222;
   color: #fff;
 }
 

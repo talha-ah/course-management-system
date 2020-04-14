@@ -16,9 +16,9 @@ class EditProfile extends React.Component {
     admin: '',
     firstName: '',
     lastName: '',
-    email: '',
+    currentEmail: '',
     // Password Inputs
-    password: '',
+    currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   };
@@ -39,7 +39,7 @@ class EditProfile extends React.Component {
         this.setState({
           firstName: resData.user.firstName,
           lastName: resData.user.lastName,
-          email: resData.user.email,
+          currentEmail: resData.user.email,
           pageLoading: false,
         });
       })
@@ -72,57 +72,25 @@ class EditProfile extends React.Component {
 
   onProfileUpdate = (e) => {
     e.preventDefault(); // Stop form submit
-    this.setState({ isLoading: true });
-    fetch(`${process.env.REACT_APP_SERVER_URL}/admin/editadmin`, {
-      method: 'POST',
-      body: JSON.stringify({
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        email: this.state.email,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw res;
-        return res.json();
-      })
-      .then((resData) => {
-        this.setState({ isLoading: false });
-        this.props.notify(true, 'Success', resData.message);
-      })
-      .catch((err) => {
-        this.setState({ isLoading: false });
-        try {
-          err.json().then((body) => {
-            this.props.notify(
-              true,
-              'Error',
-              body.error.status + ' ' + body.message
-            );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
-        }
-      });
-  };
 
-  onPasswordUpdate = (e) => {
-    e.preventDefault();
-
-    if (this.state.newPassword === this.state.confirmPassword) {
+    const firstName = this.state.firstName;
+    const lastName = this.state.lastName;
+    const email = this.state.currentEmail;
+    if (
+      firstName !== '' &&
+      firstName &&
+      lastName !== '' &&
+      lastName &&
+      email !== '' &&
+      email
+    ) {
       this.setState({ isLoading: true });
-      fetch(`${process.env.REACT_APP_SERVER_URL}/admin/editadminpassword`, {
+      fetch(`${process.env.REACT_APP_SERVER_URL}/admin/editadmin`, {
         method: 'POST',
         body: JSON.stringify({
-          currentPassword: this.state.password,
-          newPassword: this.state.newPassword,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -134,13 +102,7 @@ class EditProfile extends React.Component {
           return res.json();
         })
         .then((resData) => {
-          this.setState({
-            tab: 'info',
-            isLoading: false,
-            password: '',
-            newPassword: '',
-            confirmPassword: '',
-          });
+          this.setState({ isLoading: false });
           this.props.notify(true, 'Success', resData.message);
         })
         .catch((err) => {
@@ -162,7 +124,76 @@ class EditProfile extends React.Component {
           }
         });
     } else {
-      this.props.notify(true, 'Error', 'Passwords do not match.');
+      this.props.notify(true, 'Error', 'Fields should not be empty!');
+    }
+  };
+
+  onPasswordUpdate = (e) => {
+    e.preventDefault();
+    const currentPassword = this.state.currentPassword;
+    const newPassword = this.state.newPassword;
+    const confirmPassword = this.state.confirmPassword;
+
+    if (
+      currentPassword !== '' &&
+      newPassword !== '' &&
+      confirmPassword !== ''
+    ) {
+      if (this.state.newPassword === this.state.confirmPassword) {
+        this.setState({ isLoading: true });
+        fetch(`${process.env.REACT_APP_SERVER_URL}/admin/editadminpassword`, {
+          method: 'POST',
+          body: JSON.stringify({
+            currentPassword: this.state.password,
+            newPassword: this.state.newPassword,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.props.token,
+          },
+        })
+          .then((res) => {
+            if (!res.ok) throw res;
+            return res.json();
+          })
+          .then((resData) => {
+            this.setState({
+              tab: 'info',
+              isLoading: false,
+              password: '',
+              newPassword: '',
+              confirmPassword: '',
+            });
+            this.props.notify(true, 'Success', resData.message);
+          })
+          .catch((err) => {
+            this.setState({ isLoading: false });
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
+              this.props.notify(
+                true,
+                'Error',
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+              );
+            }
+          });
+      } else {
+        this.props.notify(
+          true,
+          'Error',
+          'New password should match confirm password.'
+        );
+      }
+    } else {
+      this.props.notify(true, 'Error', 'Fields should not be empty!');
     }
   };
 
@@ -227,12 +258,12 @@ class EditProfile extends React.Component {
               </div>
             </div>
             <div className={classes.InputDiv}>
-              <label htmlFor='email'>Email Address</label>
+              <label htmlFor='currentEmail'>Email Address</label>
               <Input
                 type='email'
-                name='email'
+                name='currentEmail'
                 placeholder='Email Address'
-                value={this.state.email}
+                value={this.state.currentEmail}
                 onChange={this.onChange}
               />
             </div>
@@ -259,12 +290,12 @@ class EditProfile extends React.Component {
             onSubmit={this.onPasswordUpdate}
           >
             <div className={classes.InputDiv}>
-              <label htmlFor='password'>Current Password</label>
+              <label htmlFor='currentPassword'>Current Password</label>
               <Input
                 type='password'
-                name='password'
+                name='currentPassword'
                 placeholder='Current Password'
-                value={this.state.password}
+                value={this.state.currentPassword}
                 onChange={this.onChange}
               />
             </div>

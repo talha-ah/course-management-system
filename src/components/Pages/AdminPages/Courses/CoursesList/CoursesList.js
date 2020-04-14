@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './CoursesList.module.css';
 import Spinner from '../../../../UI/Spinner/Spinner';
@@ -214,7 +212,16 @@ class CoursesList extends Component {
                     <td
                       colSpan='2'
                       className={classes.CourseTitle}
-                      onClick={this.onCourseFetch.bind(this, course._id)}
+                      onClick={
+                        course.status === 'Active'
+                          ? this.onCourseFetch.bind(this, course._id)
+                          : () =>
+                              this.props.notify(
+                                true,
+                                'Error',
+                                'Cannot edit inactive course.'
+                              )
+                      }
                     >
                       {course.title}
                     </td>
@@ -224,14 +231,13 @@ class CoursesList extends Component {
                     <td>{course.status}</td>
                     <td>
                       <TableButton
-                        title='Disable Course'
                         disabled={course.status === 'Active' ? '' : 'disabled'}
                         buttonType='red'
                         onClick={() =>
                           this.disableModalHandler(course._id, course.title)
                         }
                       >
-                        <FontAwesomeIcon icon={faTrashAlt} size='sm' />
+                        Disable
                       </TableButton>
                     </td>
                   </tr>

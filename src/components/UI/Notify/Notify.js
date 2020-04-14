@@ -36,8 +36,8 @@ class Notify extends Component {
         styles.borderColor = '#4F8A10';
         break;
       case 'Error':
-        styles.color = '#DE2545';
-        styles.borderColor = '#DE2545';
+        styles.color = '#c72222';
+        styles.borderColor = '#c72222';
         break;
       default:
     }

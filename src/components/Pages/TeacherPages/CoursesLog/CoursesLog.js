@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWindowClose, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './CoursesLog.module.css';
 import Spinner from '../../../UI/Spinner/Spinner';
@@ -262,7 +260,7 @@ class CoursesLog extends Component {
               <th>Duration</th>
               <th>Topics Covered</th>
               <th>Evaluation Instruments</th>
-              <th>Signature</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -310,9 +308,10 @@ class CoursesLog extends Component {
               })
             )}
             {this.state.addingRow ? (
-              <tr>
+              <tr style={{ backgroundColor: '#f4f5fd' }}>
                 <td>
                   <TableInput
+                    style={{ backgroundColor: 'transparent' }}
                     type='date'
                     name='date'
                     value={this.state.date}
@@ -321,6 +320,7 @@ class CoursesLog extends Component {
                 </td>
                 <td>
                   <TableInput
+                    style={{ backgroundColor: 'transparent' }}
                     type='time'
                     name='duration'
                     value={this.state.duration}
@@ -340,11 +340,13 @@ class CoursesLog extends Component {
                       maxHeight: '66px',
                       border: '0',
                       textAlign: 'center',
+                      backgroundColor: 'transparent',
                     }}
                   />
                 </td>
                 <td>
                   <TableInput
+                    style={{ backgroundColor: 'transparent' }}
                     type='text'
                     placeholder='Evaluation Instruments'
                     name='instruments'
@@ -354,22 +356,21 @@ class CoursesLog extends Component {
                 </td>
                 <td>
                   <TableButton
-                    title='Add'
                     className={classes.Button}
                     onClick={this.onLogAddHandler}
                     type='button'
                   >
-                    <FontAwesomeIcon icon={faPlusSquare} size='sm' />
+                    Add
                   </TableButton>
                   <TableButton
                     style={{ marginLeft: '0.4em' }}
                     buttonType='red'
-                    title='Cancel'
+                    // title='Cancel'
                     className={classes.Button}
                     onClick={() => this.setState({ addingRow: false })}
                     type='button'
                   >
-                    <FontAwesomeIcon icon={faWindowClose} size='sm' />
+                    Cancel
                   </TableButton>
                 </td>
               </tr>

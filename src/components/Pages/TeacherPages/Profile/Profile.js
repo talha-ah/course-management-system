@@ -15,7 +15,7 @@ class EditProfile extends React.Component {
     // Personal Info
     firstName: '',
     lastName: '',
-    email: '',
+    currentEmail: '',
     birthdate: '',
     phone: '',
     address: '',
@@ -23,7 +23,7 @@ class EditProfile extends React.Component {
     city: '',
     zip: '',
     // Password Inputs
-    password: '',
+    currentPassword: '',
     newPassword: '',
     confirmPassword: '',
     // CV Input
@@ -47,7 +47,7 @@ class EditProfile extends React.Component {
           pageLoading: false,
           firstName: resData.teacher.firstName,
           lastName: resData.teacher.lastName,
-          email: resData.teacher.email,
+          currentEmail: resData.teacher.email,
           birthdate: resData.teacher.dob,
           phone: resData.teacher.phone,
           address: resData.teacher.address.address,
@@ -92,64 +92,49 @@ class EditProfile extends React.Component {
 
   onProfileUpdate = (e) => {
     e.preventDefault();
-    this.setState({ isLoading: true });
+    const firstName = this.state.firstName;
+    const lastName = this.state.lastName;
+    const email = this.state.currentEmail;
+    const dob = this.state.birthdate;
+    const phone = this.state.phone;
+    const address = this.state.address;
+    const country = this.state.country;
+    const city = this.state.city;
+    const zip = this.state.zip;
 
-    fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/editteacher`, {
-      method: 'POST',
-      body: JSON.stringify({
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        email: this.state.email,
-        dob: this.state.birthdate,
-        phone: this.state.phone,
-        address: this.state.address,
-        country: this.state.country,
-        city: this.state.city,
-        zip: this.state.zip,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw res;
-        return res.json();
-      })
-      .then((resData) => {
-        this.setState({ isLoading: false });
-        this.props.notify(true, 'Success', resData.message);
-      })
-      .catch((err) => {
-        this.setState({ isLoading: false });
-        try {
-          err.json().then((body) => {
-            this.props.notify(
-              true,
-              'Error',
-              body.error.status + ' ' + body.message
-            );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
-        }
-      });
-  };
-
-  onPasswordChange = (e) => {
-    e.preventDefault();
-    this.setState({ isLoading: true });
-
-    if (this.state.newPassword === this.state.confirmPassword) {
-      fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/editteacherpassword`, {
+    if (
+      firstName !== '' &&
+      firstName &&
+      lastName !== '' &&
+      lastName &&
+      email !== '' &&
+      email &&
+      dob !== '' &&
+      dob &&
+      phone !== '' &&
+      phone &&
+      address !== '' &&
+      address &&
+      country !== '' &&
+      country &&
+      city !== '' &&
+      city &&
+      zip !== '' &&
+      zip
+    ) {
+      this.setState({ isLoading: true });
+      fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/editteacher`, {
         method: 'POST',
         body: JSON.stringify({
-          currentPassword: this.state.password,
-          newPassword: this.state.newPassword,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          dob: dob,
+          phone: phone,
+          address: address,
+          country: country,
+          city: city,
+          zip: zip,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -161,13 +146,7 @@ class EditProfile extends React.Component {
           return res.json();
         })
         .then((resData) => {
-          this.setState({
-            tab: 'info',
-            isLoading: false,
-            password: '',
-            newPassword: '',
-            confirmPassword: '',
-          });
+          this.setState({ isLoading: false });
           this.props.notify(true, 'Success', resData.message);
         })
         .catch((err) => {
@@ -189,12 +168,79 @@ class EditProfile extends React.Component {
           }
         });
     } else {
-      this.setState({ isLoading: false });
-      this.props.notify(
-        true,
-        'Error',
-        'New and Confirm passwords do not match!'
-      );
+      this.props.notify(true, 'Error', 'Fields should not be empty!');
+    }
+  };
+
+  onPasswordChange = (e) => {
+    e.preventDefault();
+    const currentPassword = this.state.currentPassword;
+    const newPassword = this.state.newPassword;
+    const confirmPassword = this.state.confirmPassword;
+
+    if (
+      currentPassword !== '' &&
+      newPassword !== '' &&
+      confirmPassword !== ''
+    ) {
+      if (newPassword === confirmPassword) {
+        this.setState({ isLoading: true });
+        fetch(
+          `${process.env.REACT_APP_SERVER_URL}/teacher/editteacherpassword`,
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              currentPassword: currentPassword,
+              newPassword: newPassword,
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + this.props.token,
+            },
+          }
+        )
+          .then((res) => {
+            if (!res.ok) throw res;
+            return res.json();
+          })
+          .then((resData) => {
+            this.setState({
+              tab: 'info',
+              isLoading: false,
+              password: '',
+              newPassword: '',
+              confirmPassword: '',
+            });
+            this.props.notify(true, 'Success', resData.message);
+          })
+          .catch((err) => {
+            this.setState({ isLoading: false });
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
+              this.props.notify(
+                true,
+                'Error',
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+              );
+            }
+          });
+      } else {
+        this.props.notify(
+          true,
+          'Error',
+          'New and Confirm passwords do not match!'
+        );
+      }
+    } else {
+      this.props.notify(true, 'Error', 'Fields should not be empty!');
     }
   };
 
@@ -326,12 +372,12 @@ class EditProfile extends React.Component {
               </div>
             </div>
             <div className={classes.InputDiv}>
-              <label htmlFor='email'>Email Address</label>
+              <label htmlFor='currentEmail'>Email Address</label>
               <Input
                 type='email'
-                name='email'
+                name='currentEmail'
                 placeholder='Email Address'
-                value={this.state.email}
+                value={this.state.currentEmail}
                 onChange={this.onChange}
               />
             </div>
@@ -451,12 +497,12 @@ class EditProfile extends React.Component {
         ) : this.state.tab === 'password' ? (
           <form method='POST' onSubmit={this.onPasswordChange}>
             <div className={classes.InputDiv}>
-              <label htmlFor='password'>Current Password</label>
+              <label htmlFor='currentPassword'>Current Password</label>
               <Input
                 type='password'
-                name='password'
+                name='currentPassword'
                 placeholder='Current Password'
-                value={this.state.password}
+                value={this.state.currentPassword}
                 onChange={this.onChange}
               />
             </div>
