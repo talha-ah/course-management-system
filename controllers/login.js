@@ -85,6 +85,13 @@ exports.login = async (req, res, next) => {
       error.status = 403;
       throw error;
     }
+    if (teacher.status === 'Inactive') {
+      var error = new Error(
+        'Your account is not active! Please contact Admin.'
+      );
+      error.status = 403;
+      throw error;
+    }
     var isAdmin = false;
     teacher.role.forEach((rol) => {
       if (rol === 'Admin') {

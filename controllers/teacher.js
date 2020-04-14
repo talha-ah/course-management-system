@@ -661,16 +661,10 @@ exports.addCourseLog = async (req, res, next) => {
 
   const errors = [];
   try {
-    if (
-      !validator.isAlphanumeric(validator.blacklist(topics, ' ')) ||
-      validator.isEmpty(topics)
-    ) {
+    if (validator.isEmpty(topics)) {
       errors.push('Invalid topics!');
     }
-    if (
-      !validator.isAlphanumeric(validator.blacklist(instruments, ' ')) ||
-      validator.isEmpty(instruments)
-    ) {
+    if (validator.isEmpty(instruments)) {
       errors.push('Invalid instruments!');
     }
     if (errors.length > 0) {

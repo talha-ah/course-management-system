@@ -299,7 +299,26 @@ exports.getCourses = async (req, res, next) => {
   }
 };
 
-exports.getCourse = async (req, res, next) => {};
+exports.getCourse = async (req, res, next) => {
+  const courseId = req.params.courseId;
+
+  try {
+    const course = await Course.findById(courseId);
+
+    if (!course) {
+      var error = new Error('Whoops, there was a problem finding that course!');
+      error.status = 404;
+      throw error;
+    }
+
+    res.status(200).json({ message: 'Course fetched!', course: course });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
 
 exports.createCourse = async (req, res, next) => {
   const courseTitle = req.body.title;
@@ -308,13 +327,13 @@ exports.createCourse = async (req, res, next) => {
   const courseType = req.body.type;
   const courseSession = req.body.session;
   const status = 'Active';
-
   const errors = [];
+
   try {
     if (!validator.isAlphanumeric(validator.blacklist(courseTitle, ' '))) {
       errors.push('Invalid course title!');
     }
-    if (!validator.isAlphanumeric(courseCode)) {
+    if (validator.isEmpty(courseCode)) {
       errors.push('Invalid course code!');
     }
     if (
@@ -372,23 +391,20 @@ exports.createCourse = async (req, res, next) => {
 };
 
 exports.updateCourse = async (req, res, next) => {
-  const courseId = req.body.courseId;
+  const courseId = req.params.courseId;
+
   const courseTitle = req.body.title;
   const courseCode = req.body.code;
   const courseCredits = req.body.credits;
   const courseType = req.body.type;
   const courseSession = req.body.session;
-
   const errors = [];
 
   try {
-    if (
-      !validator.isAlphanumeric(validator.blacklist(courseTitle, ' ')) ||
-      !validator.isLength(courseTitle, { min: 5 })
-    ) {
+    if (!validator.isAlphanumeric(validator.blacklist(courseTitle, ' '))) {
       errors.push('Invalid course title!');
     }
-    if (!validator.isAlphanumeric(courseCode)) {
+    if (validator.isEmpty(courseCode)) {
       errors.push('Invalid course code!');
     }
     if (
@@ -408,10 +424,9 @@ exports.updateCourse = async (req, res, next) => {
       error.status = 400;
       throw error;
     }
-
     const course = await Course.findById(courseId);
     if (!course) {
-      const err = new Error('Course fetching failed!');
+      const err = new Error('Whoops, course fetching failed!');
       err.code = 404;
       throw err;
     }

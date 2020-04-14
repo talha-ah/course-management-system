@@ -24,8 +24,8 @@ router.post('/reactivateteacher', isAuth, adminController.reactivateTeacher);
 // courses
 router.get('/courses', isAuth, adminController.getCourses);
 router.get('/course/:courseId', isAuth, adminController.getCourse);
+router.post('/editcourse/:courseId', isAuth, adminController.updateCourse);
 router.post('/createcourse', isAuth, adminController.createCourse);
-router.post('/editcourse', isAuth, adminController.updateCourse);
 router.get(
   '/deactivatecourse/:courseId',
   isAuth,
