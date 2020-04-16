@@ -794,6 +794,7 @@ exports.addCourseMonitoring = async (req, res, next) => {
     courseMonitoring.data.relevantProblems = relevantProblems;
     courseMonitoring.data.assessStandard = assessStandard;
     courseMonitoring.data.emergeApplication = emergeApplication;
+    courseMonitoring.status = 'Old';
 
     const courseMonitoringDoc = await courseMonitoring.save();
 
@@ -1117,6 +1118,14 @@ exports.addAssignment = async (req, res, next) => {
       throw error;
     }
 
+    assignment.assignments.map((ele) => {
+      if (ele.title === title && ele.section === section) {
+        const error = new Error('Assignment with this title and section already exists!');
+        error.code = 404;
+        throw error;
+      }
+    });
+
     assignment.assignments.push({
       title: title,
       grade: grade,
@@ -1292,7 +1301,7 @@ exports.addQuiz = async (req, res, next) => {
     ) {
       errors.push('Invalid session!');
     }
-    if (!validator.isAlphanumeric(section) || validator.isEmpty(batch)) {
+    if (!validator.isAlphanumeric(section) || validator.isEmpty(section)) {
       errors.push('Invalid section!');
     }
     if (
@@ -1337,6 +1346,14 @@ exports.addQuiz = async (req, res, next) => {
       error.code = 404;
       throw error;
     }
+
+    quiz.quizzes.map((ele) => {
+      if (ele.title === title && ele.section === section) {
+        const error = new Error('Quiz with this title and section already exists!');
+        error.code = 404;
+        throw error;
+      }
+    });
 
     quiz.quizzes.push({
       title: title,
@@ -1554,6 +1571,14 @@ exports.addPaper = async (req, res, next) => {
       error.code = 404;
       throw error;
     }
+
+    paper.papers.map((ele) => {
+      if (ele.title === title && ele.section === section) {
+        const error = new Error('Paper with this title and section already exists!');
+        error.code = 404;
+        throw error;
+      }
+    });
 
     paper.papers.push({
       title: title,

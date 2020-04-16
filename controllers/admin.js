@@ -152,7 +152,26 @@ exports.getTeachers = async (req, res, next) => {
   }
 };
 
-exports.getTeacher = async (req, res, next) => {};
+exports.getTeacher = async (req, res, next) => {
+  const teacherId = req.params.teacherId;
+  try {
+    const teacher = await Teacher.findById(teacherId);
+    if (!teacher) {
+      const error = new Error(
+        'Whoops, there was an error in finding the teacher!'
+      );
+      error.code = 404;
+      throw error;
+    }
+
+    res.status(201).json({ message: 'Teacher fetched!', teacher: teacher });
+  } catch (err) {
+    if (err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
 
 exports.createTeacher = async (req, res, next) => {
   const teacherEmail = req.body.email;
@@ -171,10 +190,10 @@ exports.createTeacher = async (req, res, next) => {
     if (!validator.isEmail(teacherEmail)) {
       errors.push('Invalid teacher email!');
     }
-    if (!validator.isAlphanumeric(validator.blacklist(teacherCode, ' '))) {
+    if (validator.isEmpty(teacherCode)) {
       errors.push('Invalid code!');
     }
-    if (!validator.isAlphanumeric(validator.blacklist(teacherRank, ' '))) {
+    if (validator.isEmpty(teacherRank)) {
       errors.push('Invalid teacher rank!');
     }
     if (!validator.isAlphanumeric(validator.blacklist(teacherType, ' '))) {
@@ -215,6 +234,67 @@ exports.createTeacher = async (req, res, next) => {
   }
 };
 
+exports.updateTeacher = async (req, res, next) => {
+  const teacherId = req.params.teacherId;
+
+  const teacherEmail = req.body.email;
+  const teacherCode = req.body.code;
+  const teacherRank = req.body.rank;
+  const teacherType = req.body.type;
+  const errors = [];
+
+  try {
+    if (!validator.isEmail(teacherEmail)) {
+      errors.push('Invalid teacher email!');
+    }
+    if (validator.isEmpty(teacherCode)) {
+      errors.push('Invalid code!');
+    }
+    if (validator.isEmpty(teacherRank)) {
+      errors.push('Invalid teacher rank!');
+    }
+    if (!validator.isAlphanumeric(validator.blacklist(teacherType, ' '))) {
+      errors.push('Invalid teacher type!');
+    }
+    if (errors.length > 0) {
+      var error = new Error(errors);
+      error.status = 400;
+      throw error;
+    }
+
+    const teacher = await Teacher.findById(teacherId);
+    if (!teacher) {
+      const err = new Error(
+        'Whoops, there was a problem in finding the teacher!'
+      );
+      err.code = 404;
+      throw err;
+    }
+
+    teacher.email = teacherEmail;
+    teacher.teacherCode = teacherCode;
+    teacher.rank = teacherRank;
+    teacher.type = teacherType;
+
+    const updatedTeacher = await teacher.save();
+    if (!updatedTeacher) {
+      const err = new Error(
+        'Whoops, there was a problem in saving the teacher!'
+      );
+      err.code = 404;
+      throw err;
+    }
+    res
+      .status(201)
+      .json({ message: 'Teacher updated!', teacher: updatedTeacher });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
 exports.deactivateTeacher = async (req, res, next) => {
   const teacherId = req.params.teacherId;
   try {
@@ -222,14 +302,14 @@ exports.deactivateTeacher = async (req, res, next) => {
     if (!teacher) {
       const error = new Error('Error in finding the user!');
       error.code = 404;
-      throw new error();
+      throw error;
     }
     teacher.status = 'Inactive';
     const updatedTeacher = await teacher.save();
     if (!updatedTeacher) {
       const error = new Error('Error in saving the user!');
       error.code = 404;
-      throw new error();
+      throw error;
     }
     res
       .status(201)
@@ -242,33 +322,64 @@ exports.deactivateTeacher = async (req, res, next) => {
   }
 };
 
-exports.reactivateTeacher = (req, res, next) => {
-  const teacherId = req.params.teacherid;
+exports.enableTeacher = async (req, res, next) => {
+  const teacherId = req.params.teacherId;
+  try {
+    const teacher = await Teacher.findById(teacherId);
+    if (!teacher) {
+      const error = new Error(
+        'Whoops, there was an error in finding the user!'
+      );
+      error.code = 404;
+      throw error;
+    }
+    teacher.status = 'Active';
+    const updatedTeacher = await teacher.save();
+    if (!updatedTeacher) {
+      const error = new Error(
+        'Whoops, there was an error in saving the teacher!'
+      );
+      throw error;
+    }
+    res.status(201).json({ message: 'Teacher enabled!', user: updatedTeacher });
+  } catch (err) {
+    if (err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
 
-  Teacher.findById(teacherId)
-    .then((teacher) => {
-      if (!teacher) {
-        const error = new Error('Error in finding the user!');
-        error.code = 404;
-        throw new error();
-      }
-      teacher.status = 'Active';
-      return teacher.save();
-    })
-    .then((updatedTeacher) => {
-      if (!updatedTeacher) {
-        const error = new Error('Error in saving the user!');
-        error.code = 404;
-        throw new error();
-      }
-      res.send({ user: updatedTeacher });
-    })
-    .catch((err) => {
-      if (err.status) {
-        err.status = 500;
-      }
-      next(err);
-    });
+exports.resetTeacherPassword = async (req, res, next) => {
+  const teacherId = req.params.teacherId;
+
+  try {
+    const teacher = await Teacher.findById(teacherId);
+    if (!teacher) {
+      const error = new Error(
+        'Whoops, there was an error in finding the teacher!'
+      );
+      error.code = 404;
+      throw error;
+    }
+    const password = 'password';
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    teacher.password = hashedPassword;
+    const updatedTeacher = await teacher.save();
+
+    res
+      .status(201)
+      .json({
+        message: 'Teacher password reset completed!',
+        teacher: updatedTeacher,
+      });
+  } catch (err) {
+    if (err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
 };
 
 // ================================================= Courses Section ================================================
@@ -466,7 +577,7 @@ exports.deactivateCourse = async (req, res, next) => {
     if (!course) {
       const error = new Error('Error in deleting the course!');
       error.code = 404;
-      throw new error();
+      throw error;
     }
     course.status = 'Inactive';
     const updatedCourse = await course.save();
@@ -491,7 +602,7 @@ exports.deleteCourse = (req, res, next) => {
       if (!course) {
         const error = new Error('Error in deleting the course!');
         error.code = 404;
-        throw new error();
+        throw error;
       }
       res.send({ course: course });
     })

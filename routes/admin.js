@@ -14,12 +14,18 @@ router.post('/editadminpassword', isAuth, adminController.editAdminPassword);
 router.get('/teachers', isAuth, adminController.getTeachers);
 router.get('/teacher/:teacherId', isAuth, adminController.getTeacher);
 router.post('/createteacher', isAuth, adminController.createTeacher);
+router.post('/updateteacher/:teacherId', isAuth, adminController.updateTeacher);
 router.get(
   '/deactiveteacher/:teacherId',
   isAuth,
   adminController.deactivateTeacher
 );
-router.post('/reactivateteacher', isAuth, adminController.reactivateTeacher);
+router.get('/enableteacher/:teacherId', isAuth, adminController.enableTeacher);
+router.get(
+  '/resetteacherpassword/:teacherId',
+  isAuth,
+  adminController.resetTeacherPassword
+);
 
 // courses
 router.get('/courses', isAuth, adminController.getCourses);
