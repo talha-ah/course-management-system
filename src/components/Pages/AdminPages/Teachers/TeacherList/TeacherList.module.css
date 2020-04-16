@@ -67,6 +67,10 @@
   border-bottom: 2px solid rgba(7, 9, 25, 0.125);
 }
 
+.TeacherTitle {
+  cursor: pointer;
+}
+
 /* Table Ends */
 
 .ButtonDiv {

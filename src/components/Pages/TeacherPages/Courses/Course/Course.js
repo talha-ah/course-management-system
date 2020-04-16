@@ -37,6 +37,8 @@ class Course extends Component {
     },
   };
 
+  abortController = new AbortController();
+
   componentDidMount() {
     const courseId = this.props.match.params.courseId;
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/course/${courseId}`, {
@@ -44,6 +46,7 @@ class Course extends Component {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token,
       },
+      signal: this.abortController.signal,
     })
       .then((res) => {
         if (!res.ok) throw res;
@@ -72,22 +75,29 @@ class Course extends Component {
         this.setState({ courseSectionsObject: secObjec });
       })
       .catch((err) => {
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
+  }
+
+  componentWillUnmount() {
+    this.abortController.abort();
   }
 
   onChange = (e) => {
@@ -128,6 +138,7 @@ class Course extends Component {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.props.token,
         },
+        signal: this.abortController.signal,
       })
         .then((res) => {
           if (!res.ok) throw res;
@@ -137,21 +148,25 @@ class Course extends Component {
           this.setState({ uploadLoading: false });
         })
         .catch((err) => {
-          this.setState({ uploadLoading: false });
-          try {
-            err.json().then((body) => {
+          if (err.name === 'AbortError') {
+          } else {
+            this.setState({ uploadLoading: false });
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
               this.props.notify(
                 true,
                 'Error',
-                body.error.status + ' ' + body.message
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
               );
-            });
-          } catch (e) {
-            this.props.notify(
-              true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-            );
+            }
           }
         });
     } else {
@@ -170,6 +185,7 @@ class Course extends Component {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.props.token,
         },
+        signal: this.abortController.signal,
       }
     )
       .then((res) => {
@@ -180,20 +196,23 @@ class Course extends Component {
         this.props.history.push('/');
       })
       .catch((err) => {
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
   };

@@ -65,12 +65,15 @@ class CoursesDescription extends Component {
     },
   };
 
+  abortController = new AbortController();
+
   componentDidMount() {
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token,
       },
+      signal: this.abortController.signal,
     })
       .then((res) => {
         if (!res.ok) throw res;
@@ -91,20 +94,23 @@ class CoursesDescription extends Component {
         });
       })
       .catch((err) => {
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
   }
@@ -115,11 +121,16 @@ class CoursesDescription extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.abortController.abort();
+  }
+
   onChangeCourse = (e) => {
     const title = e.target.value;
     if (title === 'Course List' || title === '') {
       this.setState({
         selectCourseId: '',
+        selectCourseTitle: title,
       });
     } else {
       this.setState({
@@ -129,7 +140,6 @@ class CoursesDescription extends Component {
   };
 
   onSelectCourse = () => {
-    this.setState({ descriptionLoading: true });
     const courseTitle1 = this.state.selectCourseTitle;
     const courseTitle = courseTitle1.split('-')[0];
     const batch = courseTitle1.split('-')[1] + '-' + courseTitle1.split('-')[2];
@@ -144,6 +154,7 @@ class CoursesDescription extends Component {
     });
 
     if (courseTitle !== '' && courseTitle !== 'Course List') {
+      this.setState({ descriptionLoading: true });
       fetch(
         `${process.env.REACT_APP_SERVER_URL}/teacher/getdescription/${courseId}`,
         {
@@ -151,6 +162,7 @@ class CoursesDescription extends Component {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + this.props.token,
           },
+          signal: this.abortController.signal,
         }
       )
         .then((res) => {
@@ -187,24 +199,27 @@ class CoursesDescription extends Component {
           this.props.notify(true, 'Success', resData.message);
         })
         .catch((err) => {
-          try {
-            err.json().then((body) => {
+          this.setState({ descriptionLoading: false });
+          if (err.name === 'AbortError') {
+          } else {
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
               this.props.notify(
                 true,
                 'Error',
-                body.error.status + ' ' + body.message
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
               );
-            });
-          } catch (e) {
-            this.props.notify(
-              true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-            );
+            }
           }
         });
-    } else {
-      this.props.notify(true, 'Error', 'Please select a course!');
     }
   };
 
@@ -216,7 +231,6 @@ class CoursesDescription extends Component {
 
   submitPhase1Handler = (e) => {
     e.preventDefault();
-    this.setState({ isLoading: true });
     if (this.state.status === 'new') {
       const descriptionId = this.state.courseDescriptionId;
       const prerequisites = this.state.prerequisites;
@@ -243,6 +257,7 @@ class CoursesDescription extends Component {
         reference !== '' &&
         goals !== ''
       ) {
+        this.setState({ isLoading: true });
         fetch(
           `${process.env.REACT_APP_SERVER_URL}/teacher/adddescription/${descriptionId}`,
           {
@@ -265,6 +280,7 @@ class CoursesDescription extends Component {
               reference: reference,
               goals: goals,
             }),
+            signal: this.abortController.signal,
           }
         )
           .then((res) => {
@@ -276,34 +292,39 @@ class CoursesDescription extends Component {
             this.props.notify(true, 'Success', resData.message);
           })
           .catch((err) => {
-            try {
-              err.json().then((body) => {
+            this.setState({ isLoading: false });
+            if (err.name === 'AbortError') {
+            } else {
+              try {
+                err.json().then((body) => {
+                  this.props.notify(
+                    true,
+                    'Error',
+                    body.error.status + ' ' + body.message
+                  );
+                });
+              } catch (e) {
                 this.props.notify(
                   true,
                   'Error',
-                  body.error.status + ' ' + body.message
+                  err.message +
+                    ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
                 );
-              });
-            } catch (e) {
-              this.props.notify(
-                true,
-                'Error',
-                err.message +
-                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-              );
+              }
             }
           });
       } else {
+        this.setState({ isLoading: false });
         this.props.notify(true, 'Error', 'Fields should not be empty!');
       }
     } else {
+      this.setState({ isLoading: false });
       this.props.notify(true, 'Error', 'You cannot Edit this.');
     }
   };
 
   submitPhase2Handler = (e) => {
     e.preventDefault();
-    this.setState({ isLoading: true });
     if (this.state.status === 'pending') {
       const descriptionId = this.state.courseDescriptionId;
       const topicsCovered = this.state.topicsCovered;
@@ -324,6 +345,7 @@ class CoursesDescription extends Component {
         social !== '' &&
         oralWritten !== ''
       ) {
+        this.setState({ isLoading: true });
         fetch(
           `${process.env.REACT_APP_SERVER_URL}/teacher/adddescription/${descriptionId}`,
           {
@@ -343,6 +365,7 @@ class CoursesDescription extends Component {
               social: social,
               oralWritten: oralWritten,
             }),
+            signal: this.abortController.signal,
           }
         )
           .then((res) => {
@@ -354,27 +377,33 @@ class CoursesDescription extends Component {
             this.props.notify(true, 'Success', resData.message);
           })
           .catch((err) => {
-            try {
-              err.json().then((body) => {
+            this.setState({ isLoading: false });
+            if (err.name === 'AbortError') {
+            } else {
+              try {
+                err.json().then((body) => {
+                  this.props.notify(
+                    true,
+                    'Error',
+                    body.error.status + ' ' + body.message
+                  );
+                });
+              } catch (e) {
                 this.props.notify(
                   true,
                   'Error',
-                  body.error.status + ' ' + body.message
+                  err.message +
+                    ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
                 );
-              });
-            } catch (e) {
-              this.props.notify(
-                true,
-                'Error',
-                err.message +
-                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-              );
+              }
             }
           });
       } else {
+        this.setState({ isLoading: false });
         this.props.notify(true, 'Error', 'Fields should not be empty!');
       }
     } else {
+      this.setState({ isLoading: false });
       this.props.notify(true, 'Error', 'You cannot Edit this.');
     }
   };

@@ -6,7 +6,7 @@
   width: 100%;
   font-size: 0.95rem;
   font-weight: 400;
-  padding: 0.6rem 0.8rem;
+  padding: 0.6rem 0.5rem;
   border: 1px solid rgb(208, 220, 221);
   border-radius: 3px;
   -webkit-transition: border-color 0.15s ease-in-out,
@@ -21,10 +21,6 @@
     0 0.156rem 0.125rem rgba(164, 165, 190, 0.06);
 }
 
-.SelectInput::-ms-expand {
-  display: none;
-}
-
-.SelectInput option {
+.SelectInput .Option {
   color: #3b3e66;
 }

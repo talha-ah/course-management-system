@@ -34,12 +34,18 @@ class CoursesList extends Component {
       E2: false,
     },
     // Tabs
-    tab: false,
+    tab: 'Active',
   };
+
+  abortController = new AbortController();
 
   componentDidMount() {
     this.fetchTeacherCourses();
     this.fetchAdminCourses();
+  }
+
+  componentWillUnmount() {
+    this.abortController.abort();
   }
 
   fetchTeacherCourses = () => {
@@ -49,6 +55,7 @@ class CoursesList extends Component {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token,
       },
+      signal: this.abortController.signal,
     })
       .then((res) => {
         if (!res.ok) throw res;
@@ -63,20 +70,23 @@ class CoursesList extends Component {
         });
       })
       .catch((err) => {
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
   };
@@ -87,6 +97,7 @@ class CoursesList extends Component {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token,
       },
+      signal: this.abortController.signal,
     })
       .then((res) => {
         if (!res.ok) throw res;
@@ -106,20 +117,23 @@ class CoursesList extends Component {
         });
       })
       .catch((err) => {
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
   };
@@ -148,6 +162,7 @@ class CoursesList extends Component {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.props.token,
         },
+        signal: this.abortController.signal,
       }
     )
       .then((res) => {
@@ -159,21 +174,24 @@ class CoursesList extends Component {
         this.fetchTeacherCourses();
       })
       .catch((err) => {
-        this.setState({ isLoading: false });
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          this.setState({ isLoading: false });
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
   };
@@ -234,6 +252,7 @@ class CoursesList extends Component {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.props.token,
         },
+        signal: this.abortController.signal,
       })
         .then((res) => {
           if (!res.ok) throw res;
@@ -257,21 +276,25 @@ class CoursesList extends Component {
           this.fetchTeacherCourses();
         })
         .catch((err) => {
-          this.setState({ isLoading: false });
-          try {
-            err.json().then((body) => {
+          if (err.name === 'AbortError') {
+          } else {
+            this.setState({ isLoading: false });
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
               this.props.notify(
                 true,
                 'Error',
-                body.error.status + ' ' + body.message
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
               );
-            });
-          } catch (e) {
-            this.props.notify(
-              true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-            );
+            }
           }
         });
     } else {
@@ -287,6 +310,7 @@ class CoursesList extends Component {
   render() {
     var activeCourses = 0;
     var inactiveCourses = 0;
+    var completedCourses = 0;
 
     var page = this.state.pageLoading ? (
       <Spinner />
@@ -301,21 +325,33 @@ class CoursesList extends Component {
         <div className={classes.TabsButtons}>
           <div
             className={classes.Button}
-            onClick={() => this.setState({ tab: false })}
+            onClick={() => this.setState({ tab: 'Active' })}
             style={{
-              borderBottom: !this.state.tab ? '1px solid #3b3e66' : '',
+              borderBottom:
+                this.state.tab === 'Active' ? '1px solid #3b3e66' : '',
             }}
           >
             Active Courses
           </div>
           <div
             className={classes.Button}
-            onClick={() => this.setState({ tab: true })}
+            onClick={() => this.setState({ tab: 'Inactive' })}
             style={{
-              borderBottom: this.state.tab ? '1px solid #3b3e66' : 'none',
+              borderBottom:
+                this.state.tab === 'Inactive' ? '1px solid #3b3e66' : 'none',
             }}
           >
             Inactive Courses
+          </div>
+          <div
+            className={classes.Button}
+            onClick={() => this.setState({ tab: 'Completed' })}
+            style={{
+              borderBottom:
+                this.state.tab === 'Completed' ? '1px solid #3b3e66' : 'none',
+            }}
+          >
+            Completed Courses
           </div>
         </div>
         <table className={classes.CoursesListTable}>
@@ -342,17 +378,23 @@ class CoursesList extends Component {
               </tr>
             ) : (
               this.state.courses.map((course) => {
-                if (this.state.tab) {
-                  if (course.status === 'Active') {
+                if (this.state.tab === 'Active') {
+                  if (course.status !== 'Active') {
+                    return true;
+                  } else {
+                    activeCourses++;
+                  }
+                } else if (this.state.tab === 'Inactive') {
+                  if (course.status !== 'Inactive') {
                     return true;
                   } else {
                     inactiveCourses++;
                   }
                 } else {
-                  if (course.status === 'Inactive') {
+                  if (course.status !== 'Completed') {
                     return true;
                   } else {
-                    activeCourses++;
+                    completedCourses++;
                   }
                 }
                 return (
@@ -389,10 +431,18 @@ class CoursesList extends Component {
           <tfoot>
             <tr>
               <th colSpan='4'>
-                {this.state.tab ? 'Inactive Courses' : 'Active Courses'}
+                {this.state.tab === 'Active'
+                  ? 'Active Courses'
+                  : this.state.tab === 'Inactive'
+                  ? 'Inactive Courses'
+                  : 'Completed Courses'}
               </th>
               <th colSpan='3'>
-                {this.state.tab ? inactiveCourses : activeCourses}
+                {this.state.tab === 'Active'
+                  ? activeCourses
+                  : this.state.tab === 'Inactive'
+                  ? inactiveCourses
+                  : completedCourses}
               </th>
             </tr>
           </tfoot>

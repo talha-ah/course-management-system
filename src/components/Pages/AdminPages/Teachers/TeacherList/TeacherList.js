@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './TeacherList.module.css';
 import Spinner from '../../../../UI/Spinner/Spinner';
@@ -14,6 +12,7 @@ class TeacherList extends Component {
     pageLoading: true,
     contentLoading: false,
     disableModal: false,
+    enableModal: false,
     isLoading: false,
     // Data
     teachers: '',
@@ -114,12 +113,59 @@ class TeacherList extends Component {
       });
   };
 
+  onEnableModal = () => {
+    this.setState({
+      isLoading: true,
+    });
+    fetch(
+      `${process.env.REACT_APP_SERVER_URL}/admin/enableteacher/${this.state.selectTeacherId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.props.token,
+        },
+      }
+    )
+      .then((res) => {
+        if (!res.ok) throw res;
+        return res.json();
+      })
+      .then((resData) => {
+        this.setState({
+          enableModal: false,
+          isLoading: false,
+          tab: 'Active',
+        });
+        this.fetchTeachers();
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        try {
+          err.json().then((body) => {
+            this.props.notify(
+              true,
+              'Error',
+              body.error.status + ' ' + body.message
+            );
+          });
+        } catch (e) {
+          this.props.notify(
+            true,
+            'Error',
+            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+          );
+        }
+      });
+  };
+
   addTeacherPageHandler = () => {
     this.props.history.push('/addteacher');
   };
 
   teacherHandler = (id) => {
-    console.log(id);
+    this.props.history.push(`/teacher/${id}`);
   };
 
   render() {
@@ -213,29 +259,51 @@ class TeacherList extends Component {
                 }
                 return (
                   <tr key={teacher._id}>
-                    <td onClick={this.teacherHandler.bind(this, teacher._id)}>
+                    <td>
                       {teacher.firstName} {teacher.lastName}
                     </td>
-                    <td>{teacher.email}</td>
+                    <td
+                      onClick={
+                        teacher.status === 'Active'
+                          ? this.teacherHandler.bind(this, teacher._id)
+                          : ''
+                      }
+                      className={classes.TeacherTitle}
+                    >
+                      <strong>{teacher.email}</strong>
+                    </td>
                     <td>{teacher.rank}</td>
                     <td>{teacher.status}</td>
                     <td>
                       <TableButton
-                        title='Disable teacher'
-                        disabled={
-                          teacher.status === 'Inactive' ? 'disabled' : ''
-                        }
                         buttonType='red'
-                        onClick={() => {
-                          this.setState({
-                            selectTeacherId: teacher._id,
-                            selectTeacherName:
-                              teacher.firstName + ' ' + teacher.lastName,
-                            disableModal: true,
-                          });
-                        }}
+                        onClick={
+                          teacher.status === 'Active'
+                            ? () => {
+                                this.setState({
+                                  selectTeacherId: teacher._id,
+                                  selectTeacherName:
+                                    teacher.firstName + ' ' + teacher.lastName,
+                                  disableModal: true,
+                                });
+                              }
+                            : teacher.status === 'Inactive'
+                            ? () => {
+                                this.setState({
+                                  selectTeacherId: teacher._id,
+                                  selectTeacherName:
+                                    teacher.firstName + ' ' + teacher.lastName,
+                                  enableModal: true,
+                                });
+                              }
+                            : ''
+                        }
                       >
-                        <FontAwesomeIcon icon={faTrashAlt} size='sm' />
+                        {teacher.status === 'Active'
+                          ? 'Disable'
+                          : teacher.status === 'Inactive'
+                          ? 'Reactivate'
+                          : ''}
                       </TableButton>
                     </td>
                   </tr>
@@ -267,6 +335,11 @@ class TeacherList extends Component {
             {this.state.disableModal ? 'Disabling...' : 'Add Teacher'}
           </Button>
         </div>
+      </div>
+    );
+    return (
+      <>
+        {page}
         {/* ===================================  Disable Teacher Modal Starts ===============================*/}
         <Modal visible={this.state.disableModal}>
           <div className={classes.Modal}>
@@ -301,9 +374,40 @@ class TeacherList extends Component {
           </div>
         </Modal>
         {/* ===================================  Disable Teacher Modal Ends ===============================*/}
-      </div>
+        {/* ===================================  Enable Teacher Modal Starts ===============================*/}
+        <Modal visible={this.state.enableModal}>
+          <div className={classes.Modal}>
+            <div className={classes.ModalBody}>
+              <div className={classes.ModalContent}>
+                <div className={classes.ModalContentTitle}>Enable Teacher!</div>
+                <div className={classes.ModalContentBody}>
+                  <p>
+                    Are you really sure to enable{' '}
+                    <strong>{this.state.selectTeacherName}?</strong>
+                  </p>
+                </div>
+              </div>
+              <div className={classes.ButtonDiv}>
+                <Button
+                  type='button'
+                  onClick={() => this.setState({ enableModal: false })}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type='button'
+                  buttonType='red'
+                  onClick={this.onEnableModal}
+                >
+                  {this.state.isLoading ? 'Enabling...' : 'Enable'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Modal>
+        {/* ===================================  Enable Teacher Modal Ends ===============================*/}
+      </>
     );
-    return page;
   }
 }
 

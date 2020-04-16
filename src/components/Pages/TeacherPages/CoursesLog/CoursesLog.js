@@ -28,12 +28,15 @@ class CoursesLog extends Component {
     instruments: '',
   };
 
+  abortController = new AbortController();
+
   componentDidMount() {
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token,
       },
+      signal: this.abortController.signal,
     })
       .then((res) => {
         if (!res.ok) throw res;
@@ -54,20 +57,23 @@ class CoursesLog extends Component {
         });
       })
       .catch((err) => {
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
     this.setInstantDate();
@@ -77,6 +83,10 @@ class CoursesLog extends Component {
     if (this.state.selectCourseTitle !== prevState.selectCourseTitle) {
       this.onSelectCourse();
     }
+  }
+
+  componentWillUnmount() {
+    this.abortController.abort();
   }
 
   setInstantDate = () => {
@@ -95,6 +105,7 @@ class CoursesLog extends Component {
     if (title === 'Course List' || title === '') {
       this.setState({
         selectCourseId: '',
+        selectCourseTitle: title,
       });
     } else {
       this.setState({
@@ -104,7 +115,6 @@ class CoursesLog extends Component {
   };
 
   onSelectCourse = () => {
-    this.setState({ logLoading: true });
     const courseTitle1 = this.state.selectCourseTitle;
     const courseTitle = courseTitle1.split('-')[0];
     const batch = courseTitle1.split('-')[1] + '-' + courseTitle1.split('-')[2];
@@ -118,6 +128,7 @@ class CoursesLog extends Component {
       return false;
     });
     if (courseTitle !== '' && courseTitle !== 'Course List') {
+      this.setState({ logLoading: true });
       fetch(
         `${process.env.REACT_APP_SERVER_URL}/teacher/getcourselog/${courseId}`,
         {
@@ -125,6 +136,7 @@ class CoursesLog extends Component {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + this.props.token,
           },
+          signal: this.abortController.signal,
         }
       )
         .then((res) => {
@@ -140,24 +152,26 @@ class CoursesLog extends Component {
           this.props.notify(true, 'Success', resData.message);
         })
         .catch((err) => {
-          try {
-            err.json().then((body) => {
+          if (err.name === 'AbortError') {
+          } else {
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
               this.props.notify(
                 true,
                 'Error',
-                body.error.status + ' ' + body.message
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
               );
-            });
-          } catch (e) {
-            this.props.notify(
-              true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-            );
+            }
           }
         });
-    } else {
-      this.props.notify(true, 'Error', 'Please select a course!');
     }
   };
 
@@ -187,6 +201,7 @@ class CoursesLog extends Component {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + this.props.token,
           },
+          signal: this.abortController.signal,
         }
       )
         .then((res) => {
@@ -205,20 +220,24 @@ class CoursesLog extends Component {
           this.setState({
             isLoading: false,
           });
-          try {
-            err.json().then((body) => {
+          if (err.name === 'AbortError') {
+          } else {
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
               this.props.notify(
                 true,
                 'Error',
-                body.error.status + ' ' + body.message
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
               );
-            });
-          } catch (e) {
-            this.props.notify(
-              true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-            );
+            }
           }
         });
     } else {
@@ -296,7 +315,7 @@ class CoursesLog extends Component {
                         style={{
                           height: '22px',
                           minHeight: '22px',
-                          maxHeight: '66px',
+                          maxHeight: '110px',
                           border: '0',
                         }}
                       />

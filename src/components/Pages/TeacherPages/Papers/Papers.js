@@ -34,12 +34,15 @@ class Papers extends Component {
     solution: null,
   };
 
+  abortController = new AbortController();
+
   componentDidMount() {
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token,
       },
+      signal: this.abortController.signal,
     })
       .then((res) => {
         if (!res.ok) throw res;
@@ -60,20 +63,23 @@ class Papers extends Component {
         });
       })
       .catch((err) => {
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
   }
@@ -84,11 +90,16 @@ class Papers extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.abortController.abort();
+  }
+
   onChangeCourse = (e) => {
     const title = e.target.value;
     if (title === 'Course List' || title === '') {
       this.setState({
         selectCourseId: '',
+        selectCourseTitle: title,
       });
     } else {
       this.setState({
@@ -98,7 +109,6 @@ class Papers extends Component {
   };
 
   onSelectCourse = () => {
-    this.setState({ paperLoading: true });
     const courseTitle1 = this.state.selectCourseTitle;
     const courseTitle = courseTitle1.split('-')[0];
     const batch = courseTitle1.split('-')[1] + '-' + courseTitle1.split('-')[2];
@@ -115,6 +125,7 @@ class Papers extends Component {
     });
 
     if (courseTitle !== '' && courseTitle !== 'Course List') {
+      this.setState({ paperLoading: true });
       fetch(
         `${process.env.REACT_APP_SERVER_URL}/teacher/getpapers/${courseId}`,
         {
@@ -122,6 +133,7 @@ class Papers extends Component {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + this.props.token,
           },
+          signal: this.abortController.signal,
         }
       )
         .then((res) => {
@@ -139,24 +151,27 @@ class Papers extends Component {
           this.props.notify(true, 'Success', resData.message);
         })
         .catch((err) => {
-          try {
-            err.json().then((body) => {
+          if (err.name === 'AbortError') {
+          } else {
+            this.setState({ paperLoading: false });
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
               this.props.notify(
                 true,
                 'Error',
-                body.error.status + ' ' + body.message
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
               );
-            });
-          } catch (e) {
-            this.props.notify(
-              true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-            );
+            }
           }
         });
-    } else {
-      this.props.notify(true, 'Error', 'Please select a course!');
     }
   };
 
@@ -176,49 +191,44 @@ class Papers extends Component {
     }
   };
 
-  addPaperModalHandler = () => {
-    this.setState((prevState) => ({
-      addPaperModal: !prevState.addPaperModal,
-    }));
-  };
-
   onAddPaperHandler = (e) => {
     e.preventDefault();
-    this.setState({ isLoading: true });
-    if (
-      this.state.paper !== null &&
-      this.state.solution !== null &&
-      this.state.title !== '' &&
-      this.state.grade !== '' &&
-      this.state.selectSection !== '' &&
-      this.state.selectSection !== 'Section'
-    ) {
-      const title = this.state.title;
-      const grade = this.state.grade;
-      const prePost = this.state.prePost;
-      const paper = this.state.paper;
-      const solution = this.state.solution;
-      const section = this.state.selectSection;
+    const data = {};
 
-      if (paper.size < 5000000 && solution.size < 5000000) {
+    const formData = new FormData(e.target);
+    for (let [key, value] of formData.entries()) {
+      data[key] = value;
+    }
+
+    if (
+      data.paper !== null &&
+      data.solution !== null &&
+      data.title !== '' &&
+      data.grade !== '' &&
+      data.selectSection !== '' &&
+      data.selectSection !== 'Section'
+    ) {
+      if (data.paper.size < 5000000 && data.solution.size < 5000000) {
         if (
-          (paper.type === 'application/pdf' ||
-            paper.type === 'image/jpg' ||
-            paper.type === 'image/png' ||
-            paper.type === 'image/jpeg') &&
-          (solution.type === 'application/pdf' ||
-            solution.type === 'image/jpg' ||
-            solution.type === 'image/png' ||
-            solution.type === 'image/jpeg')
+          (data.paper.type === 'application/pdf' ||
+            data.paper.type === 'image/jpg' ||
+            data.paper.type === 'image/png' ||
+            data.paper.type === 'image/jpeg') &&
+          (data.solution.type === 'application/pdf' ||
+            data.solution.type === 'image/jpg' ||
+            data.solution.type === 'image/png' ||
+            data.solution.type === 'image/jpeg')
         ) {
-          const formData = new FormData();
-          formData.append('title', title);
-          formData.append('grade', grade);
-          formData.append('section', section);
-          formData.append('batch', this.state.session);
-          formData.append('prePost', prePost);
-          formData.append('paper', paper);
-          formData.append('solution', solution);
+          const formData1 = new FormData();
+          formData1.append('title', data.title);
+          formData1.append('grade', data.grade);
+          formData1.append('section', data.selectSection);
+          formData1.append('batch', this.state.session);
+          formData1.append('prePost', data.prePost);
+          formData1.append('paper', data.paper);
+          formData1.append('solution', data.solution);
+
+          this.setState({ isLoading: true });
 
           fetch(
             `${process.env.REACT_APP_SERVER_URL}/teacher/addpaper/${this.state.papers._id}`,
@@ -228,6 +238,7 @@ class Papers extends Component {
               headers: {
                 Authorization: 'Bearer ' + this.props.token,
               },
+              signal: this.abortController.signal,
             }
           )
             .then((res) => {
@@ -237,39 +248,39 @@ class Papers extends Component {
             .then((resData) => {
               this.setState({
                 papers: resData.papers,
-                title: '',
-                grade: '',
-                prePost: 'Mid-Term',
-                paper: null,
-                solution: null,
                 addPaperModal: false,
                 isLoading: false,
               });
+              document.getElementById('addPaperForm').reset();
               this.props.notify(true, 'Success', resData.message);
             })
             .catch((err) => {
-              try {
-                err.json().then((body) => {
+              if (err.name === 'AbortError') {
+              } else {
+                this.setState({ isLoading: false });
+                try {
+                  err.json().then((body) => {
+                    this.props.notify(
+                      true,
+                      'Error',
+                      body.error.status + ' ' + body.message
+                    );
+                  });
+                } catch (e) {
                   this.props.notify(
                     true,
                     'Error',
-                    body.error.status + ' ' + body.message
+                    err.message +
+                      ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
                   );
-                });
-              } catch (e) {
-                this.props.notify(
-                  true,
-                  'Error',
-                  err.message +
-                    ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-                );
+                }
               }
             });
         } else {
           this.props.notify(
             true,
             'Error',
-            'Only .pdf,.png,jpg,jpeg files are prohibited.'
+            'Only .pdf,.png,jpg,jpeg files are allowed.'
           );
         }
       } else {
@@ -371,7 +382,7 @@ class Papers extends Component {
         </table>
         <div className={classes.ButtonDiv}>
           <Button
-            onClick={this.addPaperModalHandler}
+            onClick={() => this.setState({ addPaperModal: true })}
             disabled={
               this.state.isLoading ||
               this.state.selectCourseId === '' ||
@@ -394,16 +405,10 @@ class Papers extends Component {
             <div className={classes.ModalBody}>
               <div className={classes.ModalContent}>
                 <div className={classes.ModalContentTitle}>Add Paper</div>
-                <form onSubmit={this.onAddPaperHandler}>
+                <form onSubmit={this.onAddPaperHandler} id='addPaperForm'>
                   <div className={classes.InputGroup}>
                     <label htmlFor='title'>Title</label>
-                    <Input
-                      type='text'
-                      name='title'
-                      placeholder='Title'
-                      value={this.state.title}
-                      onChange={this.onChange}
-                    ></Input>
+                    <Input type='text' name='title' placeholder='Title'></Input>
                   </div>
                   <div className={classes.InputGroup}>
                     <label htmlFor='grade'>Grade</label>
@@ -412,25 +417,17 @@ class Papers extends Component {
                       name='grade'
                       placeholder='Grade'
                       max='60'
-                      value={this.state.grade}
-                      onChange={this.onChange}
                     ></Input>
                   </div>
                   <div className={classes.InputGroup}>
                     <label htmlFor='prePost'>Time</label>
-                    <SelectInput name='prePost' onChange={this.onChange}>
+                    <SelectInput name='prePost'>
                       {['Mid-Term', 'Final-Term']}
                     </SelectInput>
                   </div>
                   <div className={classes.InputGroup}>
                     <label htmlFor='selectSection'>Section</label>
-                    <SelectInput
-                      name='selectSection'
-                      placeholder='Section'
-                      onChange={this.onChange}
-                      disabled=''
-                      defaultValue=''
-                    >
+                    <SelectInput name='selectSection'>
                       {this.state.sections ? this.state.sections : []}
                     </SelectInput>
                   </div>
@@ -439,9 +436,8 @@ class Papers extends Component {
                     <Input
                       type='file'
                       name='paper'
-                      accept='image/*, application/pdf'
                       placeholder='paper'
-                      onChange={this.onChange}
+                      accept='image/*, application/pdf'
                     ></Input>
                   </div>
                   <div className={classes.InputGroup}>
@@ -449,9 +445,8 @@ class Papers extends Component {
                     <Input
                       type='file'
                       name='solution'
-                      accept='image/*, application/pdf'
                       placeholder='Solution'
-                      onChange={this.onChange}
+                      accept='image/*, application/pdf'
                     ></Input>
                   </div>
 
@@ -459,7 +454,13 @@ class Papers extends Component {
                     <Button
                       type='button'
                       buttonType='red'
-                      onClick={this.addPaperModalHandler}
+                      onClick={() => {
+                        this.setState({
+                          addPaperModal: false,
+                          isLoading: false,
+                        });
+                        document.getElementById('addPaperForm').reset();
+                      }}
                     >
                       Cancel
                     </Button>

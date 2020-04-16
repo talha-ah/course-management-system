@@ -2,10 +2,10 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faFileMedicalAlt,
+  // faFileMedicalAlt,
   faFileAlt,
   faUser,
-  faBookReader,
+  // faBookReader,
   faClipboard,
   faPollH,
 } from '@fortawesome/free-solid-svg-icons';
@@ -53,7 +53,7 @@ const Sidebar = () => {
             Courses
           </NavLink>
         </li>
-        <li className={classes.SidebarNavItem}>
+        {/* <li className={classes.SidebarNavItem}>
           <NavLink
             exact
             to='/addcourse'
@@ -63,7 +63,7 @@ const Sidebar = () => {
             <FontAwesomeIcon icon={faFileMedicalAlt} />
             Add Course
           </NavLink>
-        </li>
+        </li> */}
 
         <hr className={classes.SidebarNavHr} />
         <li className={classes.SidebarNavItem}>
@@ -87,7 +87,7 @@ const Sidebar = () => {
             Teachers
           </NavLink>
         </li>
-        <li className={classes.SidebarNavItem}>
+        {/* <li className={classes.SidebarNavItem}>
           <NavLink
             exact
             to='/addteacher'
@@ -97,7 +97,7 @@ const Sidebar = () => {
             <FontAwesomeIcon icon={faBookReader} />
             Add Teacher
           </NavLink>
-        </li>
+        </li> */}
         <li className={classes.SidebarNavItem}>
           <NavLink
             exact

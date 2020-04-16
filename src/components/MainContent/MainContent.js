@@ -96,7 +96,7 @@ const MainContent = (props) => {
             />
             <Route
               exact
-              path='/teacher'
+              path='/teacher/:teacherId'
               render={({ match, history, location }) => (
                 <AdminTeacher
                   match={match}

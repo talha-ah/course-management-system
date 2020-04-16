@@ -54,6 +54,10 @@
 
 /* Form Starts */
 
+.CoursesMonitoring textarea:disabled {
+  cursor: not-allowed;
+}
+
 .CoursesMonitoring label {
   font-weight: bold;
 }

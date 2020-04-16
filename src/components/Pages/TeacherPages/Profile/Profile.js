@@ -31,12 +31,15 @@ class EditProfile extends React.Component {
     fileName: '',
   };
 
+  abortController = new AbortController();
+
   componentDidMount() {
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/getteacher`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token,
       },
+      signal: this.abortController.signal,
     })
       .then((res) => {
         if (!res.ok) throw res;
@@ -57,22 +60,29 @@ class EditProfile extends React.Component {
         });
       })
       .catch((err) => {
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
+  }
+
+  componentWillUnmount() {
+    this.abortController.abort();
   }
 
   onChange = (e) => {
@@ -140,6 +150,7 @@ class EditProfile extends React.Component {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.props.token,
         },
+        signal: this.abortController.signal,
       })
         .then((res) => {
           if (!res.ok) throw res;
@@ -150,21 +161,25 @@ class EditProfile extends React.Component {
           this.props.notify(true, 'Success', resData.message);
         })
         .catch((err) => {
-          this.setState({ isLoading: false });
-          try {
-            err.json().then((body) => {
+          if (err.name === 'AbortError') {
+          } else {
+            this.setState({ isLoading: false });
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
               this.props.notify(
                 true,
                 'Error',
-                body.error.status + ' ' + body.message
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
               );
-            });
-          } catch (e) {
-            this.props.notify(
-              true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-            );
+            }
           }
         });
     } else {
@@ -197,6 +212,7 @@ class EditProfile extends React.Component {
               'Content-Type': 'application/json',
               Authorization: 'Bearer ' + this.props.token,
             },
+            signal: this.abortController.signal,
           }
         )
           .then((res) => {
@@ -214,22 +230,25 @@ class EditProfile extends React.Component {
             this.props.notify(true, 'Success', resData.message);
           })
           .catch((err) => {
-            this.setState({ isLoading: false });
-            try {
-              err.json().then((body) => {
+            if (err.name === 'AbortError') {
+            } else {
+              this.setState({ isLoading: false });
+              try {
+                err.json().then((body) => {
+                  this.props.notify(
+                    true,
+                    'Error',
+                    body.error.status + ' ' + body.message
+                  );
+                });
+              } catch (e) {
                 this.props.notify(
                   true,
                   'Error',
-                  body.error.status + ' ' + body.message
+                  err.message +
+                    ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
                 );
-              });
-            } catch (e) {
-              this.props.notify(
-                true,
-                'Error',
-                err.message +
-                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-              );
+              }
             }
           });
       } else {
@@ -262,6 +281,7 @@ class EditProfile extends React.Component {
           headers: {
             Authorization: 'Bearer ' + this.props.token,
           },
+          signal: this.abortController.signal,
         })
           .then((res) => {
             if (!res.ok) throw res;
@@ -277,22 +297,25 @@ class EditProfile extends React.Component {
             this.props.notify(true, 'Success', resData.message);
           })
           .catch((err) => {
-            this.setState({ isLoading: false });
-            try {
-              err.json().then((body) => {
+            if (err.name === 'AbortError') {
+            } else {
+              this.setState({ isLoading: false });
+              try {
+                err.json().then((body) => {
+                  this.props.notify(
+                    true,
+                    'Error',
+                    body.error.status + ' ' + body.message
+                  );
+                });
+              } catch (e) {
                 this.props.notify(
                   true,
                   'Error',
-                  body.error.status + ' ' + body.message
+                  err.message +
+                    ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
                 );
-              });
-            } catch (e) {
-              this.props.notify(
-                true,
-                'Error',
-                err.message +
-                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-              );
+              }
             }
           });
       } else {
@@ -307,7 +330,7 @@ class EditProfile extends React.Component {
 
   render() {
     const page = this.state.pageLoading ? (
-      <Spinner size='Big' />
+      <Spinner />
     ) : (
       <div className={classes.Profile}>
         <div className={classes.Caption}>

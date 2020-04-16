@@ -2,7 +2,7 @@ import React from 'react';
 
 import classes from './SelectInput.module.css';
 
-const SelectInput = props => {
+const SelectInput = (props) => {
   return (
     <select
       className={classes.SelectInput}
@@ -22,9 +22,9 @@ const SelectInput = props => {
         </option>
       )}
 
-      {props.children.map(child => {
+      {props.children.map((child) => {
         return (
-          <option value={child} key={child}>
+          <option value={child} key={child} className={classes.Option}>
             {child}
           </option>
         );
