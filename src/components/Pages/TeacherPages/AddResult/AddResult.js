@@ -15,7 +15,7 @@ class AddResult extends Component {
     class: '',
     materialId: '',
     materialTitle: '',
-    materialGrade: 10,
+    materialMarks: 10,
     materialArray: '',
     materialsDoc: '',
     selectSection: '',
@@ -147,7 +147,7 @@ class AddResult extends Component {
         result: resData.material.result,
         materialId: materialId,
         materialTitle: resData.material.title,
-        materialGrade: resData.material.grade,
+        materialMarks: resData.material.marks,
         selectSection: resData.material.section,
         contentLoading: false,
       });
@@ -182,7 +182,7 @@ class AddResult extends Component {
     var materialURL;
 
     for (var [key, value] of formData.entries()) {
-      if (value === '' || +value > +this.state.materialGrade) {
+      if (value === '' || +value > +this.state.materialMarks) {
         error = true;
       }
       data[key] = value;
@@ -288,7 +288,7 @@ class AddResult extends Component {
               <tr>
                 <th>Roll Number</th>
                 <th colSpan='2'>Name</th>
-                <th>Marks / {this.state.materialGrade}</th>
+                <th>Marks / {this.state.materialMarks}</th>
               </tr>
             </thead>
             <tbody>

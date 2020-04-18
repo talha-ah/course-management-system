@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTable } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './Quizzes.module.css';
 import Spinner from '../../../UI/Spinner/Spinner';
@@ -27,7 +25,7 @@ class Quizzes extends Component {
     quizzes: '',
     // Input
     title: '',
-    grade: '',
+    marks: '',
     prePost: 'Pre-Mid',
     selectSection: '',
     quizz: null,
@@ -204,7 +202,7 @@ class Quizzes extends Component {
       data.quizz !== null &&
       data.solution !== null &&
       data.title !== '' &&
-      data.grade !== '' &&
+      data.marks !== '' &&
       data.selectSection !== '' &&
       data.selectSection !== 'Section'
     ) {
@@ -221,7 +219,7 @@ class Quizzes extends Component {
         ) {
           const formData1 = new FormData();
           formData1.append('title', data.title);
-          formData1.append('grade', data.grade);
+          formData1.append('marks', data.marks);
           formData1.append('section', data.selectSection);
           formData1.append('batch', this.state.session);
           formData1.append('prePost', data.prePost);
@@ -234,7 +232,7 @@ class Quizzes extends Component {
             `${process.env.REACT_APP_SERVER_URL}/teacher/addquiz/${this.state.quizzes._id}`,
             {
               method: 'POST',
-              body: formData,
+              body: formData1,
               headers: {
                 Authorization: 'Bearer ' + this.props.token,
               },
@@ -322,7 +320,7 @@ class Quizzes extends Component {
           <thead>
             <tr>
               <th>Title</th>
-              <th>Grades</th>
+              <th>Marks</th>
               <th>Assessment</th>
               <th>Section</th>
               <th>Actions</th>
@@ -350,12 +348,11 @@ class Quizzes extends Component {
                 return (
                   <tr key={row._id}>
                     <td>{row.title}</td>
-                    <td>{row.grade}</td>
+                    <td>{row.marks}</td>
                     <td>{row.assessment}</td>
                     <td>{row.section}</td>
                     <td>
                       <TableButton
-                        title='Add Result'
                         onClick={() => {
                           this.props.history.push({
                             pathname: '/addresult',
@@ -371,7 +368,7 @@ class Quizzes extends Component {
                           });
                         }}
                       >
-                        <FontAwesomeIcon icon={faTable} size='sm' />
+                        Add Result
                       </TableButton>
                     </td>
                   </tr>
@@ -411,11 +408,11 @@ class Quizzes extends Component {
                     <Input type='text' name='title' placeholder='Title'></Input>
                   </div>
                   <div className={classes.InputGroup}>
-                    <label htmlFor='grade'>Grade</label>
+                    <label htmlFor='marks'>Marks</label>
                     <Input
                       type='number'
-                      name='grade'
-                      placeholder='Grade'
+                      name='marks'
+                      placeholder='marks'
                       max='20'
                     ></Input>
                   </div>

@@ -376,7 +376,7 @@ class Course extends Component {
             <thead>
               <tr>
                 <th>Title</th>
-                <th>Grades</th>
+                <th>Marks</th>
                 <th>Assessment</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -394,7 +394,7 @@ class Course extends Component {
                   return (
                     <tr key={row._id}>
                       <td>{row.title}</td>
-                      <td>{row.grade}</td>
+                      <td>{row.marks}</td>
                       <td>{row.assessment}</td>
                       <td>Status</td>
                       <td>
@@ -432,7 +432,7 @@ class Course extends Component {
             <thead>
               <tr>
                 <th>Title</th>
-                <th>Grades</th>
+                <th>Marks</th>
                 <th>Assessment</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -450,7 +450,7 @@ class Course extends Component {
                   return (
                     <tr key={row._id}>
                       <td>{row.title}</td>
-                      <td>{row.grade}</td>
+                      <td>{row.marks}</td>
                       <td>{row.assessment}</td>
                       <td>Status</td>
                       <td>
@@ -488,7 +488,7 @@ class Course extends Component {
             <thead>
               <tr>
                 <th>Title</th>
-                <th>Grades</th>
+                <th>Marks</th>
                 <th>Assessment</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -506,7 +506,7 @@ class Course extends Component {
                   return (
                     <tr key={row._id}>
                       <td>{row.title}</td>
-                      <td>{row.grade}</td>
+                      <td>{row.marks}</td>
                       <td>{row.assessment}</td>
                       <td>Status</td>
                       <td>

@@ -28,6 +28,7 @@ import TakeCourse from '../Pages/TeacherPages/Courses/AddCourse/AddCourse';
 import CoursesDescription from '../Pages/TeacherPages/CoursesDescription/CoursesDescription';
 import CoursesLog from '../Pages/TeacherPages/CoursesLog/CoursesLog';
 import CoursesMonitoring from '../Pages/TeacherPages/CoursesMonitoring/CoursesMonitoring';
+import Grading from '../Pages/TeacherPages/Grading/Grading';
 import Assignments from '../Pages/TeacherPages/Assignments/Assignments';
 import Papers from '../Pages/TeacherPages/Papers/Papers';
 import Quizzes from '../Pages/TeacherPages/Quizzes/Quizzes';
@@ -223,6 +224,18 @@ const MainContent = (props) => {
               path='/coursesmonitoring'
               render={({ match, history, location }) => (
                 <CoursesMonitoring
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/grading'
+              render={({ match, history, location }) => (
+                <Grading
                   match={match}
                   location={location}
                   history={history}

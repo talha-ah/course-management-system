@@ -11,6 +11,7 @@ import {
   faClipboard,
   faPollH,
   faBook,
+  faGraduationCap,
 } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './Sidebar.module.css';
@@ -145,6 +146,17 @@ const TeacherSidebar = () => {
           >
             <FontAwesomeIcon icon={faBookOpen} />
             Papers
+          </NavLink>
+        </li>
+        <li className={classes.SidebarNavItem}>
+          <NavLink
+            exact
+            to='/grading'
+            className={classes.SidebarNavLink}
+            activeClassName={classes.activeLink}
+          >
+            <FontAwesomeIcon icon={faGraduationCap} />
+            Grading
           </NavLink>
         </li>
         <li className={classes.SidebarNavItem}>
