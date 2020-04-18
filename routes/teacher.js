@@ -11,12 +11,12 @@ const teacherController = require('../controllers/teacher');
 // ============================== CV ========
 // Multer Storage
 const fileStorageCV = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination: function (req, file, cb) {
     cb(null, 'data/cv');
   },
-  filename: function(req, file, cb) {
+  filename: function (req, file, cb) {
     cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);
-  }
+  },
 });
 
 // Multer FileFilter
@@ -35,12 +35,12 @@ const uploadCV = multer({ storage: fileStorageCV, fileFilter: fileFilterCV });
 // ============================== Assignment ========
 // Multer Storage
 const fileStorageAssignment = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination: function (req, file, cb) {
     cb(null, 'data/assignments');
   },
-  filename: function(req, file, cb) {
+  filename: function (req, file, cb) {
     cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);
-  }
+  },
 });
 
 // Multer FileFilter
@@ -60,19 +60,19 @@ const fileFilterAssignment = (req, file, cb) => {
 // File Upload Handler
 const uploadAssignment = multer({
   storage: fileStorageAssignment,
-  fileFilter: fileFilterAssignment
+  fileFilter: fileFilterAssignment,
 });
 
 // ============================== Assignment ==========
 // ============================== Quiz ========
 // Multer Storage
 const fileStorageQuiz = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination: function (req, file, cb) {
     cb(null, 'data/quizzes');
   },
-  filename: function(req, file, cb) {
+  filename: function (req, file, cb) {
     cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);
-  }
+  },
 });
 
 // Multer FileFilter
@@ -92,19 +92,19 @@ const fileFilterQuiz = (req, file, cb) => {
 // File Upload Handler
 const uploadQuiz = multer({
   storage: fileStorageQuiz,
-  fileFilter: fileFilterQuiz
+  fileFilter: fileFilterQuiz,
 });
 
 // ============================== Quiz ==========
 // ============================== Paper ========
 // Multer Storage
 const fileStoragePaper = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination: function (req, file, cb) {
     cb(null, 'data/papers');
   },
-  filename: function(req, file, cb) {
+  filename: function (req, file, cb) {
     cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);
-  }
+  },
 });
 
 // Multer FileFilter
@@ -124,7 +124,7 @@ const fileFilterPaper = (req, file, cb) => {
 // File Upload Handler
 const uploadPaper = multer({
   storage: fileStoragePaper,
-  fileFilter: fileFilterPaper
+  fileFilter: fileFilterPaper,
 });
 
 // ============================== Paper ==========
@@ -196,7 +196,7 @@ router.post(
   isAuth,
   uploadAssignment.fields([
     { name: 'assignment', maxCount: 1 },
-    { name: 'solution', maxCount: 1 }
+    { name: 'solution', maxCount: 1 },
   ]),
   teacherController.addAssignment
 );
@@ -217,7 +217,7 @@ router.post(
   isAuth,
   uploadQuiz.fields([
     { name: 'quiz', maxCount: 1 },
-    { name: 'solution', maxCount: 1 }
+    { name: 'solution', maxCount: 1 },
   ]),
   teacherController.addQuiz
 );
@@ -238,7 +238,7 @@ router.post(
   isAuth,
   uploadQuiz.fields([
     { name: 'paper', maxCount: 1 },
-    { name: 'solution', maxCount: 1 }
+    { name: 'solution', maxCount: 1 },
   ]),
   teacherController.addPaper
 );
@@ -251,6 +251,17 @@ router.post(
   '/addpaperresult/:paperDocId/:paperId',
   isAuth,
   teacherController.addPaperResult
+);
+
+router.post(
+  '/addassignmentgrades/:assignmentDocId',
+  isAuth,
+  teacherController.addAssignmentGrades
+);
+router.post(
+  '/addquizgrades/:quizDocId',
+  isAuth,
+  teacherController.addQuizGrades
 );
 
 module.exports = router;

@@ -11,10 +11,11 @@ const assignments = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Teacher',
   },
+  grades: { type: Object, default: {} },
   assignments: [
     {
       title: { type: String },
-      grade: { type: String },
+      marks: { type: String },
       batch: '',
       section: '',
       assessment: { type: String },

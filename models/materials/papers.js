@@ -14,7 +14,7 @@ const papers = new Schema({
   papers: [
     {
       title: { type: String },
-      grade: { type: String },
+      marks: { type: String },
       batch: '',
       section: '',
       assessment: { type: String },

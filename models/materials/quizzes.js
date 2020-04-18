@@ -11,10 +11,11 @@ const quizzes = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Teacher',
   },
+  grades: { type: Object, default: {}, required: true },
   quizzes: [
     {
       title: { type: String },
-      grade: { type: String },
+      marks: { type: String },
       batch: '',
       section: '',
       assessment: { type: String },

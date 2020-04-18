@@ -1049,7 +1049,7 @@ exports.addAssignment = async (req, res, next) => {
   const assignmentId = req.params.assignmentId;
 
   const title = req.body.title;
-  const grade = req.body.grade;
+  const marks = req.body.marks;
   const batch = req.body.batch;
   const section = req.body.section;
   const assessment = req.body.prePost;
@@ -1060,26 +1060,20 @@ exports.addAssignment = async (req, res, next) => {
 
   const errors = [];
   try {
-    if (
-      !validator.isAlphanumeric(validator.blacklist(title, ' ')) ||
-      validator.isEmpty(title)
-    ) {
+    if (validator.isEmpty(title)) {
       errors.push('Invalid title!');
     }
-    if (
-      !validator.isAlphanumeric(validator.blacklist(batch, ' -')) ||
-      validator.isEmpty(batch)
-    ) {
+    if (validator.isEmpty(batch)) {
       errors.push('Invalid session!');
     }
-    if (!validator.isAlphanumeric(section) || validator.isEmpty(batch)) {
+    if (!validator.isAlphanumeric(section) || validator.isEmpty(section)) {
       errors.push('Invalid section!');
     }
     if (
-      !validator.isNumeric(String(grade)) ||
-      validator.isEmpty(String(grade))
+      !validator.isNumeric(String(marks)) ||
+      validator.isEmpty(String(marks))
     ) {
-      errors.push('Invalid grades!');
+      errors.push('Invalid marks!');
     }
     if (assessment !== 'Pre-Mid' && assessment !== 'Post-Mid') {
       errors.push('Invalid assessment field!');
@@ -1120,7 +1114,9 @@ exports.addAssignment = async (req, res, next) => {
 
     assignment.assignments.map((ele) => {
       if (ele.title === title && ele.section === section) {
-        const error = new Error('Assignment with this title and section already exists!');
+        const error = new Error(
+          'Assignment with this title and section already exists!'
+        );
         error.code = 404;
         throw error;
       }
@@ -1128,7 +1124,7 @@ exports.addAssignment = async (req, res, next) => {
 
     assignment.assignments.push({
       title: title,
-      grade: grade,
+      marks: marks,
       batch: batch,
       section: section,
       assessment: assessment,
@@ -1278,7 +1274,7 @@ exports.addQuiz = async (req, res, next) => {
   const quizId = req.params.quizId;
 
   const title = req.body.title;
-  const grade = req.body.grade;
+  const marks = req.body.marks;
   const batch = req.body.batch;
   const section = req.body.section;
   const assessment = req.body.prePost;
@@ -1289,26 +1285,20 @@ exports.addQuiz = async (req, res, next) => {
 
   const errors = [];
   try {
-    if (
-      !validator.isAlphanumeric(validator.blacklist(title, ' ')) ||
-      validator.isEmpty(title)
-    ) {
+    if (validator.isEmpty(title)) {
       errors.push('Invalid title!');
     }
-    if (
-      !validator.isAlphanumeric(validator.blacklist(batch, ' -')) ||
-      validator.isEmpty(batch)
-    ) {
+    if (validator.isEmpty(batch)) {
       errors.push('Invalid session!');
     }
     if (!validator.isAlphanumeric(section) || validator.isEmpty(section)) {
       errors.push('Invalid section!');
     }
     if (
-      !validator.isNumeric(String(grade)) ||
-      validator.isEmpty(String(grade))
+      !validator.isNumeric(String(marks)) ||
+      validator.isEmpty(String(marks))
     ) {
-      errors.push('Invalid grades!');
+      errors.push('Invalid markss!');
     }
     if (assessment !== 'Pre-Mid' && assessment !== 'Post-Mid') {
       errors.push('Invalid assessment field!');
@@ -1349,7 +1339,9 @@ exports.addQuiz = async (req, res, next) => {
 
     quiz.quizzes.map((ele) => {
       if (ele.title === title && ele.section === section) {
-        const error = new Error('Quiz with this title and section already exists!');
+        const error = new Error(
+          'Quiz with this title and section already exists!'
+        );
         error.code = 404;
         throw error;
       }
@@ -1357,7 +1349,7 @@ exports.addQuiz = async (req, res, next) => {
 
     quiz.quizzes.push({
       title: title,
-      grade: grade,
+      marks: marks,
       batch: batch,
       section: section,
       assessment: assessment,
@@ -1503,7 +1495,7 @@ exports.addPaper = async (req, res, next) => {
   const paperId = req.params.paperId;
 
   const title = req.body.title;
-  const grade = req.body.grade;
+  const marks = req.body.marks;
   const batch = req.body.batch;
   const section = req.body.section;
   const assessment = req.body.prePost;
@@ -1514,26 +1506,20 @@ exports.addPaper = async (req, res, next) => {
 
   const errors = [];
   try {
-    if (
-      !validator.isAlphanumeric(validator.blacklist(title, ' ')) ||
-      validator.isEmpty(title)
-    ) {
+    if (validator.isEmpty(title)) {
       errors.push('Invalid title!');
     }
-    if (
-      !validator.isAlphanumeric(validator.blacklist(batch, ' -')) ||
-      validator.isEmpty(batch)
-    ) {
+    if (validator.isEmpty(batch)) {
       errors.push('Invalid session!');
     }
     if (!validator.isAlphanumeric(section) || validator.isEmpty(batch)) {
       errors.push('Invalid section!');
     }
     if (
-      !validator.isNumeric(String(grade)) ||
-      validator.isEmpty(String(grade))
+      !validator.isNumeric(String(marks)) ||
+      validator.isEmpty(String(marks))
     ) {
-      errors.push('Invalid grades!');
+      errors.push('Invalid markss!');
     }
     if (assessment !== 'Mid-Term' && assessment !== 'Final-Term') {
       errors.push('Invalid assessment field!');
@@ -1574,7 +1560,9 @@ exports.addPaper = async (req, res, next) => {
 
     paper.papers.map((ele) => {
       if (ele.title === title && ele.section === section) {
-        const error = new Error('Paper with this title and section already exists!');
+        const error = new Error(
+          'Paper with this title and section already exists!'
+        );
         error.code = 404;
         throw error;
       }
@@ -1582,7 +1570,7 @@ exports.addPaper = async (req, res, next) => {
 
     paper.papers.push({
       title: title,
-      grade: grade,
+      marks: marks,
       batch: batch,
       section: section,
       assessment: assessment,
@@ -1680,6 +1668,81 @@ exports.addPaperResult = async (req, res, next) => {
     });
   } catch (err) {
     if (!err.status) err.status = 500;
+    next(err);
+  }
+};
+
+// Grades
+
+exports.addAssignmentGrades = async (req, res, next) => {
+  const teacherId = req.userId;
+  const assignmentDocId = req.params.assignmentDocId;
+  const data = req.body.data;
+
+  try {
+    const assignment = await Assignment.findById(assignmentDocId);
+
+    if (!assignment) {
+      const err = new Error('Could not find assignment doc.');
+      err.status = 404;
+      throw err;
+    }
+    if (assignment.teacherId.toString() !== teacherId.toString()) {
+      const err = new Error('Whoops, not authorized to add grades.');
+      err.status = 404;
+      throw err;
+    }
+
+    const section = Object.keys(data)[0];
+
+    assignment.grades = { ...assignment.grades, [section]: data[section] };
+
+    const assignmentUpdated = await assignment.save();
+
+    res.status(201).json({
+      message: 'Assignment grades submitted.',
+      assignment: assignmentUpdated,
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.addQuizGrades = async (req, res, next) => {
+  const teacherId = req.userId;
+  const quizDocId = req.params.quizDocId;
+  const data = req.body.data;
+
+  try {
+    const quiz = await Quiz.findById(quizDocId);
+    if (!quiz) {
+      const err = new Error('Could not find quiz doc.');
+      err.status = 404;
+      throw err;
+    }
+    if (quiz.teacherId.toString() !== teacherId.toString()) {
+      const err = new Error('Whoops, not authorized to add grades.');
+      err.status = 404;
+      throw err;
+    }
+    // quiz.grades = data;
+    const section = Object.keys(data)[0];
+
+    quiz.grades = { ...quiz.grades, [section]: data[section] };
+
+    const quizUpdated = await quiz.save();
+
+    res.status(201).json({
+      message: 'Quiz grades submitted.',
+      quiz: quizUpdated,
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
     next(err);
   }
 };
