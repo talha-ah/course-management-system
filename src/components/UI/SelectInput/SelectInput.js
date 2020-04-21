@@ -6,22 +6,17 @@ const SelectInput = (props) => {
   return (
     <select
       className={classes.SelectInput}
+      style={props.style}
       name={props.name}
       onChange={props.onChange}
-      style={props.style}
+      disabled={props.disabled}
+      value={props.selected}
     >
-      {props.defaultValue !== '' ? (
-        ''
+      {props.placeholder !== '' && props.placeholder ? (
+        <option className={classes.Placeholder}>{props.placeholder}</option>
       ) : (
-        <option
-          disabled={props.disabled}
-          defaultValue={props.defaultValue}
-          className={classes.Placeholder}
-        >
-          {props.placeholder}
-        </option>
+        ''
       )}
-
       {props.children.map((child) => {
         return (
           <option value={child} key={child} className={classes.Option}>

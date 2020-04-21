@@ -2,14 +2,23 @@ import React, { Component } from 'react';
 
 import classes from './loginPage.module.css';
 import Logo from '../../../assets/Logo/logo.png';
+import Spinner from '../../UI/Spinner/Spinner';
 import Input from '../../UI/Input/Input';
 import Button from '../../UI/Button/Button';
 
 class SignIn extends Component {
   state = {
+    // Loadings
+    pageLoading: true,
+    logoLoaded: false,
+    // Inputs
     email: '',
     password: '',
   };
+
+  componentDidMount() {
+    this.setState({ pageLoading: false });
+  }
 
   ForgetHandler = () => {
     this.props.history.push('/recover');
@@ -23,7 +32,14 @@ class SignIn extends Component {
   };
 
   render() {
-    return (
+    const logoStyle = {
+      display: 'block',
+      height: '100%',
+      margin: 'auto',
+    };
+    const page = this.state.pageLoading ? (
+      <Spinner />
+    ) : (
       <div className={classes.Login}>
         <form
           className={classes.Form}
@@ -34,7 +50,17 @@ class SignIn extends Component {
             })
           }
         >
-          <img src={Logo} alt='DCS-LOGO' width='100px' />
+          <div
+            style={{ width: '6.25rem', height: '7.05rem', textAlign: 'center' }}
+          >
+            {this.state.logoLoaded ? '' : <Spinner />}
+            <img
+              src={Logo}
+              alt='DCS-LOGO'
+              style={this.state.logoLoaded ? logoStyle : { display: 'none' }}
+              onLoad={() => this.setState({ logoLoaded: true })}
+            />
+          </div>
           <br />
           <Input
             type='email'
@@ -61,6 +87,7 @@ class SignIn extends Component {
         </form>
       </div>
     );
+    return page;
   }
 }
 

@@ -13,11 +13,11 @@ class AddResult extends Component {
     isLoading: false,
     // Data
     class: '',
+    materialsDoc: '',
     materialId: '',
     materialTitle: '',
     materialMarks: 10,
     materialArray: '',
-    materialsDoc: '',
     selectSection: '',
     selectSession: '',
     result: '',
@@ -29,42 +29,55 @@ class AddResult extends Component {
     const tempMaterialArray = [];
     if (this.props.location.state.pageFor === 'Assignment') {
       this.props.location.state.materialDoc.assignments.map((material) => {
-        return tempMaterialArray.push(material.title);
+        return tempMaterialArray.push(material.title + '::' + material.section);
       });
     } else if (this.props.location.state.pageFor === 'Quiz') {
       this.props.location.state.materialDoc.quizzes.map((material) => {
-        return tempMaterialArray.push(material.title);
+        return tempMaterialArray.push(material.title + '::' + material.section);
       });
     } else if (this.props.location.state.pageFor === 'Paper') {
       this.props.location.state.materialDoc.papers.map((material) => {
-        return tempMaterialArray.push(material.title);
+        return tempMaterialArray.push(material.title + '::' + material.section);
       });
     }
+    const title = this.props.location.state.materialTitle.split(/:{2}/);
     this.setState({
-      materialArray: tempMaterialArray,
+      materialsDoc: this.props.location.state.materialDoc,
       materialId: this.props.location.state.materialId,
       materialTitle: this.props.location.state.materialTitle,
-      materialsDoc: this.props.location.state.materialDoc,
+      materialArray: tempMaterialArray,
       selectSession: this.props.location.state.session,
+      selectSection: title[title.length - 1],
       pageLoading: false,
     });
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
+    if (this.state.selectSection !== prevState.selectSection)
+      await this.fetchClass();
     if (this.state.materialTitle !== prevState.materialTitle)
-      this.getMaterialFromServer();
-    if (this.state.selectSection !== prevState.selectSection) this.fetchClass();
+      await this.getMaterialFromServer();
   }
 
   componentWillUnmount() {
     this.abortController.abort();
   }
 
+  onChangeMaterial = (e) => {
+    const title = e.target.value;
+    const title1 = title.split(/:{2}/);
+    this.setState({
+      materialTitle: title,
+      selectSection: title1[title1.length - 1],
+    });
+  };
+
   fetchClass = async () => {
     const session = this.state.selectSession.substring(0, 4);
+    const section = this.state.selectSection;
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_SERVER_URL}/class/getclass/${session}/${this.state.selectSection}`,
+        `${process.env.REACT_APP_SERVER_URL}/class/getclass/${session}/${section}`,
         {
           headers: {
             Authorization: 'Bearer ' + this.props.token,
@@ -102,13 +115,18 @@ class AddResult extends Component {
 
   getMaterialFromServer = async () => {
     this.setState({ contentLoading: true });
-    const materialTitle = this.state.materialTitle;
+    const materialTitle0 = this.state.materialTitle;
+    const materialTitle = materialTitle0.split(/:{2}/)[0];
+    const materialSection = materialTitle0.split(/:{2}/)[1];
     var materialId;
     var materialURL;
 
     if (this.props.location.state.pageFor === 'Assignment') {
       this.state.materialsDoc.assignments.some((material) => {
-        if (material.title === materialTitle) {
+        if (
+          material.title === materialTitle &&
+          material.section === materialSection
+        ) {
           materialId = material._id;
           return true;
         }
@@ -117,7 +135,10 @@ class AddResult extends Component {
       materialURL = `${process.env.REACT_APP_SERVER_URL}/teacher/getassignmentresult/${this.state.materialsDoc._id}/${materialId}`;
     } else if (this.props.location.state.pageFor === 'Quiz') {
       this.state.materialsDoc.quizzes.some((material) => {
-        if (material.title === materialTitle) {
+        if (
+          material.title === materialTitle &&
+          material.section === materialSection
+        ) {
           materialId = material._id;
           return true;
         }
@@ -126,7 +147,10 @@ class AddResult extends Component {
       materialURL = `${process.env.REACT_APP_SERVER_URL}/teacher/getquizresult/${this.state.materialsDoc._id}/${materialId}`;
     } else if (this.props.location.state.pageFor === 'Paper') {
       this.state.materialsDoc.papers.some((material) => {
-        if (material.title === materialTitle) {
+        if (
+          material.title === materialTitle &&
+          material.section === materialSection
+        ) {
           materialId = material._id;
           return true;
         }
@@ -146,10 +170,10 @@ class AddResult extends Component {
       this.setState({
         result: resData.material.result,
         materialId: materialId,
-        materialTitle: resData.material.title,
         materialMarks: resData.material.marks,
-        selectSection: resData.material.section,
         contentLoading: false,
+        // materialTitle: resData.material.title,
+        // selectSection: resData.material.section,
       });
     } catch (err) {
       if (err.name === 'AbortError') {
@@ -175,7 +199,6 @@ class AddResult extends Component {
 
   onSubmitHandler = async (e) => {
     e.preventDefault();
-    this.setState({ isLoading: true });
     const formData = new FormData(e.target);
     const data = {};
     var error = false;
@@ -196,15 +219,16 @@ class AddResult extends Component {
         materialURL = `${process.env.REACT_APP_SERVER_URL}/teacher/addpaperresult/${this.state.materialsDoc._id}/${this.state.materialId}`;
       }
       try {
+        this.setState({ isLoading: true });
         const res = await fetch(materialURL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + this.props.token,
-            body: JSON.stringify({
-              data: data,
-            }),
           },
+          body: JSON.stringify({
+            data: data,
+          }),
           signal: this.abortController.signal,
         });
         if (!res.ok) throw res;
@@ -236,20 +260,12 @@ class AddResult extends Component {
         }
       }
     } else {
-      this.setState({ isLoading: false });
       this.props.notify(
         true,
         'Error',
         'Every should not be empty or greater than totals marks!'
       );
     }
-  };
-
-  onChangeCourse = (e) => {
-    const title = e.target.value;
-    this.setState({
-      materialTitle: title,
-    });
   };
 
   render() {
@@ -262,11 +278,6 @@ class AddResult extends Component {
             Subject: <strong>{this.props.location.state.courseTitle}</strong>
           </span>
           <span className={classes.CaptionSpan}>
-            {this.state.selectSection === ''
-              ? ''
-              : `Section: ${this.state.selectSection} - ${this.state.selectSession}`}
-          </span>
-          <span className={classes.CaptionSpan}>
             {this.props.location.state.pageFor}:
             <SelectInput
               style={{
@@ -275,8 +286,8 @@ class AddResult extends Component {
                 marginRight: '10px',
               }}
               name='materialTitle'
-              value={this.state.materialTitle}
-              onChange={this.onChangeCourse}
+              selected={this.state.materialTitle}
+              onChange={this.onChangeMaterial}
             >
               {this.state.materialArray}
             </SelectInput>

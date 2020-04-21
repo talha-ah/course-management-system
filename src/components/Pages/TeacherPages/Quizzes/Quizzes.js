@@ -227,7 +227,6 @@ class Quizzes extends Component {
           formData1.append('solution', data.solution);
 
           this.setState({ isLoading: true });
-
           fetch(
             `${process.env.REACT_APP_SERVER_URL}/teacher/addquiz/${this.state.quizzes._id}`,
             {
@@ -309,8 +308,6 @@ class Quizzes extends Component {
               name='courseTitle'
               placeholder='Course List'
               onChange={this.onChangeCourse}
-              disabled=''
-              defaultValue=''
             >
               {this.state.coursesArray}
             </SelectInput>
@@ -361,14 +358,14 @@ class Quizzes extends Component {
                               courseId: this.state.selectCourseId,
                               courseTitle: this.state.selectCourseTitle,
                               materialId: row._id,
-                              materialTitle: row.title,
+                              materialTitle: row.title + '::' + row.section,
                               materialDoc: this.state.quizzes,
                               session: this.state.session,
                             },
                           });
                         }}
                       >
-                        Add Result
+                        {row.resultAdded ? 'Edit Result' : 'Add Result'}
                       </TableButton>
                     </td>
                   </tr>
