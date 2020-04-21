@@ -26,6 +26,7 @@ const papers = new Schema({
         name: { type: String },
         path: { type: String },
       },
+      resultAdded: { type: Boolean, default: false },
       result: { type: Object },
     },
   ],

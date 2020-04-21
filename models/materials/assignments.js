@@ -27,7 +27,8 @@ const assignments = new Schema({
         name: { type: String },
         path: { type: String },
       },
-      result: { type: Object },
+      resultAdded: { type: Boolean, default: false },
+      result: { type: Object, default: {} },
     },
   ],
 });

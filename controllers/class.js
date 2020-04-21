@@ -25,16 +25,28 @@ exports.addStudent = async (req, res, next) => {
   const section = req.body.section;
   const fullName = req.body.fullName;
   const rollNumber = req.body.rollNumber;
-  const fullBatch = batch + '-' + (+batch + 4);
 
   try {
     const fetchClass = await ClassModel.findOne({
-      batch: fullBatch,
+      batch: batch,
       section: section,
     });
 
     if (!fetchClass) {
       const error = new Error('Whoops, could not find the class.');
+      error.status = 404;
+      throw error;
+    }
+
+    var found = false;
+    fetchClass.students.map((student) => {
+      if (student.rollNumber === rollNumber) {
+        found = true;
+      }
+    });
+
+    if (found) {
+      const error = new Error('Whoops, student already exists.');
       error.status = 404;
       throw error;
     }

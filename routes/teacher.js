@@ -263,5 +263,10 @@ router.post(
   isAuth,
   teacherController.addQuizGrades
 );
+router.get(
+  '/generatereport/:teacherCourseId/:batch/:semester/:section',
+  isAuth,
+  teacherController.generateReport
+);
 
 module.exports = router;

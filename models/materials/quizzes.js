@@ -11,7 +11,7 @@ const quizzes = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Teacher',
   },
-  grades: { type: Object, default: {}, required: true },
+  grades: { type: Object, default: {} },
   quizzes: [
     {
       title: { type: String },
@@ -27,6 +27,8 @@ const quizzes = new Schema({
         name: { type: String },
         path: { type: String },
       },
+      resultAdded: { type: Boolean, default: false },
+
       result: { type: Object },
     },
   ],

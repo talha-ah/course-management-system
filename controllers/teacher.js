@@ -1,6 +1,7 @@
 const { clearFile } = require('../utils/clearFile');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
+const PDFDocument = require('pdfkit');
 
 const Teacher = require('../models/teacher');
 const Course = require('../models/course');
@@ -10,6 +11,8 @@ const CourseDescription = require('../models/nceac/coursedescription');
 const Assignment = require('../models/materials/assignments');
 const Quiz = require('../models/materials/quizzes');
 const Paper = require('../models/materials/papers');
+
+const Class = require('../models/class');
 
 // =========================================================== Profile ================================================
 
@@ -1190,6 +1193,7 @@ exports.addAssignmentResult = async (req, res, next) => {
   const assignmentDocId = req.params.assignmentDocId;
   const assignmentId = req.params.assignmentId;
   const data = req.body.data;
+
   try {
     const assignmentDoc = await Assignment.findById(assignmentDocId);
 
@@ -1218,6 +1222,7 @@ exports.addAssignmentResult = async (req, res, next) => {
     }
 
     assignment.result = data;
+    assignment.resultAdded = true;
     const savedAssignmentDoc = await assignmentDoc.save();
     const result = savedAssignmentDoc.assignments[assignmentIndex];
     res.status(200).json({
@@ -1439,6 +1444,7 @@ exports.addQuizResult = async (req, res, next) => {
     }
 
     quiz.result = data;
+    quiz.resultAdded = true;
     const savedQuizDoc = await quizDoc.save();
     const result = savedQuizDoc.quizzes[quizIndex];
     res.status(200).json({
@@ -1660,6 +1666,7 @@ exports.addPaperResult = async (req, res, next) => {
     }
 
     paper.result = data;
+    paper.resultAdded = true;
     const savedPaperDoc = await paperDoc.save();
     const result = savedPaperDoc.papers[paperIndex];
     res.status(200).json({
@@ -1739,6 +1746,229 @@ exports.addQuizGrades = async (req, res, next) => {
       message: 'Quiz grades submitted.',
       quiz: quizUpdated,
     });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.generateReport = async (req, res, next) => {
+  const teacherId = req.userId;
+  const courseId = req.params.teacherCourseId;
+  const batch = req.params.batch;
+  const semester = req.params.semester;
+  const section = req.params.section;
+
+  const teacher = await Teacher.findById(teacherId);
+  if (!teacher) {
+    const err = new Error('Whoops, could not find the teacher!.');
+    err.status = 404;
+    throw err;
+  }
+  const courseIndex = teacher.coursesAssigned.findIndex((c) => {
+    return c._id.toString() === courseId.toString();
+  });
+
+  const course = teacher.coursesAssigned[courseIndex];
+
+  if (!course) {
+    const error = new Error('Error in fetching course!');
+    error.code = 404;
+    throw error;
+  }
+
+  const adminCourseId = course.courseId;
+  const assignmentDocId = course.assignments;
+  const quizDocId = course.quizzes;
+  const paperDocId = course.papers;
+
+  try {
+    const adminCourse = await Course.findById(adminCourseId);
+    if (!adminCourse) {
+      const error = new Error('Error in fetching base course!');
+      error.code = 404;
+      throw error;
+    }
+    const assignmentDoc = await Assignment.findById(assignmentDocId);
+    if (!assignmentDoc) {
+      const error = new Error('Error in fetching assignment!');
+      error.code = 404;
+      throw error;
+    }
+    const quizDoc = await Quiz.findById(quizDocId);
+    if (!quizDoc) {
+      const error = new Error('Error in fetching base quiz!');
+      error.code = 404;
+      throw error;
+    }
+    const paperDoc = await Paper.findById(paperDocId);
+    if (!paperDoc) {
+      const error = new Error('Error in fetching base paper!');
+      error.code = 404;
+      throw error;
+    }
+
+    const sessionTime = adminCourse.session;
+    const courseTitle = adminCourse.title;
+    const courseCode = adminCourse.code;
+
+    var data = {
+      quiz: {},
+      assignment: {},
+      midTerm: {},
+      finalTerm: {},
+    };
+
+    var quizCount = 0;
+    quizDoc.quizzes.map((quiz) => {
+      if (quiz.section.toString() === section.toString()) {
+        quizCount++;
+      }
+    });
+    if (Object.keys(quizDoc.grades[section.toString()]).length !== quizCount) {
+      const error = new Error('Please grade every quiz first.');
+      error.code = 404;
+      throw error;
+    }
+    var assignmentCount = 0;
+    assignmentDoc.assignments.map((assignment) => {
+      if (assignment.section.toString() === section.toString()) {
+        assignmentCount++;
+      }
+    });
+    if (
+      Object.keys(assignmentDoc.grades[section.toString()]).length !==
+      assignmentCount
+    ) {
+      const error = new Error('Please grade every assignment first.');
+      error.code = 404;
+      throw error;
+    }
+
+    quizDoc.quizzes.map((quiz) => {
+      if (quiz.section.toString() === section.toString()) {
+        if (quiz.resultAdded) {
+          var grade;
+          Object.entries(quizDoc.grades[section.toString()]).map((ele) => {
+            if (quiz._id.toString() === ele[0].toString()) {
+              grade = ele[1];
+            }
+          });
+          var check = { ...data.quiz };
+          Object.entries(quiz.result).map((ent) => {
+            var num = (+ent[1] / +quiz.marks) * 100;
+            var num2 = (+num * +grade) / 100;
+            var num3 = Math.round((+num2 + Number.EPSILON) * 10) / 10;
+            check[ent[0]] = check[ent[0]] ? +check[ent[0]] + +num3 : +num3;
+          });
+          data = { ...data, quiz: check };
+        } else {
+          const error = new Error(`${quiz.title}'s result needs to be added.`);
+          error.status = 404;
+          throw error;
+        }
+      }
+    });
+    assignmentDoc.assignments.map((assignment) => {
+      if (assignment.section.toString() === section.toString()) {
+        if (assignment.resultAdded) {
+          var grade;
+          Object.entries(assignmentDoc.grades[section.toString()]).map(
+            (ele) => {
+              if (assignment._id.toString() === ele[0].toString()) {
+                grade = ele[1];
+              }
+            }
+          );
+          var check = { ...data.assignment };
+          Object.entries(assignment.result).map((ent) => {
+            var num = (+ent[1] / +assignment.marks) * 100;
+            var num2 = (+num * +grade) / 100;
+            var num3 = Math.round((+num2 + Number.EPSILON) * 10) / 10;
+            check[ent[0]] = check[ent[0]] ? +check[ent[0]] + +num3 : +num3;
+          });
+          data = { ...data, assignment: check };
+        } else {
+          const error = new Error(`${quiz.title}'s result needs to be added.`);
+          error.status = 404;
+          throw error;
+        }
+      }
+    });
+    paperDoc.papers.map((paper) => {
+      if (paper.section.toString() === section.toString()) {
+        if (paper.resultAdded) {
+          if (paper.assessment === 'Mid-Term') {
+            var check = { ...data.midTerm };
+            Object.entries(paper.result).map((ent) => {
+              check[ent[0]] = check[ent[0]]
+                ? +check[ent[0]] + +ent[1]
+                : +ent[1];
+            });
+            data = { ...data, midTerm: check };
+          } else if (paper.assessment === 'Final-Term') {
+            var check = { ...data.finalTerm };
+            Object.entries(paper.result).map((ent) => {
+              check[ent[0]] = check[ent[0]]
+                ? +check[ent[0]] + +ent[1]
+                : +ent[1];
+            });
+            data = { ...data, finalTerm: check };
+          } else {
+            const error = new Error(
+              `Whoops, there is something wrong with ${paper.title}'s assessment.`
+            );
+            error.status = 404;
+            throw error;
+          }
+        } else {
+          const error = new Error(`${paper.title}'s result needs to be added.`);
+          error.status = 404;
+          throw error;
+        }
+      }
+    });
+
+    const fetchClass = await Class.findOne({
+      batch: batch,
+      section: section,
+    });
+
+    if (!fetchClass) {
+      const error = new Error('Whoops, could not find the class.');
+      error.status = 404;
+      throw error;
+    }
+
+    const info = {
+      batch: batch,
+      section: section,
+      semester: semester,
+      session: sessionTime,
+      title: courseTitle,
+      code: courseCode,
+    };
+    var data2 = [];
+    fetchClass.students.map((student) => {
+      data2.push({
+        rollNumber: student.rollNumber,
+        studentName: student.fullName,
+        quiz: data.quiz[student.rollNumber],
+        termPaper: data.assignment[student.rollNumber],
+        midSemester: data.midTerm[student.rollNumber],
+        sessionalTotal:
+          +data.quiz[student.rollNumber] + +data.assignment[student.rollNumber],
+        finalExam: data.finalTerm[student.rollNumber],
+        totalMarks:
+          +data.quiz[student.rollNumber] +
+          +data.assignment[student.rollNumber] +
+          +data.midTerm[student.rollNumber] +
+          +data.finalTerm[student.rollNumber],
+      });
+    });
+    res.status(200).json({ info: info, data: data2 });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
