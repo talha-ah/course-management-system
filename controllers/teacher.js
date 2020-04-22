@@ -1501,7 +1501,8 @@ exports.addPaper = async (req, res, next) => {
   const paperId = req.params.paperId;
 
   const title = req.body.title;
-  const marks = req.body.marks;
+  // var marks = req.body.marks;
+  var marks = '0';
   const batch = req.body.batch;
   const section = req.body.section;
   const assessment = req.body.prePost;
@@ -1521,12 +1522,12 @@ exports.addPaper = async (req, res, next) => {
     if (!validator.isAlphanumeric(section) || validator.isEmpty(batch)) {
       errors.push('Invalid section!');
     }
-    if (
-      !validator.isNumeric(String(marks)) ||
-      validator.isEmpty(String(marks))
-    ) {
-      errors.push('Invalid markss!');
-    }
+    // if (
+    //   !validator.isNumeric(String(marks)) ||
+    //   validator.isEmpty(String(marks))
+    // ) {
+    //   errors.push('Invalid marks!');
+    // }
     if (assessment !== 'Mid-Term' && assessment !== 'Final-Term') {
       errors.push('Invalid assessment field!');
     }
@@ -1573,6 +1574,13 @@ exports.addPaper = async (req, res, next) => {
         throw error;
       }
     });
+
+    if (assessment === 'Mid-Term') {
+      marks = '20';
+    }
+    if (assessment === 'Final-Term') {
+      marks = '60';
+    }
 
     paper.papers.push({
       title: title,
@@ -1827,7 +1835,10 @@ exports.generateReport = async (req, res, next) => {
         quizCount++;
       }
     });
-    if (Object.keys(quizDoc.grades[section.toString()]).length !== quizCount) {
+    if (
+      quizDoc.grades[section.toString()] &&
+      Object.keys(quizDoc.grades[section.toString()]).length !== quizCount
+    ) {
       const error = new Error('Please grade every quiz first.');
       error.code = 404;
       throw error;
@@ -1839,8 +1850,9 @@ exports.generateReport = async (req, res, next) => {
       }
     });
     if (
+      assignmentDoc.grades[section.toString()] &&
       Object.keys(assignmentDoc.grades[section.toString()]).length !==
-      assignmentCount
+        assignmentCount
     ) {
       const error = new Error('Please grade every assignment first.');
       error.code = 404;
