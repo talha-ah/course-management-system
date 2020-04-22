@@ -1836,7 +1836,7 @@ exports.generateReport = async (req, res, next) => {
       }
     });
     if (
-      Object.keys(quizDoc.grades[section.toString()]).length &&
+      !quizDoc.grades[section.toString()] ||
       Object.keys(quizDoc.grades[section.toString()]).length !== quizCount
     ) {
       const error = new Error('Please grade every quiz first.');
@@ -1850,7 +1850,7 @@ exports.generateReport = async (req, res, next) => {
       }
     });
     if (
-      Object.keys(assignmentDoc.grades[section.toString()]).length &&
+      !assignmentDoc.grades[section.toString()] ||
       Object.keys(assignmentDoc.grades[section.toString()]).length !==
         assignmentCount
     ) {
