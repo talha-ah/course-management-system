@@ -430,13 +430,21 @@ exports.takeCourse = async (req, res, next) => {
     const courseDescriptionDoc = await courseDescription.save();
     const courseMonitoringDoc = await courseMonitoring.save();
 
+    var grades = {};
+    sections.map((section) => (grades[section] = {}));
+
+    var grades = {};
+    sections.map((section) => (grades[section] = { '5e9fd911': '5' }));
+
     const assignment = new Assignment({
       courseId: courseId,
       teacherId: teacherId,
+      grades: grades,
     });
     const quiz = new Quiz({
       courseId: courseId,
       teacherId: teacherId,
+      grades: grades,
     });
     const paper = new Paper({
       courseId: courseId,

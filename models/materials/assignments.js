@@ -11,7 +11,7 @@ const assignments = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Teacher',
   },
-  grades: { type: Object, default: {} },
+  grades: { type: Object, required: true },
   assignments: [
     {
       title: { type: String },
