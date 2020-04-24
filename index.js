@@ -37,7 +37,7 @@ app.use(bodyParser.json()); // application/json
 app.use(bodyParser.urlencoded({ extended: true })); // x-www-form-urlencoded <form>
 
 // Serving Images Statically
-app.use(express.static(path.join(__dirname, 'data')));
+app.use('/data', express.static(path.join(__dirname, 'data')));
 
 // Routes
 app.use('/login', loginRoute);

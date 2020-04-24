@@ -1583,6 +1583,18 @@ exports.addPaper = async (req, res, next) => {
       }
     });
 
+    paper.papers.map((ele) => {
+      if (
+        ele.assessment === assessment &&
+        ele.section === section &&
+        ele.batch === batch
+      ) {
+        const error = new Error(`${assessment} paper already exists!`);
+        error.code = 404;
+        throw error;
+      }
+    });
+
     if (assessment === 'Mid-Term') {
       marks = '20';
     }
