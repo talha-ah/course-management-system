@@ -288,6 +288,32 @@ class Quizzes extends Component {
     }
   };
 
+  downloadFile = async (path) => {
+    var name = path.split(/[/]+/g)[2];
+    name = name.substring(24);
+    fetch(`${process.env.REACT_APP_SERVER_URL}/${path}`)
+      .then((response) => {
+        if (!response.ok) throw response;
+        response.arrayBuffer().then(function (buffer) {
+          const url = window.URL.createObjectURL(new Blob([buffer]));
+          const element = document.createElement('a');
+          element.style.display = 'none';
+          element.href = url;
+          element.setAttribute('download', name); //or any other extension
+          document.body.appendChild(element);
+          element.click();
+          window.URL.revokeObjectURL(element.href);
+          document.body.removeChild(element);
+        });
+      })
+      .catch((err) => {
+        if (err.name === 'AbortError') {
+        } else {
+          this.props.notify(true, 'Error', 'Whoops, file not found!');
+        }
+      });
+  };
+
   render() {
     const page = this.state.pageLoading ? (
       <Spinner />
@@ -366,6 +392,19 @@ class Quizzes extends Component {
                         }}
                       >
                         {row.resultAdded ? 'Edit Result' : 'Add Result'}
+                      </TableButton>
+                      <TableButton
+                        onClick={this.downloadFile.bind(this, row.quiz.path)}
+                      >
+                        Download Quiz
+                      </TableButton>
+                      <TableButton
+                        onClick={this.downloadFile.bind(
+                          this,
+                          row.solution.path
+                        )}
+                      >
+                        Download Solution
                       </TableButton>
                     </td>
                   </tr>

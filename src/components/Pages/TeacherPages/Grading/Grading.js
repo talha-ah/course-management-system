@@ -406,7 +406,11 @@ class Grading extends Component {
                     this.state.assignments.assignments.map((row) => {
                       if (row.section === this.state.tab) {
                         var defValue = '';
-                        if (this.state.assignments.grades[this.state.tab]) {
+                        if (
+                          this.state.assignments.grades[
+                            this.state.tab.toString()
+                          ]
+                        ) {
                           Object.entries(
                             this.state.assignments.grades[this.state.tab]
                           ).map((grd) => {

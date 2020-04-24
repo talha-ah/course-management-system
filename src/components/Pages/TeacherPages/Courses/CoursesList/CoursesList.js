@@ -261,17 +261,9 @@ class CoursesList extends Component {
         .then((resData) => {
           this.setState({
             addCourseModal: false,
-            courseTitle: '',
-            courseSession: new Date().toISOString().substr(0, 10),
-            courseSectionsObject: {
-              A: false,
-              B: false,
-              C: false,
-              E1: false,
-              E2: false,
-            },
             isLoading: false,
           });
+          document.getElementById('onAddCourseForm').reset();
           this.props.notify(true, 'Success', resData.message);
           this.fetchTeacherCourses();
         })
@@ -494,7 +486,10 @@ class CoursesList extends Component {
             <div className={classes.ModalBody}>
               <div className={classes.ModalContent}>
                 <div className={classes.ModalContentTitle}>Add Course</div>
-                <form onSubmit={this.onAddCourseFormSubmit}>
+                <form
+                  onSubmit={this.onAddCourseFormSubmit}
+                  id='onAddCourseForm'
+                >
                   <div className={classes.InputGroup}>
                     <label htmlFor='courseTitle'>Title</label>
                     <SelectInput
@@ -571,14 +566,12 @@ class CoursesList extends Component {
                     <Button
                       type='button'
                       buttonType='red'
-                      onClick={() =>
+                      onClick={() => {
                         this.setState({
                           addCourseModal: false,
-                          courseTitle: '',
-                          courseSection: '',
-                          courseSession: '',
-                        })
-                      }
+                        });
+                        document.getElementById('onAddCourseForm').reset();
+                      }}
                     >
                       Cancel
                     </Button>

@@ -16,7 +16,7 @@ class AddResult extends Component {
     materialsDoc: '',
     materialId: '',
     materialTitle: '',
-    materialMarks: 10,
+    materialMarks: 0,
     materialArray: '',
     selectSection: '',
     selectSession: '',

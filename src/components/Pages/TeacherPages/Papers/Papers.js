@@ -202,7 +202,7 @@ class Papers extends Component {
       data.paper !== null &&
       data.solution !== null &&
       data.title !== '' &&
-      data.marks !== '' &&
+      // data.marks !== '' &&
       data.selectSection !== '' &&
       data.selectSection !== 'Section'
     ) {
@@ -219,7 +219,7 @@ class Papers extends Component {
         ) {
           const formData1 = new FormData();
           formData1.append('title', data.title);
-          formData1.append('marks', data.marks);
+          // formData1.append('marks', data.marks);
           formData1.append('section', data.selectSection);
           formData1.append('batch', this.state.session);
           formData1.append('prePost', data.prePost);
@@ -287,6 +287,32 @@ class Papers extends Component {
     } else {
       this.props.notify(true, 'Error', 'All fields are required.');
     }
+  };
+
+  downloadFile = async (path) => {
+    var name = path.split(/[/]+/g)[2];
+    name = name.substring(24);
+    fetch(`${process.env.REACT_APP_SERVER_URL}/${path}`)
+      .then((response) => {
+        if (!response.ok) throw response;
+        response.arrayBuffer().then(function (buffer) {
+          const url = window.URL.createObjectURL(new Blob([buffer]));
+          const element = document.createElement('a');
+          element.style.display = 'none';
+          element.href = url;
+          element.setAttribute('download', name); //or any other extension
+          document.body.appendChild(element);
+          element.click();
+          window.URL.revokeObjectURL(element.href);
+          document.body.removeChild(element);
+        });
+      })
+      .catch((err) => {
+        if (err.name === 'AbortError') {
+        } else {
+          this.props.notify(true, 'Error', 'Whoops, file not found!');
+        }
+      });
   };
 
   render() {
@@ -368,6 +394,19 @@ class Papers extends Component {
                       >
                         {row.resultAdded ? 'Edit Result' : 'Add Result'}
                       </TableButton>
+                      <TableButton
+                        onClick={this.downloadFile.bind(this, row.paper.path)}
+                      >
+                        Download Paper
+                      </TableButton>
+                      <TableButton
+                        onClick={this.downloadFile.bind(
+                          this,
+                          row.solution.path
+                        )}
+                      >
+                        Download Solution
+                      </TableButton>
                     </td>
                   </tr>
                 );
@@ -405,7 +444,7 @@ class Papers extends Component {
                     <label htmlFor='title'>Title</label>
                     <Input type='text' name='title' placeholder='Title'></Input>
                   </div>
-                  <div className={classes.InputGroup}>
+                  {/* <div className={classes.InputGroup}>
                     <label htmlFor='marks'>Marks</label>
                     <Input
                       type='number'
@@ -413,7 +452,7 @@ class Papers extends Component {
                       placeholder='marks'
                       max='60'
                     ></Input>
-                  </div>
+                  </div> */}
                   <div className={classes.InputGroup}>
                     <label htmlFor='prePost'>Time</label>
                     <SelectInput name='prePost'>
