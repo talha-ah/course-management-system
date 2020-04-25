@@ -22,6 +22,7 @@ class EditProfile extends React.Component {
     country: '',
     city: '',
     zip: '',
+    cv: '',
     // Password Inputs
     currentPassword: '',
     newPassword: '',
@@ -57,6 +58,7 @@ class EditProfile extends React.Component {
           country: resData.teacher.address.country,
           city: resData.teacher.address.city,
           zip: resData.teacher.address.zip,
+          cv: resData.teacher.cvUrl,
         });
       })
       .catch((err) => {
@@ -502,18 +504,16 @@ class EditProfile extends React.Component {
             </div>
             <div className={classes.ButtonDiv}>
               <Button
-                type='button'
-                buttonType='red'
-                onClick={() => this.props.history.push('/')}
-              >
-                Cancel
-              </Button>
-              <Button
                 type='submit'
                 disabled={this.state.isLoading ? true : false}
                 onClick={this.onCVSubmit}
               >
-                {this.state.isLoading ? 'Uploading...' : 'Upload CV'}
+                {console.log(this.state.cv)}
+                {this.state.isLoading
+                  ? 'Uploading...'
+                  : this.state.cv !== 'undefined'
+                  ? 'Update CV'
+                  : 'Submit CV'}
               </Button>
             </div>
           </div>
@@ -550,13 +550,6 @@ class EditProfile extends React.Component {
               />
             </div>
             <div className={classes.ButtonDiv}>
-              <Button
-                type='button'
-                buttonType='red'
-                onClick={() => this.props.history.push('/')}
-              >
-                Cancel
-              </Button>
               <Button
                 type='submit'
                 disabled={this.state.isLoading ? true : false}

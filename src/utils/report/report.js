@@ -3,10 +3,10 @@ import pdfFonts from 'pdfmake/build/vfs_fonts';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 // var fonts = {
 //   Roboto: {
-//     normal: 'src/utils/report/fonts/Roboto-Regular.ttf',
-//     bold: 'src/utils/report/fonts/Roboto-Medium.ttf',
-//     italics: 'src/utils/report/fonts/Roboto-Italic.ttf',
-//     bolditalics: 'src/utils/report/fonts/Roboto-MediumItalic.ttf',
+//     normal: 'fonts/Roboto-Regular.ttf',
+//     bold: 'fonts/Roboto-Medium.ttf',
+//     italics: 'fonts/Roboto-Italic.ttf',
+//     bolditalics: 'fonts/Roboto-MediumItalic.ttf',
 //   },
 // };
 // Font's are Times Roman actually ^-^
@@ -14,28 +14,6 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 // var fs = require('fs');
 // var PdfPrinter = require('pdfmake');
 // var printer = new PdfPrinter(fonts);
-
-// const info = {
-//   batch: '2015-2016',
-//   session: 'Spring 2018',
-//   semester: 'VI',
-//   title: 'Compiler Construction',
-//   code: 'CS-4274',
-//   section: 'A',
-// };
-
-// var dataRecieved = [
-//   {
-//     rollNumber: '118-BSCS-14',
-//     studentName: 'Hira Sohail',
-//     quiz: 8,
-//     termPaper: 8,
-//     midSemester: 4,
-//     sessionalTotal: 20,
-//     finalExam: 30,
-//     totalMarks: 50,
-//   },
-// ];
 
 function buildTableBody(data, headers, columns) {
   var body = [];
@@ -221,30 +199,6 @@ const generatePdfReport = (info, dataRecieved) => {
     },
   };
 
-  // var isFirefox = typeof InstallTrigger !== 'undefined';
-  // var flag = 'src/images/cou_flag.png';
-  // function toDataUrl(file, callback) {
-  //   var xhr = new XMLHttpRequest();
-  //   xhr.responseType = 'blob';
-  //   xhr.onload = function () {
-  //     var reader = new FileReader();
-  //     reader.onloadend = function () {
-  //       callback(reader.result);
-  //     };
-  //     reader.readAsDataURL(xhr.response);
-  //   };
-  //   xhr.open('GET', file);
-  //   xhr.send();
-  // }
-
-  // toDataUrl(flag, function (base64Image) {
-  //   if (isFirefox == true) {
-  //     flag_pdf.push(base64Image);
-  //   } else {
-  //     docDefinition.images.flag = base64Image;
-  //   }
-  // });
-
   var mypdf = pdfMake.createPdf(dd);
   mypdf.open();
   // mypdf.download();
@@ -261,48 +215,3 @@ const generatePdfReport = (info, dataRecieved) => {
 };
 
 export default generatePdfReport;
-
-// ================================
-// I found solution for printing in same window.
-
-// In your .html file put iframe
-
-// <iframe id="printPdf" name="printPdf"></iframe>
-// iframe needs style to hide himself for example (I do not know why, but if I define width and height on iframe, printing will not work):
-
-// #printPdf { position: fixed; top: 0px; left: 0px; display: block;
-//             padding: 0px;border: 0px;margin: 0px;
-//             visibility: hidden; opacity: 0;
-// }
-// Finally, just call:
-
-//     if ('safari') {
-//         pdfMake.createPdf(content).open({}, window.frames['printPdf']);
-//         setTimeout(function() {
-//             window.frames['printPdf'].focus();
-//             window.frames['printPdf'].print();
-//         }, 2000)
-//     } else {
-//         pdfMake.createPdf(content).print({}, window.frames['printPdf']);
-//     }
-// Tested on Chrome v72, Firefox v65, Edge v18, Safari v12
-// ========================
-// for the open() it's not working even without ad blocker so i converted it to base64 then blob then fileURL
-
-//                    var docDefinition = getRWABELPDF(data);
-//                    var createPdf = pdfMake.createPdf(docDefinition);
-//                    var base64data = null;
-
-//                     createPdf.getBase64(function(encodedString) {
-//                         base64data = encodedString;
-//                        console.log(base64data );
-
-//                         var byteCharacters = atob(base64data);
-//                         var byteNumbers = new Array(byteCharacters.length);
-//                         for (var i = 0; i < byteCharacters.length; i++) {
-//                             byteNumbers[i] = byteCharacters.charCodeAt(i);
-//                         }
-//                         var byteArray = new Uint8Array(byteNumbers);
-//                         var file = new Blob([byteArray], { type: 'application/pdf;base64' });
-//                         var fileURL = URL.createObjectURL(file);
-//                         window.open(fileURL);

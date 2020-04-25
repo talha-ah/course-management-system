@@ -77,7 +77,7 @@ class SignIn extends Component {
             onChange={this.onChange}
           />
           <br />
-          <Button type='submit'>
+          <Button type='submit' disabled={this.props.isLoading}>
             {this.props.isLoading ? '...' : 'Login'}
           </Button>
           <br />

@@ -1,4 +1,5 @@
 import React from 'react';
+// import { Link } from 'react-router-dom';
 
 import classes from './Footer.module.css';
 
@@ -6,16 +7,17 @@ const Footer = () => {
   return (
     <div className={classes.Footer}>
       <ul className={classes.FooterNav}>
-        <li className={classes.FooterNavItem}>
-          <a href='/terms'>Terms of Use</a>
+        {/* <li className={classes.FooterNavItem}>
+          <Link to='/terms'>Terms of Use</Link>
         </li>
         <li className={classes.FooterNavItem}>
-          <a href='/support'>Support</a>
-        </li>
+          <Link to='/support'>Support</Link>
+        </li> */}
         <li className={classes.FooterNavItem}>
           <div>
-            © 2019 <span className={classes.FooterNavSpan}>DCS, GCU</span>{' '}
-            <span>All rights reserved</span>
+            Made with <span style={{ color: '#e25555' }}>❤</span> by{' '}
+            <span className={classes.FooterNavSpan}>DCS, GCU</span>{' '}
+            <span>© 2019 All rights reserved</span>
           </div>
         </li>
       </ul>
