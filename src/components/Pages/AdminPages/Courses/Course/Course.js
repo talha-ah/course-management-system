@@ -137,6 +137,7 @@ class Course extends Component {
   };
 
   onDeleteHandler = () => {
+    this.props.notify(true, 'Error', 'Not yet implemented!');
     this.setState({ deleteLoading: true });
   };
 

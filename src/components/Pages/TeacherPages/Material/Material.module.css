@@ -1,0 +1,82 @@
+.Material {
+  position: relative;
+  color: #3b3e66;
+  max-width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  margin: 1rem 3rem 3rem 3rem;
+  padding: 0 3rem;
+  background-color: #fff;
+  border-radius: 0.375rem;
+  box-shadow: 0 0.313rem 0.8rem rgba(122, 123, 151, 0.5),
+    0 0.126rem 0.225rem rgba(122, 123, 151, 0.3);
+}
+
+.Material .Caption {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-top: 15px;
+  margin: 0.625rem 0 25px 0;
+  text-align: center;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.33;
+  white-space: nowrap;
+}
+
+.Material .Caption .CaptionSpan {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.Material .MaterialBody {
+  margin: 0.625rem 0 3rem 0;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+}
+
+.InputGroup {
+  display: flex;
+  margin: 2rem 0;
+}
+
+.InputGroup div {
+  text-align: center;
+  width: 100%;
+}
+
+.InputGroup .InputDiv label {
+  display: inline-block;
+  font-weight: bold;
+}
+
+.Material hr {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(
+    to right,
+    rgba(204, 204, 204, 0),
+    rgba(204, 204, 204, 0.75),
+    rgba(204, 204, 204, 0)
+  );
+}
+
+.ButtonDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.ButtonDiv button {
+  margin-left: 2rem;
+}
+
+.ButtonDiv button:nth-child(1) {
+  margin-left: 0;
+}

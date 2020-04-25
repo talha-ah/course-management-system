@@ -32,6 +32,7 @@ import Grading from '../Pages/TeacherPages/Grading/Grading';
 import Assignments from '../Pages/TeacherPages/Assignments/Assignments';
 import Papers from '../Pages/TeacherPages/Papers/Papers';
 import Quizzes from '../Pages/TeacherPages/Quizzes/Quizzes';
+import Material from '../Pages/TeacherPages/Material/Material';
 import AddResult from '../Pages/TeacherPages/AddResult/AddResult';
 import Reports from '../Pages/TeacherPages/Reports/Reports';
 
@@ -272,6 +273,18 @@ const MainContent = (props) => {
               path='/quizzes'
               render={({ match, history, location }) => (
                 <Quizzes
+                  match={match}
+                  location={location}
+                  history={history}
+                  {...props.authData}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/material'
+              render={({ match, history, location }) => (
+                <Material
                   match={match}
                   location={location}
                   history={history}
