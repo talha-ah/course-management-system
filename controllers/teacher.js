@@ -1055,6 +1055,38 @@ exports.getAssignments = async (req, res, next) => {
   }
 };
 
+exports.getAssignment = async (req, res, next) => {
+  const assignmentDocId = req.params.assignmentDocId;
+  const assignmentId = req.params.assignmentId;
+
+  try {
+    const assignmentDoc = await Assignment.findById(assignmentDocId);
+    if (!assignmentDoc) {
+      const error = new Error(
+        'Whoops, there was an error fetching assignment doc!'
+      );
+      error.code = 404;
+      throw error;
+    }
+
+    const assignmentIndex = assignmentDoc.assignments.findIndex((c) => {
+      return c._id.toString() === assignmentId.toString();
+    });
+
+    const assignment = assignmentDoc.assignments[assignmentIndex];
+
+    res.status(200).json({
+      message: 'Material fetched!',
+      material: assignment,
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
 exports.addAssignment = async (req, res, next) => {
   const teacherId = req.userId;
   const assignmentId = req.params.assignmentId;
@@ -1282,6 +1314,36 @@ exports.getQuizzes = async (req, res, next) => {
   }
 };
 
+exports.getQuiz = async (req, res, next) => {
+  const quizDocId = req.params.quizDocId;
+  const quizId = req.params.quizId;
+
+  try {
+    const quizDoc = await Quiz.findById(quizDocId);
+    if (!quizDoc) {
+      const error = new Error('Whoops, there was an error fetching quiz doc!');
+      error.code = 404;
+      throw error;
+    }
+
+    const quizIndex = quizDoc.quizzes.findIndex((c) => {
+      return c._id.toString() === quizId.toString();
+    });
+
+    const quiz = quizDoc.quizzes[quizIndex];
+
+    res.status(200).json({
+      message: 'Material fetched!',
+      material: quiz,
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
 exports.addQuiz = async (req, res, next) => {
   const teacherId = req.userId;
   const quizId = req.params.quizId;
@@ -1495,6 +1557,36 @@ exports.getPapers = async (req, res, next) => {
     res.status(200).json({
       message: 'Course papers fetched!',
       papers: papers,
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getPaper = async (req, res, next) => {
+  const paperDocId = req.params.paperDocId;
+  const paperId = req.params.paperId;
+
+  try {
+    const paperDoc = await Paper.findById(paperDocId);
+    if (!paperDoc) {
+      const error = new Error('Whoops, there was an error fetching paper doc!');
+      error.code = 404;
+      throw error;
+    }
+
+    const paperIndex = paperDoc.papers.findIndex((c) => {
+      return c._id.toString() === paperId.toString();
+    });
+
+    const paper = paperDoc.papers[paperIndex];
+
+    res.status(200).json({
+      message: 'Material fetched!',
+      material: paper,
     });
   } catch (err) {
     if (!err.status) {

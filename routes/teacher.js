@@ -191,6 +191,11 @@ router.get(
   isAuth,
   teacherController.getAssignments
 );
+router.get(
+  '/getassignment/:assignmentDocId/:assignmentId',
+  isAuth,
+  teacherController.getAssignment
+);
 router.post(
   '/addassignment/:assignmentId',
   isAuth,
@@ -212,6 +217,7 @@ router.post(
 );
 
 router.get('/getquizzes/:courseId', isAuth, teacherController.getQuizzes);
+router.get('/getquiz/:quizDocId/:quizId', isAuth, teacherController.getQuiz);
 router.post(
   '/addquiz/:quizId',
   isAuth,
@@ -233,6 +239,11 @@ router.post(
 );
 
 router.get('/getpapers/:courseId', isAuth, teacherController.getPapers);
+router.get(
+  '/getpaper/:paperDocId/:paperId',
+  isAuth,
+  teacherController.getPaper
+);
 router.post(
   '/addpaper/:paperId',
   isAuth,
