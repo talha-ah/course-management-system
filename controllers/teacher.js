@@ -37,6 +37,7 @@ exports.getTeacher = async (req, res, next) => {
         dob: teacher.dob,
         address: teacher.address,
         phone: teacher.phone,
+        cvUrl: teacher.cvUrl,
       },
     });
   } catch (err) {
@@ -222,7 +223,7 @@ exports.editCV = async (req, res, next) => {
       err.status = 404;
       throw err;
     }
-    if (teacher.cvUrl !== 'undefined' || !teacher.cvUrl) {
+    if (teacher.cvUrl !== 'undefined' && !teacher.cvUrl) {
       clearFile(teacher.cvUrl);
     }
     teacher.cvUrl = cvPath;
@@ -2083,13 +2084,22 @@ exports.generateReport = async (req, res, next) => {
         termPaper: data.assignment[student.rollNumber],
         midSemester: data.midTerm[student.rollNumber],
         sessionalTotal:
-          +data.quiz[student.rollNumber] + +data.assignment[student.rollNumber],
+          Math.round(
+            (+data.quiz[student.rollNumber] +
+              +data.assignment[student.rollNumber] +
+              Number.EPSILON) *
+              10
+          ) / 10,
         finalExam: data.finalTerm[student.rollNumber],
         totalMarks:
-          +data.quiz[student.rollNumber] +
-          +data.assignment[student.rollNumber] +
-          +data.midTerm[student.rollNumber] +
-          +data.finalTerm[student.rollNumber],
+          Math.round(
+            (+data.quiz[student.rollNumber] +
+              +data.assignment[student.rollNumber] +
+              +data.midTerm[student.rollNumber] +
+              +data.finalTerm[student.rollNumber] +
+              Number.EPSILON) *
+              10
+          ) / 10,
       });
     });
     res.status(200).json({ info: info, data: data2 });
