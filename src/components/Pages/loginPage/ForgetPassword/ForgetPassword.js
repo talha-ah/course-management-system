@@ -2,19 +2,27 @@ import React, { Component } from 'react';
 
 import classes from './ForgetPassword.module.css';
 import Logo from '../../../../assets/Logo/logo.png';
+import Background from '../../../../assets/background.jpg';
+import Spinner from '../../../UI/Spinner/Spinner';
 import Input from '../../../UI/Input/Input';
 import Button from '../../../UI/Button/Button';
 
-class SignIn extends Component {
+class ForgetPassword extends Component {
   state = {
+    // Loadings
+    pageLoading: true,
+    logoLoaded: false,
+    // Inputs
     email: '',
   };
 
+  componentDidMount() {
+    this.setState({ pageLoading: false });
+  }
+
   onChange = (e) => {
-    e.preventDefault();
     const name = e.target.name;
     const value = e.target.value;
-
     this.setState({ [name]: value });
   };
 
@@ -55,36 +63,68 @@ class SignIn extends Component {
   };
 
   onLoginHandler = () => {
-    this.props.history.push('/');
+    this.props.history.replace('/');
   };
 
   render() {
-    return (
-      <div className={classes.Forget}>
+    const logoStyle = {
+      display: 'block',
+      height: '100%',
+      margin: 'auto',
+    };
+    const page = this.state.pageLoading ? (
+      <Spinner />
+    ) : (
+      <div
+        style={{
+          backgroundImage: `url(${Background})`,
+          backgroundColor: '#ccc',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+        }}
+        className={classes.ForgetPassword}
+      >
         <form className={classes.Form} onSubmit={this.onFormSubmit}>
-          <img src={Logo} alt='DCS-LOGO' width='100px' />
-          <br />
-          <p>Enter your email to get password.</p>
-          <br />
-          <Input
-            type='email'
-            placeholder='Email'
-            name='email'
-            value={this.state.email}
-            onChange={this.onChange}
-          />
-          <br />
-          <Button type='submit'>
-            {this.props.isLoading ? 'Sending...' : 'Send'}
-          </Button>
-          <br />
-          <div onClick={this.onLoginHandler} className={classes.LogIn}>
-            Log In
+          <div
+            style={{ width: '6.25rem', height: '7.05rem', textAlign: 'center' }}
+          >
+            {this.state.logoLoaded ? '' : <Spinner />}
+            <img
+              src={Logo}
+              alt='DCS-LOGO'
+              style={this.state.logoLoaded ? logoStyle : { display: 'none' }}
+              onLoad={() => this.setState({ logoLoaded: true })}
+            />
+          </div>
+          <div className={classes.InputDiv}>
+            <label>
+              To reset your password, <br />
+              Please enter your email here.
+            </label>
+            <br />
+            <label htmlFor='email'>Email</label>
+            <Input
+              type='email'
+              placeholder='Email'
+              name='email'
+              value={this.state.email}
+              onChange={this.onChange}
+            />
+          </div>
+          <div className={classes.ButtonDiv}>
+            <Button type='submit' disabled={this.props.isLoading}>
+              {this.props.isLoading ? 'Sending...' : 'Send Reset Instructions'}
+            </Button>
+          </div>
+          <div className={classes.Login} onClick={this.onLoginHandler}>
+            Sign In
           </div>
         </form>
       </div>
     );
+    return page;
   }
 }
 
-export default SignIn;
+export default ForgetPassword;

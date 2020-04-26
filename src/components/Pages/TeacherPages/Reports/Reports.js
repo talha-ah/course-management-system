@@ -4,7 +4,7 @@ import classes from './Reports.module.css';
 import Spinner from '../../../UI/Spinner/Spinner';
 import Button from '../../../UI/Button/Button';
 import SelectInput from '../../../UI/SelectInput/SelectInput';
-import PDFMake from '../../../../utils/report/report';
+import ReportGenerate from '../../../../utils/report/report';
 
 class Report extends Component {
   state = {
@@ -161,7 +161,7 @@ class Report extends Component {
           return res.json();
         })
         .then(async (resData) => {
-          await PDFMake(resData.info, resData.data);
+          await ReportGenerate(resData.info, resData.data);
           this.setState({ reportLoading: false });
         })
         .catch((err) => {

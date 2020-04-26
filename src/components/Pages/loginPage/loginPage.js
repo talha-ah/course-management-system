@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import classes from './loginPage.module.css';
 import Logo from '../../../assets/Logo/logo.png';
+import Background from '../../../assets/background.jpg';
 import Spinner from '../../UI/Spinner/Spinner';
 import Input from '../../UI/Input/Input';
 import Button from '../../UI/Button/Button';
@@ -20,15 +21,15 @@ class SignIn extends Component {
     this.setState({ pageLoading: false });
   }
 
-  ForgetHandler = () => {
-    this.props.history.push('/recover');
-  };
-
   onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
 
     this.setState({ [name]: value });
+  };
+
+  ForgetHandler = () => {
+    this.props.history.push('/recover');
   };
 
   render() {
@@ -40,7 +41,16 @@ class SignIn extends Component {
     const page = this.state.pageLoading ? (
       <Spinner />
     ) : (
-      <div className={classes.Login}>
+      <div
+        style={{
+          backgroundImage: `url(${Background})`,
+          backgroundColor: '#ccc',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+        }}
+        className={classes.Login}
+      >
         <form
           className={classes.Form}
           onSubmit={(e) =>
@@ -61,26 +71,30 @@ class SignIn extends Component {
               onLoad={() => this.setState({ logoLoaded: true })}
             />
           </div>
-          <br />
-          <Input
-            type='email'
-            placeholder='Email'
-            name='email'
-            value={this.state.email}
-            onChange={this.onChange}
-          />
-          <br />
-          <Input
-            type='password'
-            placeholder='Password'
-            name='password'
-            onChange={this.onChange}
-          />
-          <br />
-          <Button type='submit' disabled={this.props.isLoading}>
-            {this.props.isLoading ? '...' : 'Login'}
-          </Button>
-          <br />
+          <div className={classes.InputDiv}>
+            <label htmlFor='email'>Email</label>
+            <Input
+              type='email'
+              placeholder='Email'
+              name='email'
+              value={this.state.email}
+              onChange={this.onChange}
+            />
+          </div>
+          <div className={classes.InputDiv}>
+            <label htmlFor='password'>Password</label>
+            <Input
+              type='password'
+              placeholder='Password'
+              name='password'
+              onChange={this.onChange}
+            />
+          </div>
+          <div className={classes.ButtonDiv}>
+            <Button type='submit' disabled={this.props.isLoading}>
+              {this.props.isLoading ? '...' : 'Login'}
+            </Button>
+          </div>
           <div className={classes.Forget} onClick={this.ForgetHandler}>
             Forgot Password?
           </div>

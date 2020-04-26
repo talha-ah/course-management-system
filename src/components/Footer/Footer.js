@@ -16,7 +16,8 @@ const Footer = () => {
         <li className={classes.FooterNavItem}>
           <div>
             Made with <span style={{ color: '#e25555' }}>❤</span> by{' '}
-            <span className={classes.FooterNavSpan}>DCS, GCU</span>{' '}
+            <strong>Muhammad Talha Ahmed</strong> and{' '}
+            <strong>Humza Bashir</strong> for <strong>DCS, GCU</strong>{' '}
             <span>© 2019 All rights reserved</span>
           </div>
         </li>
