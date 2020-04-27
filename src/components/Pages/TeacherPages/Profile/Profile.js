@@ -508,7 +508,6 @@ class EditProfile extends React.Component {
                 disabled={this.state.isLoading ? true : false}
                 onClick={this.onCVSubmit}
               >
-                {console.log(this.state.cv)}
                 {this.state.isLoading
                   ? 'Uploading...'
                   : this.state.cv !== 'undefined'

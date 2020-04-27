@@ -23,6 +23,8 @@ class EditProfile extends React.Component {
     confirmPassword: '',
   };
 
+  abortController = new AbortController();
+
   componentDidMount() {
     fetch(`${process.env.REACT_APP_SERVER_URL}/admin/getadmin`, {
       method: 'GET',
@@ -30,6 +32,7 @@ class EditProfile extends React.Component {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token,
       },
+      signal: this.abortController.signal,
     })
       .then((res) => {
         if (!res.ok) throw res;
@@ -60,6 +63,10 @@ class EditProfile extends React.Component {
           );
         }
       });
+  }
+
+  componentWillUnmount() {
+    this.abortController.abort();
   }
 
   onChange = (e) => {
@@ -96,6 +103,7 @@ class EditProfile extends React.Component {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.props.token,
         },
+        signal: this.abortController.signal,
       })
         .then((res) => {
           if (!res.ok) throw res;
@@ -151,6 +159,7 @@ class EditProfile extends React.Component {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + this.props.token,
           },
+          signal: this.abortController.signal,
         })
           .then((res) => {
             if (!res.ok) throw res;

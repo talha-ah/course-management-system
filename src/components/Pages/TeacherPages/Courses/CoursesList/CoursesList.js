@@ -496,8 +496,6 @@ class CoursesList extends Component {
                       name='courseTitle'
                       placeholder='Course Title'
                       onChange={this.onChange}
-                      disabled=''
-                      defaultValue=''
                     >
                       {this.state.adminCoursesArray}
                     </SelectInput>
@@ -507,8 +505,9 @@ class CoursesList extends Component {
                     <Input
                       type='date'
                       name='courseSession'
-                      value={this.state.courseSession}
+                      defaultValue={this.state.courseSession}
                       onChange={this.onChange}
+                      min='2010-12-31'
                       max='2999-12-31'
                     />
                   </div>

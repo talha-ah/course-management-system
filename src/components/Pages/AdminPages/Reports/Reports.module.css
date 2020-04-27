@@ -4,6 +4,7 @@
   text-align: center;
   max-width: 100%;
   margin: 1rem 3rem 3rem 3rem;
+  padding: 0rem 3rem;
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 0.375rem;
   background-color: #fff;
@@ -15,11 +16,11 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  padding: 15px 20px 0 20px;
+  justify-content: center;
+  padding: 0.938rem 1.25rem 0 1.25rem;
   margin: 10px 0 25px 0;
   text-align: center;
-  font-size: 22px;
+  font-size: 1.375rem;
   font-style: normal;
   font-weight: 600;
   line-height: 1.33;
@@ -31,4 +32,49 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+.Reports form {
+  margin-top: 2rem;
+}
+
+.Reports hr {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(
+    to right,
+    rgba(204, 204, 204, 0),
+    rgba(204, 204, 204, 0.75),
+    rgba(204, 204, 204, 0)
+  );
+}
+
+.InputGroup {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+/* .InputGroup * { */
+.InputGroup :nth-child(2) {
+  max-width: 65%;
+}
+
+.ButtonDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 1.563rem 0;
+}
+
+.ButtonDiv button {
+  margin-left: 1.563rem;
+}
+
+.ButtonDiv button:nth-child(1) {
+  margin-left: 0;
 }

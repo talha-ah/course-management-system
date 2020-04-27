@@ -1,7 +1,7 @@
 import * as actionTypes from './actions';
 
 const initialState = {
-  adminSidebar: false
+  adminSidebar: false,
 };
 
 const reducer = (state = initialState, action) => {
@@ -9,7 +9,7 @@ const reducer = (state = initialState, action) => {
     case actionTypes.SWITCH_SIDEBAR:
       return {
         ...state,
-        adminSidebar: !state.adminSidebar
+        adminSidebar: !state.adminSidebar,
       };
 
     default:
