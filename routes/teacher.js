@@ -269,11 +269,13 @@ router.post(
   isAuth,
   teacherController.addAssignmentGrades
 );
+
 router.post(
   '/addquizgrades/:quizDocId',
   isAuth,
   teacherController.addQuizGrades
 );
+
 router.get(
   '/generatereport/:teacherCourseId/:batch/:semester/:section',
   isAuth,

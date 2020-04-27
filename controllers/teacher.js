@@ -1,7 +1,7 @@
 const { clearFile } = require('../utils/clearFile');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
-const PDFDocument = require('pdfkit');
+// const PDFDocument = require('pdfkit');
 
 const Teacher = require('../models/teacher');
 const Course = require('../models/course');
