@@ -293,36 +293,45 @@ class TeacherList extends Component {
                     <td>{teacher.rank}</td>
                     <td>{teacher.status}</td>
                     <td>
-                      <TableButton
-                        buttonType='red'
-                        onClick={
-                          teacher.status === 'Active'
-                            ? () => {
-                                this.setState({
-                                  selectTeacherId: teacher._id,
-                                  selectTeacherName:
-                                    teacher.firstName + ' ' + teacher.lastName,
-                                  disableModal: true,
-                                });
-                              }
+                      {teacher.status === 'Active' ||
+                      teacher.status === 'Inactive' ? (
+                        <TableButton
+                          buttonType='red'
+                          onClick={
+                            teacher.status === 'Active'
+                              ? () => {
+                                  this.setState({
+                                    selectTeacherId: teacher._id,
+                                    selectTeacherName:
+                                      teacher.firstName +
+                                      ' ' +
+                                      teacher.lastName,
+                                    disableModal: true,
+                                  });
+                                }
+                              : teacher.status === 'Inactive'
+                              ? () => {
+                                  this.setState({
+                                    selectTeacherId: teacher._id,
+                                    selectTeacherName:
+                                      teacher.firstName +
+                                      ' ' +
+                                      teacher.lastName,
+                                    enableModal: true,
+                                  });
+                                }
+                              : ''
+                          }
+                        >
+                          {teacher.status === 'Active'
+                            ? 'Disable'
                             : teacher.status === 'Inactive'
-                            ? () => {
-                                this.setState({
-                                  selectTeacherId: teacher._id,
-                                  selectTeacherName:
-                                    teacher.firstName + ' ' + teacher.lastName,
-                                  enableModal: true,
-                                });
-                              }
-                            : ''
-                        }
-                      >
-                        {teacher.status === 'Active'
-                          ? 'Disable'
-                          : teacher.status === 'Inactive'
-                          ? 'Reactivate'
-                          : ''}
-                      </TableButton>
+                            ? 'Reactivate'
+                            : ''}
+                        </TableButton>
+                      ) : (
+                        '-'
+                      )}
                     </td>
                   </tr>
                 );
