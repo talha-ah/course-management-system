@@ -47,20 +47,23 @@ class EditProfile extends React.Component {
         });
       })
       .catch((err) => {
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
   }
@@ -115,20 +118,24 @@ class EditProfile extends React.Component {
         })
         .catch((err) => {
           this.setState({ isLoading: false });
-          try {
-            err.json().then((body) => {
+          if (err.name === 'AbortError') {
+          } else {
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
               this.props.notify(
                 true,
                 'Error',
-                body.error.status + ' ' + body.message
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
               );
-            });
-          } catch (e) {
-            this.props.notify(
-              true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-            );
+            }
           }
         });
     } else {
@@ -177,21 +184,24 @@ class EditProfile extends React.Component {
           })
           .catch((err) => {
             this.setState({ isLoading: false });
-            try {
-              err.json().then((body) => {
+            if (err.name === 'AbortError') {
+            } else {
+              try {
+                err.json().then((body) => {
+                  this.props.notify(
+                    true,
+                    'Error',
+                    body.error.status + ' ' + body.message
+                  );
+                });
+              } catch (e) {
                 this.props.notify(
                   true,
                   'Error',
-                  body.error.status + ' ' + body.message
+                  err.message +
+                    ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
                 );
-              });
-            } catch (e) {
-              this.props.notify(
-                true,
-                'Error',
-                err.message +
-                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-              );
+              }
             }
           });
       } else {

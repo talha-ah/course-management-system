@@ -79,6 +79,7 @@ class SignIn extends Component {
               name='email'
               value={this.state.email}
               onChange={this.onChange}
+              autoComplete='username'
             />
           </div>
           <div className={classes.InputDiv}>
@@ -88,6 +89,7 @@ class SignIn extends Component {
               placeholder='Password'
               name='password'
               onChange={this.onChange}
+              autoComplete='current-password'
             />
           </div>
           <div className={classes.ButtonDiv}>

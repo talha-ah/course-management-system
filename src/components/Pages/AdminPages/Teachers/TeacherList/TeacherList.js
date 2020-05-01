@@ -23,6 +23,12 @@ class TeacherList extends Component {
     tab: 'Active',
   };
 
+  abortController = new AbortController();
+
+  componentWillUnmount() {
+    this.abortController.abort();
+  }
+
   componentDidMount() {
     this.fetchTeachers();
   }
@@ -34,6 +40,7 @@ class TeacherList extends Component {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token,
       },
+      signal: this.abortController.signal,
     })
       .then((res) => {
         if (!res.ok) throw res;
@@ -49,20 +56,23 @@ class TeacherList extends Component {
       })
       .catch((err) => {
         this.setState({ contentLoading: false });
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
   };
@@ -78,6 +88,7 @@ class TeacherList extends Component {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.props.token,
         },
+        signal: this.abortController.signal,
       }
     )
       .then((res) => {
@@ -95,20 +106,23 @@ class TeacherList extends Component {
         this.setState({
           isLoading: false,
         });
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
   };
@@ -124,6 +138,7 @@ class TeacherList extends Component {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.props.token,
         },
+        signal: this.abortController.signal,
       }
     )
       .then((res) => {
@@ -142,20 +157,23 @@ class TeacherList extends Component {
         this.setState({
           isLoading: false,
         });
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
   };

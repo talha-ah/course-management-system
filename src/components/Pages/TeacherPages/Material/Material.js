@@ -80,27 +80,56 @@ class Material extends Component {
   downloadFileHandler = async (name, path, loading) => {
     // var name = path.split(/[/]+/g)[2];
     // name = name.substring(24);
-    this.setState({ [loading]: true });
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_SERVER_URL}/${path}`
-      );
-      if (!response.ok) throw response;
-      const buffer = await response.arrayBuffer();
-      const url = window.URL.createObjectURL(new Blob([buffer]));
-      const element = document.createElement('a');
-      element.style.display = 'none';
-      element.href = url;
-      element.setAttribute('download', name); //or any other extension
-      document.body.appendChild(element);
-      element.click();
-      this.setState({ [loading]: false });
-      window.URL.revokeObjectURL(element.href);
-      document.body.removeChild(element);
-    } catch (err) {
-      if (err.name === 'AbortError') {
-      } else {
-        this.props.notify(true, 'Error', 'Whoops, file not found!');
+
+    var isPDF = false;
+    var name1 = path.split(/[.]+/g);
+
+    if (name1[name1.length - 1] === 'pdf') {
+      isPDF = true;
+    }
+
+    if (isPDF) {
+      var url = `${process.env.REACT_APP_SERVER_URL}/${path}`;
+
+      this.setState({ cvDownloadLoading: true });
+      try {
+        const element = document.createElement('a');
+        element.style.display = 'none';
+        element.href = url;
+        element.setAttribute('download', name);
+        element.setAttribute('target', '_blank');
+        document.body.appendChild(element);
+        element.click();
+        this.setState({ cvDownloadLoading: false });
+        window.URL.revokeObjectURL(element.href);
+        document.body.removeChild(element);
+      } catch (err) {
+        console.log(err);
+        console.log('catch');
+      }
+    } else {
+      this.setState({ [loading]: true });
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_URL}/${path}`
+        );
+        if (!response.ok) throw response;
+        const buffer = await response.arrayBuffer();
+        const url = window.URL.createObjectURL(new Blob([buffer]));
+        const element = document.createElement('a');
+        element.style.display = 'none';
+        element.href = url;
+        element.setAttribute('download', name); //or any other extension
+        document.body.appendChild(element);
+        element.click();
+        this.setState({ [loading]: false });
+        window.URL.revokeObjectURL(element.href);
+        document.body.removeChild(element);
+      } catch (err) {
+        if (err.name === 'AbortError') {
+        } else {
+          this.props.notify(true, 'Error', 'Whoops, file not found!');
+        }
       }
     }
   };

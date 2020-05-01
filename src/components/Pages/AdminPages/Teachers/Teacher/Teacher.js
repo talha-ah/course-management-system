@@ -21,6 +21,12 @@ class Teacher extends Component {
     teacherType: 'Permanent',
   };
 
+  abortController = new AbortController();
+
+  componentWillUnmount() {
+    this.abortController.abort();
+  }
+
   componentDidMount() {
     const teacherId = this.props.match.params.teacherId;
     fetch(`${process.env.REACT_APP_SERVER_URL}/admin/teacher/${teacherId}`, {
@@ -28,6 +34,7 @@ class Teacher extends Component {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.props.token,
       },
+      signal: this.abortController.signal,
     })
       .then((res) => {
         if (!res.ok) throw res;
@@ -47,20 +54,23 @@ class Teacher extends Component {
         this.setState({
           isLoading: false,
         });
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
   }
@@ -97,6 +107,7 @@ class Teacher extends Component {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + this.props.token,
           },
+          signal: this.abortController.signal,
         }
       )
         .then((res) => {
@@ -109,20 +120,24 @@ class Teacher extends Component {
         })
         .catch((err) => {
           this.setState({ isLoading: false });
-          try {
-            err.json().then((body) => {
+          if (err.name === 'AbortError') {
+          } else {
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
               this.props.notify(
                 true,
                 'Error',
-                body.error.status + ' ' + body.message
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
               );
-            });
-          } catch (e) {
-            this.props.notify(
-              true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-            );
+            }
           }
         });
     } else {
@@ -148,6 +163,7 @@ class Teacher extends Component {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.props.token,
         },
+        signal: this.abortController.signal,
       }
     )
       .then((res) => {
@@ -161,20 +177,23 @@ class Teacher extends Component {
       })
       .catch((err) => {
         this.setState({ isLoading: false });
-        try {
-          err.json().then((body) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.props.notify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.props.notify(
-            true,
-            'Error',
-            err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
   };

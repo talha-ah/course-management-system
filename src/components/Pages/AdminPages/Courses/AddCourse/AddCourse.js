@@ -19,6 +19,8 @@ class AddCourse extends Component {
     courseSession: 'Fall',
   };
 
+  abortController = new AbortController();
+
   componentDidMount() {
     this.setState({ pageLoading: false });
   }
@@ -52,6 +54,7 @@ class AddCourse extends Component {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.props.token,
         },
+        signal: this.abortController.signal,
       })
         .then((res) => {
           if (!res.ok) throw res;
@@ -63,26 +66,34 @@ class AddCourse extends Component {
         })
         .catch((err) => {
           this.setState({ isLoading: false });
-          try {
-            err.json().then((body) => {
+          if (err.name === 'AbortError') {
+          } else {
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
               this.props.notify(
                 true,
                 'Error',
-                body.error.status + ' ' + body.message
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
               );
-            });
-          } catch (e) {
-            this.props.notify(
-              true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-            );
+            }
           }
         });
     } else {
       this.props.notify(true, 'Error', 'Fields should not be empty!');
     }
   };
+
+  componentWillUnmount() {
+    this.abortController.abort();
+  }
 
   onChange = (e) => {
     const value = e.target.value;

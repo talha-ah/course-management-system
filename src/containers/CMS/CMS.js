@@ -1,12 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 import MainContent from '../../components/MainContent/MainContent';
-import Login from '../../components/Pages/loginPage/loginPage';
-import ForgetPassword from '../../components/Pages/loginPage/ForgetPassword/ForgetPassword';
 import Spinner from '../../components/UI/Spinner/Spinner';
-
 import Notify from '../../components/UI/Notify/Notify';
+const Login = React.lazy(() =>
+  import('../../components/Pages/loginPage/loginPage')
+);
+const ForgetPassword = React.lazy(() =>
+  import('../../components/Pages/loginPage/ForgetPassword/ForgetPassword')
+);
 
 class CMS extends Component {
   state = {
@@ -22,6 +25,12 @@ class CMS extends Component {
     notifyType: '',
     notifyMessage: '',
   };
+
+  abortController = new AbortController();
+
+  componentWillUnmount() {
+    this.abortController.abort();
+  }
 
   componentDidMount() {
     const token = localStorage.getItem('token');
@@ -65,6 +74,7 @@ class CMS extends Component {
         email: authData.email,
         password: authData.password,
       }),
+      signal: this.abortController.signal,
     })
       .then((res) => {
         if (!res.ok) throw res;
@@ -93,26 +103,30 @@ class CMS extends Component {
         // window.location.reload();
       })
       .catch((error) => {
-        try {
-          error.json().then((body) => {
+        if (error.name === 'AbortError') {
+        } else {
+          try {
+            error.json().then((body) => {
+              this.setState({
+                isLoading: false,
+              });
+              this.transitNotify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
             this.setState({
               isLoading: false,
             });
             this.transitNotify(
               true,
               'Error',
-              body.error.status + ' ' + body.message
+              error.message +
+                ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
             );
-          });
-        } catch (e) {
-          this.setState({
-            isLoading: false,
-          });
-          this.transitNotify(
-            true,
-            'Error',
-            error.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-          );
+          }
         }
       });
   };
@@ -171,27 +185,35 @@ class CMS extends Component {
         logoutHandler={this.logoutHandler}
       />
     ) : (
-      <Switch>
-        <Route
-          path='/'
-          exact
-          render={(props) => (
-            <Login
-              {...props}
-              loginHandler={this.loginHandler}
-              isLoading={this.state.isLoading}
-            />
-          )}
-        />
-        <Route
-          path='/recover'
-          exact
-          render={(props) => (
-            <ForgetPassword {...props} isLoading={this.state.isLoading} />
-          )}
-        />
-        <Redirect to='/' />
-      </Switch>
+      <Suspense
+        fallback={
+          <div style={{ height: '100vh', textAlign: 'center' }}>
+            <Spinner />
+          </div>
+        }
+      >
+        <Switch>
+          <Route
+            path='/'
+            exact
+            render={(props) => (
+              <Login
+                {...props}
+                loginHandler={this.loginHandler}
+                isLoading={this.state.isLoading}
+              />
+            )}
+          />
+          <Route
+            path='/recover'
+            exact
+            render={(props) => (
+              <ForgetPassword {...props} isLoading={this.state.isLoading} />
+            )}
+          />
+          <Redirect to='/' />
+        </Switch>
+      </Suspense>
     );
     return (
       <>

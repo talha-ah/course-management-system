@@ -10,6 +10,7 @@ class EditProfile extends React.Component {
     // Loadings
     pageLoading: true,
     isLoading: false,
+    cvDownloadLoading: false,
     // Tabs
     tab: 'info',
     // Personal Info
@@ -35,6 +36,11 @@ class EditProfile extends React.Component {
   abortController = new AbortController();
 
   componentDidMount() {
+    this.fetchTeacher();
+  }
+
+  fetchTeacher = () => {
+    this.setState({ pageLoading: true });
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/getteacher`, {
       headers: {
         'Content-Type': 'application/json',
@@ -81,7 +87,7 @@ class EditProfile extends React.Component {
           }
         }
       });
-  }
+  };
 
   componentWillUnmount() {
     this.abortController.abort();
@@ -277,49 +283,55 @@ class EditProfile extends React.Component {
       formData.append('fileName', fileName);
 
       if (file.size < 5000000) {
-        fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/editcv`, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            Authorization: 'Bearer ' + this.props.token,
-          },
-          signal: this.abortController.signal,
-        })
-          .then((res) => {
-            if (!res.ok) throw res;
-            return res.json();
+        if (file.type === 'application/pdf') {
+          fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/editcv`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              Authorization: 'Bearer ' + this.props.token,
+            },
+            signal: this.abortController.signal,
           })
-          .then((resData) => {
-            this.setState({
-              tab: 'info',
-              isLoading: false,
-              file: null,
-              fileName: '',
-            });
-            this.props.notify(true, 'Success', resData.message);
-          })
-          .catch((err) => {
-            if (err.name === 'AbortError') {
-            } else {
-              this.setState({ isLoading: false });
-              try {
-                err.json().then((body) => {
+            .then((res) => {
+              if (!res.ok) throw res;
+              return res.json();
+            })
+            .then((resData) => {
+              this.setState({
+                tab: 'info',
+                isLoading: false,
+                file: null,
+                fileName: '',
+              });
+              this.fetchTeacher();
+              this.props.notify(true, 'Success', resData.message);
+            })
+            .catch((err) => {
+              if (err.name === 'AbortError') {
+              } else {
+                this.setState({ isLoading: false });
+                try {
+                  err.json().then((body) => {
+                    this.props.notify(
+                      true,
+                      'Error',
+                      body.error.status + ' ' + body.message
+                    );
+                  });
+                } catch (e) {
                   this.props.notify(
                     true,
                     'Error',
-                    body.error.status + ' ' + body.message
+                    err.message +
+                      ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
                   );
-                });
-              } catch (e) {
-                this.props.notify(
-                  true,
-                  'Error',
-                  err.message +
-                    ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-                );
+                }
               }
-            }
-          });
+            });
+        } else {
+          this.setState({ isLoading: false });
+          this.props.notify(true, 'Error', 'Only .pdf file allowed!');
+        }
       } else {
         this.setState({ isLoading: false });
         this.props.notify(true, 'Error', 'File too big!');
@@ -330,7 +342,25 @@ class EditProfile extends React.Component {
     }
   };
 
+  downloadFileHandler = async (name, path) => {
+    var url = `${process.env.REACT_APP_SERVER_URL}/${path}`;
+
+    this.setState({ cvDownloadLoading: true });
+    const element = document.createElement('a');
+    element.style.display = 'none';
+    element.href = url;
+    element.setAttribute('download', name);
+    document.body.appendChild(element);
+    element.click();
+    this.setState({ cvDownloadLoading: false });
+    window.URL.revokeObjectURL(element.href);
+    document.body.removeChild(element);
+  };
+
   render() {
+    var cvName = this.state.cv.split(/[/]+/g)[2];
+    cvName = cvName ? cvName.substring(24) : '';
+
     const page = this.state.pageLoading ? (
       <Spinner />
     ) : (
@@ -503,6 +533,22 @@ class EditProfile extends React.Component {
               </form>
             </div>
             <div className={classes.ButtonDiv}>
+              {!this.state.cv || this.state.cv !== 'undefined' ? (
+                <Button
+                  type='button'
+                  onClick={this.downloadFileHandler.bind(
+                    this,
+                    cvName,
+                    this.state.cv
+                  )}
+                >
+                  {this.state.cvDownloadLoading
+                    ? 'Downloading...'
+                    : `Download ${cvName}`}
+                </Button>
+              ) : (
+                ''
+              )}
               <Button
                 type='submit'
                 disabled={this.state.isLoading ? true : false}

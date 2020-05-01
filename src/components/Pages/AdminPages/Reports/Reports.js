@@ -140,6 +140,7 @@ class Report extends Component {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.props.token,
         },
+        signal: this.abortController.signal,
       })
         .then((res) => {
           if (!res.ok) throw res;
@@ -177,20 +178,24 @@ class Report extends Component {
           });
         })
         .catch((err) => {
-          try {
-            err.json().then((body) => {
+          if (err.name === 'AbortError') {
+          } else {
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
               this.props.notify(
                 true,
                 'Error',
-                body.error.status + ' ' + body.message
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
               );
-            });
-          } catch (e) {
-            this.props.notify(
-              true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-            );
+            }
           }
         });
     }

@@ -17,6 +17,7 @@ const Input = (props) => {
       max={props.max}
       accept={props.accept}
       defaultValue={props.defaultValue}
+      autoComplete={props.autoComplete}
     />
   );
 };
