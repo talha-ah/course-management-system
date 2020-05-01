@@ -71,7 +71,10 @@ exports.editProfile = async (req, res, next) => {
     if (!validator.isEmail(email) || validator.isEmpty(email)) {
       errors.push('Invalid Email!');
     }
-    if (!validator.isNumeric(String(phone)) || validator.isEmpty(phone)) {
+    if (
+      !validator.isNumeric(String(phone)) ||
+      validator.isEmpty(String(phone))
+    ) {
       errors.push('Invalid Phone!');
     }
     if (!validator.isAlpha(country) || validator.isEmpty(country)) {
@@ -80,7 +83,7 @@ exports.editProfile = async (req, res, next) => {
     if (!validator.isAlpha(city) || validator.isEmpty(city)) {
       errors.push('Invalid City!');
     }
-    if (!validator.isAlphanumeric(zip) || validator.isEmpty(zip)) {
+    if (!validator.isAlphanumeric(zip) || validator.isEmpty(String(zip))) {
       errors.push('Invalid Zip!');
     }
     if (errors.length > 0) {
@@ -223,7 +226,7 @@ exports.editCV = async (req, res, next) => {
       err.status = 404;
       throw err;
     }
-    if (teacher.cvUrl !== 'undefined' && !teacher.cvUrl) {
+    if (teacher.cvUrl !== 'undefined' && teacher.cvUrl) {
       clearFile(teacher.cvUrl);
     }
     teacher.cvUrl = cvPath;

@@ -29,6 +29,7 @@ app.use(
     ? morgan('combined', { stream: accessLogStream })
     : morgan('dev')
 );
+
 app.use(cors());
 app.use(helmet());
 

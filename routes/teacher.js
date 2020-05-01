@@ -247,7 +247,7 @@ router.get(
 router.post(
   '/addpaper/:paperId',
   isAuth,
-  uploadQuiz.fields([
+  uploadPaper.fields([
     { name: 'paper', maxCount: 1 },
     { name: 'solution', maxCount: 1 },
   ]),
