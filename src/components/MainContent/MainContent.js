@@ -92,8 +92,16 @@ const MainContent = (props) => {
         {props.isAdmin ? (
           <Suspense
             fallback={
-              <div style={{ textAlign: 'center' }}>
-                <Spinner />
+              <div
+                style={{
+                  width: '100vw',
+                  height: '100vh',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Spinner size='Big' />
               </div>
             }
           >

@@ -316,6 +316,7 @@ class EditProfile extends React.Component {
                 placeholder='Current Password'
                 value={this.state.currentPassword}
                 onChange={this.onChange}
+                autoComplete='off'
               />
             </div>
             <div className={classes.InputDiv}>
@@ -326,6 +327,7 @@ class EditProfile extends React.Component {
                 placeholder='New Password'
                 value={this.state.newPassword}
                 onChange={this.onChange}
+                autoComplete='off'
               />
             </div>
             <div className={classes.InputDiv}>
@@ -336,6 +338,7 @@ class EditProfile extends React.Component {
                 placeholder='Current Password'
                 value={this.state.confirmPassword}
                 onChange={this.onChange}
+                autoComplete='off'
               />
             </div>
             <div className={classes.ButtonDiv}>

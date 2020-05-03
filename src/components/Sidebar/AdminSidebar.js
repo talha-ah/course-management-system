@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   // faFileMedicalAlt,
-  faFileAlt,
+  faBook,
   faUser,
   // faBookReader,
   faClipboard,
@@ -49,7 +49,7 @@ const Sidebar = () => {
             className={classes.SidebarNavLink}
             activeClassName={classes.activeLink}
           >
-            <FontAwesomeIcon icon={faFileAlt} />
+            <FontAwesomeIcon icon={faBook} />
             Courses
           </NavLink>
         </li>

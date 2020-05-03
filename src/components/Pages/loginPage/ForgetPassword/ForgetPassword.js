@@ -12,6 +12,7 @@ class ForgetPassword extends Component {
     // Loadings
     pageLoading: true,
     logoLoaded: false,
+    emailLoading: false,
     // Inputs
     email: '',
   };
@@ -35,41 +36,50 @@ class ForgetPassword extends Component {
   onFormSubmit = (e) => {
     e.preventDefault();
 
-    fetch(`${process.env.REACT_APP_SERVER_URL}/login/forgetpassword`, {
-      method: 'POST',
-      body: JSON.stringify({ email: this.state.email }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      signal: this.abortController.signal,
-    })
-      .then((res) => {
-        if (!res.ok) throw res;
-        return res.json();
+    if (this.state.email !== '' && this.state.email) {
+      this.setState({ emailLoading: true });
+      fetch(`${process.env.REACT_APP_SERVER_URL}/login/forgetpassword`, {
+        method: 'POST',
+        body: JSON.stringify({ email: this.state.email }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal: this.abortController.signal,
       })
-      .then((resData) => {
-        this.props.history.push('/');
-      })
-      .catch((err) => {
-        if (err.name === 'AbortError') {
-        } else {
-          try {
-            err.json().then((body) => {
+        .then((res) => {
+          if (!res.ok) throw res;
+          return res.json();
+        })
+        .then((resData) => {
+          this.setState({ emailLoading: false });
+          this.props.notify(true, 'Success', resData.message);
+          this.props.history.push('/');
+        })
+        .catch((err) => {
+          this.setState({ emailLoading: false });
+          if (err.name === 'AbortError') {
+          } else {
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
               this.props.notify(
                 true,
                 'Error',
-                body.error.status + ' ' + body.message
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
               );
-            });
-          } catch (e) {
-            this.props.notify(
-              true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
-            );
+            }
           }
-        }
-      });
+        });
+    } else {
+      this.props.notify(true, 'Error', 'Please provide an email!');
+    }
   };
 
   onLoginHandler = () => {
@@ -107,11 +117,12 @@ class ForgetPassword extends Component {
               onLoad={() => this.setState({ logoLoaded: true })}
             />
           </div>
+          <p>
+            To reset your password, <br />
+            Please enter your email here. <br />
+            Also check your spam folder.
+          </p>
           <div className={classes.InputDiv}>
-            <label>
-              To reset your password, <br />
-              Please enter your email here.
-            </label>
             <br />
             <label htmlFor='email'>Email</label>
             <Input
@@ -123,8 +134,10 @@ class ForgetPassword extends Component {
             />
           </div>
           <div className={classes.ButtonDiv}>
-            <Button type='submit' disabled={this.props.isLoading}>
-              {this.props.isLoading ? 'Sending...' : 'Send Reset Instructions'}
+            <Button type='submit' disabled={this.state.emailLoading}>
+              {this.state.emailLoading
+                ? 'Sending...'
+                : 'Send Reset Instructions'}
             </Button>
           </div>
           <div className={classes.Login} onClick={this.onLoginHandler}>

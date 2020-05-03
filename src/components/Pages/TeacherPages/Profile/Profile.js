@@ -362,6 +362,7 @@ class EditProfile extends React.Component {
     element.style.display = 'none';
     element.href = url;
     element.setAttribute('download', name);
+    element.setAttribute('target', '_blank');
     document.body.appendChild(element);
     element.click();
     this.setState({ cvDownloadLoading: false });
@@ -465,7 +466,7 @@ class EditProfile extends React.Component {
               <Input
                 type='number'
                 name='phone'
-                defaultValue='03'
+                // defaultValue='03'
                 placeholder='Phone Number'
                 value={this.state.phone}
                 onChange={this.onChange}
@@ -586,6 +587,7 @@ class EditProfile extends React.Component {
                 placeholder='Current Password'
                 value={this.state.currentPassword}
                 onChange={this.onChange}
+                autoComplete='off'
               />
             </div>
             <div className={classes.InputDiv}>
@@ -596,6 +598,7 @@ class EditProfile extends React.Component {
                 placeholder='New Password'
                 value={this.state.newPassword}
                 onChange={this.onChange}
+                autoComplete='off'
               />
             </div>
             <div className={classes.InputDiv}>
@@ -606,6 +609,7 @@ class EditProfile extends React.Component {
                 placeholder='Current Password'
                 value={this.state.confirmPassword}
                 onChange={this.onChange}
+                autoComplete='off'
               />
             </div>
             <div className={classes.ButtonDiv}>

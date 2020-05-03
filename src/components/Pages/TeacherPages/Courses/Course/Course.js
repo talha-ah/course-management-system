@@ -286,6 +286,7 @@ class Course extends Component {
                     type='checkbox'
                     value='A'
                     name='A'
+                    id='A'
                     onChange={this.onChange}
                     disabled={
                       this.state.courseStatus === 'Inactive' ? 'disabled' : ''
@@ -299,6 +300,7 @@ class Course extends Component {
                     type='checkbox'
                     value='B'
                     name='B'
+                    id='B'
                     onChange={this.onChange}
                     disabled={
                       this.state.courseStatus === 'Inactive' ? 'disabled' : ''
@@ -312,6 +314,7 @@ class Course extends Component {
                     type='checkbox'
                     value='C'
                     name='C'
+                    id='C'
                     onChange={this.onChange}
                     disabled={
                       this.state.courseStatus === 'Inactive' ? 'disabled' : ''
@@ -325,6 +328,7 @@ class Course extends Component {
                     type='checkbox'
                     value='E1'
                     name='E1'
+                    id='E1'
                     onChange={this.onChange}
                     disabled={
                       this.state.courseStatus === 'Inactive' ? 'disabled' : ''
@@ -338,6 +342,7 @@ class Course extends Component {
                     type='checkbox'
                     value='E2'
                     name='E2'
+                    id='E2'
                     onChange={this.onChange}
                     disabled={
                       this.state.courseStatus === 'Inactive' ? 'disabled' : ''

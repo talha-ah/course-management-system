@@ -51,21 +51,55 @@ class CMS extends Component {
       return;
     }
 
-    var isAdmin = false;
-    const check = token.split(' ')[1];
-    if (check === 'yes') {
-      isAdmin = true;
-    }
-    this.setState({
-      isAuth: true,
-      token: token,
-      userId: userId,
-      isAdmin: isAdmin,
-      pageLoading: false,
-    });
-    const remainingMilliseconds =
-      new Date(expiry).getTime() - new Date().getTime();
-    this.autoLogoutHandler(remainingMilliseconds);
+    fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/getprofilestatus`, {
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+      signal: this.abortController.signal,
+    })
+      .then((res) => {
+        if (!res.ok) throw res;
+        return res.json();
+      })
+      .then((resData) => {
+        this.props.setUser(resData.user);
+        var isAdmin = false;
+        const check = token.split(' ')[1];
+        if (check === 'yes') {
+          isAdmin = true;
+        }
+        this.setState({
+          isAuth: true,
+          status: resData.teacher.status,
+          token: token,
+          userId: userId,
+          isAdmin: isAdmin,
+          pageLoading: false,
+        });
+        const remainingMilliseconds =
+          new Date(expiry).getTime() - new Date().getTime();
+        this.autoLogoutHandler(remainingMilliseconds);
+      })
+      .catch((err) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.transitNotify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
+            this.transitNotify(
+              true,
+              'Error',
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+            );
+          }
+        }
+      });
   }
 
   loginHandler = (event, authData) => {
@@ -85,25 +119,24 @@ class CMS extends Component {
         if (!res.ok) throw res;
         return res.json();
       })
-      .then((result) => {
-        console.log(result.user);
-        this.props.setUser(result.user);
+      .then((resData) => {
+        this.props.setUser(resData.user);
         var isAdmin = false;
-        const check = result.token.split(' ')[1];
+        const check = resData.token.split(' ')[1];
         if (check === 'yes') {
           isAdmin = true;
         }
         this.setState({
           isAuth: true,
-          status: result.user.status,
-          token: result.token,
-          userId: result.userId,
+          status: resData.user.status,
+          token: resData.token,
+          userId: resData.userId,
           isAdmin: isAdmin,
           isLoading: false,
         });
-        this.transitNotify(true, 'Success', result.message);
-        localStorage.setItem('userId', result.userId);
-        localStorage.setItem('token', result.token);
+        this.transitNotify(true, 'Success', resData.message);
+        localStorage.setItem('userId', resData.userId);
+        localStorage.setItem('token', resData.token);
         const expiry = 3600000;
         const expiryDate = new Date(new Date().getTime() + expiry);
         localStorage.setItem('expiry', expiryDate.toISOString());
@@ -185,7 +218,17 @@ class CMS extends Component {
 
   render() {
     var route = this.state.pageLoading ? (
-      <Spinner size='Big' />
+      <div
+        style={{
+          width: '100vw',
+          height: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Spinner size='Big' />
+      </div>
     ) : this.state.isAuth ? (
       this.state.status === 'Pending' && !this.state.isAdmin ? (
         <PendingProfile
@@ -210,8 +253,16 @@ class CMS extends Component {
     ) : (
       <Suspense
         fallback={
-          <div style={{ height: '100vh', textAlign: 'center' }}>
-            <Spinner />
+          <div
+            style={{
+              width: '100vw',
+              height: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Spinner size='Big' />
           </div>
         }
       >
@@ -224,6 +275,7 @@ class CMS extends Component {
                 {...props}
                 loginHandler={this.loginHandler}
                 isLoading={this.state.isLoading}
+                notify={this.transitNotify}
               />
             )}
           />
@@ -231,7 +283,11 @@ class CMS extends Component {
             path='/recover'
             exact
             render={(props) => (
-              <ForgetPassword {...props} isLoading={this.state.isLoading} />
+              <ForgetPassword
+                {...props}
+                isLoading={this.state.isLoading}
+                notify={this.transitNotify}
+              />
             )}
           />
           <Redirect to='/' />

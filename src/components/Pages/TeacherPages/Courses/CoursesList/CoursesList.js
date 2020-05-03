@@ -530,6 +530,7 @@ class CoursesList extends Component {
                           type='checkbox'
                           value='A'
                           name='A'
+                          id='A'
                           onChange={this.onChange}
                         />
                         <label htmlFor='A'>A</label>
@@ -539,6 +540,7 @@ class CoursesList extends Component {
                           type='checkbox'
                           value='B'
                           name='B'
+                          id='B'
                           onChange={this.onChange}
                         />
                         <label htmlFor='B'>B</label>
@@ -548,6 +550,7 @@ class CoursesList extends Component {
                           type='checkbox'
                           value='C'
                           name='C'
+                          id='C'
                           onChange={this.onChange}
                         />
                         <label htmlFor='C'>C</label>
@@ -557,6 +560,7 @@ class CoursesList extends Component {
                           type='checkbox'
                           value='E1'
                           name='E1'
+                          id='E1'
                           onChange={this.onChange}
                         />
                         <label htmlFor='E1'>E1</label>
@@ -566,6 +570,7 @@ class CoursesList extends Component {
                           type='checkbox'
                           value='E2'
                           name='E2'
+                          id='E2'
                           onChange={this.onChange}
                         />
                         <label htmlFor='E2'>E2</label>

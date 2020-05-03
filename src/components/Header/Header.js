@@ -3,9 +3,9 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faDotCircle,
+  // faDotCircle,
   faUser,
-  faBell,
+  // faBell,
   faSignOutAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -80,8 +80,14 @@ class Header extends Component {
         <ul className={classes.headerNav}>
           {this.props.isAdmin ? (
             <>
-              <li className={classes.headerNavItemSwitch}>Switch to Admin</li>
-              <li className={classes.headerNavItem}>
+              {/* <li className={classes.headerNavItemSwitch}>Switch to Admin</li> */}
+              <li
+                className={classes.headerNavItem}
+                style={{ flex: '1', alignSelf: 'flex-start' }}
+              >
+                <span className={classes.headerNavItemSwitch}>
+                  Switch to Admin
+                </span>
                 <label className={classes.switch}>
                   <input type='checkbox' onChange={this.switchSidebarHandler} />
                   <span
@@ -93,7 +99,7 @@ class Header extends Component {
           ) : (
             ''
           )}
-          <li
+          {/* <li
             className={[
               classes.headerNavItemFloat,
               classes.headerDropDownParent,
@@ -125,7 +131,7 @@ class Header extends Component {
                 ))}
               </ul>
             </div>
-          </li>
+          </li> */}
           <li
             className={[
               classes.headerNavItem,
