@@ -137,6 +137,7 @@ const uploadPaper = multer({
 
 // Profile
 router.get('/getteacher', isAuth, teacherController.getTeacher);
+router.get('/getprofilestatus', isAuth, teacherController.getProfileStatus);
 router.post('/editteacher', isAuth, teacherController.editProfile);
 router.post(
   '/editteacherpassword',

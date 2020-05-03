@@ -16,6 +16,35 @@ const Class = require('../models/class');
 
 // =========================================================== Profile ================================================
 
+exports.getProfileStatus = async (req, res, next) => {
+  const teacherId = req.userId;
+
+  try {
+    const teacher = await Teacher.findById(teacherId);
+
+    if (!teacher) {
+      const error = new Error('Unable to fetch the user.');
+      error.status = 404;
+      throw error;
+    }
+
+    res.status(200).send({
+      message: 'Teacher fetched.',
+      teacher: {
+        email: teacher.email,
+        firstName: teacher.firstName,
+        lastName: teacher.lastName,
+        status: teacher.status,
+        type: teacher.type,
+      },
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
 exports.getTeacher = async (req, res, next) => {
   const teacherId = req.userId;
 

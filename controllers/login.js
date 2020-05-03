@@ -1,8 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
-
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+const path = require('path');
+const handlebars = require('handlebars');
 
 const Teacher = require('../models/teacher');
 
@@ -126,23 +128,74 @@ exports.login = async (req, res, next) => {
 
 exports.forgetPassword = async (req, res, next) => {
   const email = req.body.email;
-  api_key =
-    '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';
 
-  console.log(email);
-
-  sgMail.setApiKey(api_key);
-  const msg = {
-    to: email,
-    from: 'test@example.com',
-    subject: 'Sending with Twilio SendGrid is Fun',
-    text: 'and easy to do anywhere, even with Node.js',
-    html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-  };
-  //ES8
   try {
-    await sgMail.send(msg);
+    const teacher = await Teacher.findOne({ email: email });
+
+    if (!teacher) {
+      var error = new Error('No user found with this email!');
+      error.status = 404;
+      throw error;
+    }
+    if (teacher.status === 'Inactive') {
+      var error = new Error(
+        'Your account is not active! Please contact Admin.'
+      );
+      error.status = 403;
+      throw error;
+    }
+
+    var length = 12,
+      charset =
+        '#&|!@abcdefghijklmnopqrstuvwxyz#&|!@ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#&|!@',
+      resetPass = '';
+    for (var i = 0, n = charset.length; i < length; ++i) {
+      resetPass += charset.charAt(Math.floor(Math.random() * n));
+    }
+
+    const hashedPassword = await bcrypt.hash(resetPass, 12);
+
+    teacher.password = hashedPassword;
+
+    // Email Starts
+    const filePath = path.join(__dirname, '../utils/resetPassword.html');
+    const source = fs.readFileSync(filePath, 'utf-8').toString();
+    const template = handlebars.compile(source);
+    const replacements = {
+      name: teacher.firstName + ' ' + teacher.lastName,
+      email: email,
+      password: resetPass,
+      action_url: 'https://condescending-davinci.netlify.app/',
+    };
+    const htmlToSend = template(replacements);
+    var transporter = nodemailer.createTransport({
+      // host: 'smtp.mailtrap.io',
+      // port: 2525,
+      // auth: {
+      //   user: 'b33edd77e38c85',
+      //   pass: '4f6a254bdb395e',
+      // },
+      service: 'gmail',
+      auth: {
+        user: 'ariaylake@gmail.com',
+        pass: 'shutdown12',
+      },
+    });
+    const mailOptions = {
+      from: 'ariaylake@gmail.com',
+      to: 'betarid65@gmail.com',
+      subject: 'CMS-Password Reset Request',
+      // text: url,
+      html: htmlToSend,
+    };
+
+    await transporter.sendMail(mailOptions);
+    await teacher.save();
+    res.status(200).json({ message: 'Email sent!' });
   } catch (err) {
-    console.error(err.toString());
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
   }
 };
