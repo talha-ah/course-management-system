@@ -106,6 +106,13 @@ exports.login = async (req, res, next) => {
     const tokenAppend = isAdmin ? 'yes' : 'no';
     res.status(200).json({
       message: 'Logged In Successfully!',
+      user: {
+        email: teacher.email,
+        firstName: teacher.firstName,
+        lastName: teacher.lastName,
+        status: teacher.status,
+        type: teacher.type,
+      },
       userId: teacher._id,
       token: token + ' ' + tokenAppend,
     });
