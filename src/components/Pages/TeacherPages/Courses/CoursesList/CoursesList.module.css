@@ -176,11 +176,43 @@
 
 .InputGroup input[type='date']::-webkit-datetime-edit-text,
 .InputGroup input[type='date']::-webkit-datetime-edit-month-field,
-.InputGroup input[type='date']::-webkit-datetime-edit-day-field {
+.InputGroup input[type='date']::-webkit-datetime-edit-day-field,
+.InputGroup input[type='date']::-webkit-inner-spin-button,
+.InputGroup input[type='date']::-webkit-clear-button,
+.InputGroup input[type='date']::-webkit-calendar-picker-indicator {
   display: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   -o-appearance: none;
   -ms-appearance: none;
   appearance: none;
+}
+
+.InputGroup input[type='date'] {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.53rem 1rem;
+  color: #3b3e66;
+  background-color: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.5;
+  border: 1px solid rgb(208, 220, 221);
+  border-radius: 3px;
+  -webkit-transition: border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.InputGroup input[type='date']:focus {
+  border-color: #9297da;
+  outline: 0;
+  box-shadow: 0 0.313rem 0.719rem rgba(122, 123, 151, 0.1),
+    0 0.156rem 0.125rem rgba(122, 123, 151, 0.06);
+}
+
+.InputGroup input[type='date']:disabled {
+  cursor: not-allowed;
 }

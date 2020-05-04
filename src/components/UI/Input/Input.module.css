@@ -48,18 +48,34 @@
 .input[type='time']::-webkit-clear-button,
 .input[type='time']::-webkit-datetime-edit-ampm-field,
 .input[type='date']::-webkit-inner-spin-button,
-.input[type='date']::-webkit-clear-button,
+.input[type='date']::-webkit-clear-button
 /* .input[type='datatime']::-webkit-datetime-edit,
 .input[type='datatime']::-webkit-datetime-edit-fields-wrapper,
 .input[type='datatime']::-webkit-datetime-edit-text,
 .input[type='datatime']::-webkit-datetime-edit-month-field,
 .input[type='datatime']::-webkit-datetime-edit-day-field,
 .input[type='datatime']::-webkit-datetime-edit-year-field, */
-.input[type='date']::-webkit-calendar-picker-indicator {
+/* .input[type='date']::-webkit-calendar-picker-indicator  */ {
   display: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   -o-appearance: none;
   -ms-appearance: none;
   appearance: none;
+}
+
+.input[type='date'] {
+  position: relative;
+}
+
+.input[type='date']::-webkit-calendar-picker-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  height: auto;
+  color: transparent;
+  background: transparent;
 }

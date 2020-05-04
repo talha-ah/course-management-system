@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import classes from './CoursesList.module.css';
 import Spinner from '../../../../UI/Spinner/Spinner';
-import Input from '../../../../UI/Input/Input';
 import Button from '../../../../UI/Button/Button';
 import TableButton from '../../../../UI/TableButton/TableButton';
 import SelectInput from '../../../../UI/SelectInput/SelectInput';
@@ -200,7 +199,18 @@ class CoursesList extends Component {
     const value = e.target.value;
     const name = e.target.name;
 
-    if (e.target.type === 'checkbox') {
+    if (name === 'courseSession') {
+      if (
+        new Date(value).getFullYear() < 2014 ||
+        new Date(value).getFullYear().toString().length !== 4
+      ) {
+        this.setState((prevState) => ({
+          courseSession: prevState.courseSession,
+        }));
+      } else {
+        this.setState({ courseSession: value });
+      }
+    } else if (e.target.type === 'checkbox') {
       this.setState((prevState) => ({
         ...prevState,
         courseSectionsObject: {
@@ -502,13 +512,14 @@ class CoursesList extends Component {
                   </div>
                   <div className={classes.InputGroup}>
                     <label htmlFor='courseSession'>Session From</label>
-                    <Input
+                    <input
                       type='date'
                       name='courseSession'
-                      defaultValue={this.state.courseSession}
+                      className={classes.dataInput}
+                      value={this.state.courseSession}
                       onChange={this.onChange}
                       min='2010-12-31'
-                      max='2999-12-31'
+                      // max='2999-12-31'
                     />
                   </div>
                   <div className={classes.InputGroup}>

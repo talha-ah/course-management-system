@@ -102,9 +102,21 @@ class EditProfile extends React.Component {
     } else {
       const name = e.target.name;
       const value = e.target.value;
-      this.setState({
-        [name]: value,
-      });
+      if (name === 'phone') {
+        if (value.length > 14) {
+          this.setState((prevState) => ({
+            phone: prevState.phone,
+          }));
+        } else {
+          this.setState({
+            phone: value,
+          });
+        }
+      } else {
+        this.setState({
+          [name]: value,
+        });
+      }
     }
   };
 
@@ -442,8 +454,9 @@ class EditProfile extends React.Component {
                 type='date'
                 name='birthdate'
                 placeholder='Birthdate'
-                // value='1980-01-01'
-                value={this.state.birthdate}
+                value={
+                  this.state.birthdate ? this.state.birthdate : '1990-01-01'
+                }
                 onChange={this.onChange}
               />
             </div>
@@ -452,6 +465,7 @@ class EditProfile extends React.Component {
               <Input
                 type='number'
                 name='phone'
+                defaultValue='03'
                 placeholder='Phone Number'
                 value={this.state.phone}
                 onChange={this.onChange}

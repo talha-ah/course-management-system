@@ -1,9 +1,13 @@
 import React, { Component, Suspense } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+
+import * as actionTypes from '../../store/actions';
 
 import MainContent from '../../components/MainContent/MainContent';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import Notify from '../../components/UI/Notify/Notify';
+import PendingProfile from '../../components/Pages/TeacherPages/PendingProfile/PendingProfile';
 const Login = React.lazy(() =>
   import('../../components/Pages/loginPage/loginPage')
 );
@@ -17,8 +21,9 @@ class CMS extends Component {
     pageLoading: true,
     isLoading: false,
     // Data
+    status: 'Pending',
     isAuth: false,
-    token: '',
+    token: 'Pending',
     userId: false,
     isAdmin: false,
     notify: false,
@@ -81,6 +86,8 @@ class CMS extends Component {
         return res.json();
       })
       .then((result) => {
+        console.log(result.user);
+        this.props.setUser(result.user);
         var isAdmin = false;
         const check = result.token.split(' ')[1];
         if (check === 'yes') {
@@ -88,6 +95,7 @@ class CMS extends Component {
         }
         this.setState({
           isAuth: true,
+          status: result.user.status,
           token: result.token,
           userId: result.userId,
           isAdmin: isAdmin,
@@ -103,13 +111,13 @@ class CMS extends Component {
         // window.location.reload();
       })
       .catch((error) => {
+        this.setState({
+          isLoading: false,
+        });
         if (error.name === 'AbortError') {
         } else {
           try {
             error.json().then((body) => {
-              this.setState({
-                isLoading: false,
-              });
               this.transitNotify(
                 true,
                 'Error',
@@ -117,9 +125,6 @@ class CMS extends Component {
               );
             });
           } catch (e) {
-            this.setState({
-              isLoading: false,
-            });
             this.transitNotify(
               true,
               'Error',
@@ -153,7 +158,7 @@ class CMS extends Component {
   autoLogoutHandler = (expiry) => {
     setTimeout(() => {
       this.logoutHandler();
-      this.transitNotify(true, 'Success', 'AutoLogout was successfull.');
+      // this.transitNotify(true, 'Success', 'AutoLogout was successfull.');
     }, expiry);
   };
 
@@ -168,22 +173,40 @@ class CMS extends Component {
     localStorage.removeItem('userId');
     localStorage.removeItem('token');
     localStorage.removeItem('expiry');
+    this.props.resetSidebar();
     this.transitNotify(true, 'Success', 'Logout successfully.');
+  };
+
+  changeStatus = (status) => {
+    this.setState({
+      status: status,
+    });
   };
 
   render() {
     var route = this.state.pageLoading ? (
       <Spinner size='Big' />
     ) : this.state.isAuth ? (
-      <MainContent
-        authData={{
-          isAdmin: this.state.isAdmin,
-          token: this.state.token,
-          userId: this.state.userId,
-          notify: this.transitNotify,
-        }}
-        logoutHandler={this.logoutHandler}
-      />
+      this.state.status === 'Pending' && !this.state.isAdmin ? (
+        <PendingProfile
+          isAdmin={this.state.isAdmin}
+          token={this.state.token}
+          userId={this.state.userId}
+          notify={this.transitNotify}
+          logoutHandler={this.logoutHandler}
+          changeStatus={this.changeStatus}
+        />
+      ) : (
+        <MainContent
+          authData={{
+            isAdmin: this.state.isAdmin,
+            token: this.state.token,
+            userId: this.state.userId,
+            notify: this.transitNotify,
+          }}
+          logoutHandler={this.logoutHandler}
+        />
+      )
     ) : (
       <Suspense
         fallback={
@@ -232,4 +255,11 @@ class CMS extends Component {
   }
 }
 
-export default CMS;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    resetSidebar: () => dispatch({ type: actionTypes.RESET_SIDEBAR }),
+    setUser: (user) => dispatch({ type: actionTypes.SET_USER, user: user }),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(CMS);

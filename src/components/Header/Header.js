@@ -152,7 +152,7 @@ class Header extends Component {
                 >
                   <div>
                     <FontAwesomeIcon icon={faUser} />
-                    My Profile
+                    Profile
                   </div>
                 </li>
                 <hr />
