@@ -2,7 +2,7 @@
 
 # dependencies
 /node_modules
-# nodemon.json
+nodemon.json
 
 # Compiled source #
 ###################
