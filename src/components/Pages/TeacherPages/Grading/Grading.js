@@ -429,7 +429,7 @@ class Grading extends Component {
                               <input
                                 className={classes.MarksInput}
                                 type='number'
-                                placeholder='Grade'
+                                placeholder='Type here'
                                 name={row._id}
                                 onChange={this.onChange}
                                 defaultValue={defValue}
@@ -501,7 +501,7 @@ class Grading extends Component {
                               <input
                                 className={classes.MarksInput}
                                 type='number'
-                                placeholder='Grade'
+                                placeholder='Type here'
                                 name={row._id}
                                 onChange={this.onChange}
                                 defaultValue={defValue}

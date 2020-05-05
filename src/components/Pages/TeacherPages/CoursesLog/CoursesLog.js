@@ -106,6 +106,7 @@ class CoursesLog extends Component {
       this.setState({
         selectCourseId: '',
         selectCourseTitle: title,
+        addingRow: false,
       });
     } else {
       this.setState({
