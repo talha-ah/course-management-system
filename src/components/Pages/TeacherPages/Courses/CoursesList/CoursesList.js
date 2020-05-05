@@ -400,16 +400,14 @@ class CoursesList extends Component {
                   }
                 }
                 return (
-                  <tr key={course._id}>
-                    <td>
-                      <strong>{course.code}</strong>
-                    </td>
+                  <tr key={course._id} className={classes.onRowHoverEffect}>
+                    <td>{course.code}</td>
                     <td
                       colSpan='2'
                       onClick={() => this.onCourseFetch(course._id)}
                       className={classes.CourseTitle}
                     >
-                      {course.title}
+                      <strong>{course.title}</strong>
                     </td>
                     <td>{course.sections.map((section) => section + ' ')}</td>
                     <td>{course.session}</td>

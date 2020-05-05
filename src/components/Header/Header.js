@@ -80,16 +80,23 @@ class Header extends Component {
         <ul className={classes.headerNav}>
           {this.props.isAdmin ? (
             <>
-              {/* <li className={classes.headerNavItemSwitch}>Switch to Admin</li> */}
               <li
                 className={classes.headerNavItem}
-                style={{ flex: '1', alignSelf: 'flex-start' }}
+                style={{
+                  flex: '1',
+                  alignSelf: 'flex-start',
+                  cursor: 'default',
+                }}
               >
                 <span className={classes.headerNavItemSwitch}>
                   Switch to Admin
                 </span>
                 <label className={classes.switch}>
-                  <input type='checkbox' onChange={this.switchSidebarHandler} />
+                  <input
+                    type='checkbox'
+                    onChange={this.switchSidebarHandler}
+                    checked={this.props.adminSidebar}
+                  />
                   <span
                     className={[classes.slider, classes.round].join(' ')}
                   ></span>
@@ -132,6 +139,16 @@ class Header extends Component {
               </ul>
             </div>
           </li> */}
+          <li
+            className={classes.headerNavItemFloat}
+            style={{
+              color: '#3b3e66',
+              textDecoration: 'underline',
+            }}
+            onClick={() => this.props.history.push('/profile')}
+          >
+            {this.props.user.firstName} {this.props.user.lastName}
+          </li>
           <li
             className={[
               classes.headerNavItem,
@@ -180,10 +197,17 @@ class Header extends Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    adminSidebar: state.adminSidebar,
+    user: state.user,
+  };
+};
+
 const mapDispatchToProps = (dispatch) => {
   return {
     switchSidebar: () => dispatch({ type: actionTypes.SWITCH_SIDEBAR }),
   };
 };
 
-export default connect(null, mapDispatchToProps)(withRouter(Header));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Header));

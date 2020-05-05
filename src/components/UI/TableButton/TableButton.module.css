@@ -4,9 +4,8 @@
   position: relative;
   color: #fff;
   background-color: #3b3e66;
-  padding: 0.1em 0.4em;
+  padding: 0.2em 0.4em;
   border: 2px solid transparent;
-  border-radius: 10%;
   outline: none;
   cursor: pointer;
   transition: all 0.2s ease-out;

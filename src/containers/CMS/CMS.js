@@ -62,7 +62,7 @@ class CMS extends Component {
         return res.json();
       })
       .then((resData) => {
-        this.props.setUser(resData.user);
+        this.props.setUser(resData.teacher);
         var isAdmin = false;
         const check = token.split(' ')[1];
         if (check === 'yes') {

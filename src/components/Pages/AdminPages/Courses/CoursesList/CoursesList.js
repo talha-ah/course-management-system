@@ -219,10 +219,8 @@ class CoursesList extends Component {
                   }
                 }
                 return (
-                  <tr key={course._id}>
-                    <td>
-                      <strong>{course.code}</strong>
-                    </td>
+                  <tr key={course._id} className={classes.onRowHoverEffect}>
+                    <td>{course.code}</td>
                     <td
                       colSpan='2'
                       className={classes.CourseTitle}
@@ -237,7 +235,7 @@ class CoursesList extends Component {
                               )
                       }
                     >
-                      {course.title}
+                      <strong>{course.title}</strong>
                     </td>
                     <td>{course.credits}</td>
                     <td>{course.type}</td>

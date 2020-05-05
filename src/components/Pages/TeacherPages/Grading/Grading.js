@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import classes from './Grading.module.css';
 import Spinner from '../../../UI/Spinner/Spinner';
-// import Input from '../../../UI/Input/Input';
 import Button from '../../../UI/Button/Button';
 import SelectInput from '../../../UI/SelectInput/SelectInput';
 
@@ -501,6 +500,7 @@ class Grading extends Component {
                               <input
                                 className={classes.MarksInput}
                                 type='number'
+                                placeholder='Grade'
                                 name={row._id}
                                 onChange={this.onChange}
                                 defaultValue={defValue}

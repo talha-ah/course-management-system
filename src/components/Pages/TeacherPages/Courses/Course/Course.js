@@ -397,7 +397,7 @@ class Course extends Component {
               ) : (
                 this.state.courseAssignments[0].assignments.map((row) => {
                   return (
-                    <tr key={row._id}>
+                    <tr key={row._id} className={classes.onRowHoverEffect}>
                       <td>{row.title}</td>
                       <td>{row.marks}</td>
                       <td>{row.assessment}</td>
@@ -453,7 +453,7 @@ class Course extends Component {
               ) : (
                 this.state.courseQuizzes[0].quizzes.map((row) => {
                   return (
-                    <tr key={row._id}>
+                    <tr key={row._id} className={classes.onRowHoverEffect}>
                       <td>{row.title}</td>
                       <td>{row.marks}</td>
                       <td>{row.assessment}</td>
@@ -509,7 +509,7 @@ class Course extends Component {
               ) : (
                 this.state.coursePapers[0].papers.map((row) => {
                   return (
-                    <tr key={row._id}>
+                    <tr key={row._id} className={classes.onRowHoverEffect}>
                       <td>{row.title}</td>
                       <td>{row.marks}</td>
                       <td>{row.assessment}</td>

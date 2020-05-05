@@ -276,7 +276,7 @@ class TeacherList extends Component {
                   }
                 }
                 return (
-                  <tr key={teacher._id}>
+                  <tr key={teacher._id} className={classes.onRowHoverEffect}>
                     <td>
                       {teacher.firstName} {teacher.lastName}
                     </td>

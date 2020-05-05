@@ -59,6 +59,21 @@
   padding: 15px;
 }
 
+.onRowHoverEffect:hover {
+  background-color: #f4f5fd;
+}
+.onRowHoverEffect td {
+  position: relative;
+}
+.onRowHoverEffect:hover td:first-child::before {
+  content: '';
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-left: 4px solid #3b3e66;
+}
+
 .Quizzes table th {
   padding: 20px 0;
 }

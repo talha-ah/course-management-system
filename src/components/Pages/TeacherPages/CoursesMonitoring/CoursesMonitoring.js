@@ -151,7 +151,6 @@ class CoursesMonitoring extends Component {
             status: resData.courseMonitoring.status,
             monitoringLoading: false,
           });
-          this.props.notify(true, 'Success', resData.message);
         })
         .catch((err) => {
           this.setState({ monitoringLoading: false });

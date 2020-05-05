@@ -36,7 +36,7 @@ function buildTableBody(data, headers, columns) {
   return body;
 }
 
-const generatePdfReport = (info, dataRecieved) => {
+const generatePdfReport = (info, dataRecieved, assignmentGrade, quizGrade) => {
   var dd = {
     // info: {
     //   title: 'Country Profile',
@@ -151,8 +151,8 @@ const generatePdfReport = (info, dataRecieved) => {
               { text: 'Sr. #', alignment: 'center' },
               { text: 'Roll Number' },
               { text: 'Student Name' },
-              { text: 'Quiz(10)', alignment: 'center' },
-              { text: 'Term Paper (10)', alignment: 'center' },
+              { text: `Quiz(${quizGrade})`, alignment: 'center' },
+              { text: `Term Paper (${assignmentGrade})`, alignment: 'center' },
               { text: 'Mid Semeseter Test(20)', alignment: 'center' },
               { text: 'Sessional Total(40)', alignment: 'center' },
               { text: 'Final Examination(60)', alignment: 'center' },

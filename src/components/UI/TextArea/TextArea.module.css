@@ -6,7 +6,7 @@
   /* padding: 0 1rem; */
   padding: 0;
   color: #3b3e66;
-  background-color: #fff;
+  background-color: transparent;
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 400;
@@ -19,23 +19,3 @@
 .TextArea:focus {
   outline: 0;
 }
-
-/* .TextArea::placeholder {
-  font-size: 1em;
-  font-weight: bold;
-}
-
-.TextArea::-webkit-input-placeholder {
-  font-size: 1em;
-  font-weight: bold;
-}
-
-.TextArea::-moz-placeholder {
-  font-size: 1em;
-  font-weight: bold;
-}
-
-.TextArea:-ms-input-placeholder {
-  font-size: 1em;
-  font-weight: bold;
-} */

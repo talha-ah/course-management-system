@@ -58,10 +58,6 @@
 .Grading table tbody tr td {
   padding: 15px;
 }
-.Grading table tbody tr .InputTD {
-  padding: 0;
-  padding-top: 1.6rem;
-}
 
 .Grading table th {
   padding: 20px 0;
@@ -114,21 +110,25 @@
   cursor: pointer;
 }
 
+/* .Grading .InputTD {
+  padding: 0;
+  padding-top: 1.6rem;
+} */
+
 .Grading .MarksInput {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
+  /* display: block; */
+  /* box-sizing: border-box; */
+  /* width: 100%; */
+  /* height: 100%; */
   color: #3b3e66;
   background-color: #fff;
   font-family: inherit;
   font-size: 0.95rem;
-  font-weight: 700;
+  /* font-weight: 700; */
   text-align: center;
-  cursor: text;
-  border: 0;
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 2px;
+  /* border: 0; */
+  /* border-bottom: 1px solsid #ccc; */
+  /* margin-bottom: 2px; */
   outline: 0;
 }
 

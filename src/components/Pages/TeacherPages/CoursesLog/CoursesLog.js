@@ -149,7 +149,6 @@ class CoursesLog extends Component {
             courseLog: resData.courseLog,
             logLoading: false,
           });
-          this.props.notify(true, 'Success', resData.message);
         })
         .catch((err) => {
           if (err.name === 'AbortError') {
@@ -212,6 +211,8 @@ class CoursesLog extends Component {
           this.setState({
             isLoading: false,
             addingRow: false,
+            instruments: '',
+            topics: '',
           });
           this.onSelectCourse();
           this.props.notify(true, 'Success', resData.message);
@@ -304,7 +305,7 @@ class CoursesLog extends Component {
             ) : (
               this.state.courseLog.log.map((row) => {
                 return (
-                  <tr key={row._id}>
+                  <tr key={row._id} className={classes.onRowHoverEffect}>
                     <td>{row.date}</td>
                     <td>{row.duration}</td>
                     <td>
@@ -386,7 +387,13 @@ class CoursesLog extends Component {
                     buttonType='red'
                     // title='Cancel'
                     className={classes.Button}
-                    onClick={() => this.setState({ addingRow: false })}
+                    onClick={() =>
+                      this.setState({
+                        addingRow: false,
+                        instruments: '',
+                        topics: '',
+                      })
+                    }
                     type='button'
                   >
                     Cancel

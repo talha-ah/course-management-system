@@ -335,6 +335,7 @@ class AddResult extends Component {
                             <input
                               className={classes.MarksInput}
                               type='number'
+                              placeholder='Type here'
                               name={student[1].rollNumber}
                               defaultValue={
                                 this.state.result

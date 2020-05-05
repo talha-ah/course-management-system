@@ -10,6 +10,7 @@ class Report extends Component {
   state = {
     pageLoading: true,
     reportLoading: false,
+    teacherSelectLoading: false,
     // Data
     teachers: '',
     teachersArray: [],
@@ -95,7 +96,12 @@ class Report extends Component {
       this.setState({
         selectTeacherId: '',
         selectTeacherTitle: title,
+        selectCourseId: '',
+        selectCourseTitle: '',
+        selectSection: '',
+        selectSemester: '',
       });
+      document.getElementById('reportForm').reset();
     } else {
       this.setState({
         selectTeacherTitle: title,
@@ -127,6 +133,7 @@ class Report extends Component {
       teacherTitle !== '' &&
       teacherTitle !== 'Teacher List'
     ) {
+      this.setState({ teacherSelectLoading: true });
       this.state.teachers.some((teacher) => {
         if (teacher.firstName + ' ' + teacher.lastName === teacherTitle) {
           teacherId = teacher._id;
@@ -175,6 +182,7 @@ class Report extends Component {
             selectTeacherId: teacherId,
             courses: courses,
             coursesArray: arrayCourses,
+            teacherSelectLoading: false,
           });
         })
         .catch((err) => {
@@ -269,7 +277,12 @@ class Report extends Component {
           return res.json();
         })
         .then(async (resData) => {
-          await ReportGenerate(resData.info, resData.data);
+          await ReportGenerate(
+            resData.info,
+            resData.data,
+            resData.assignmentGrade,
+            resData.quizGrade
+          );
           this.setState({ reportLoading: false });
         })
         .catch((err) => {
@@ -308,7 +321,7 @@ class Report extends Component {
           <span className={classes.CaptionSpan}>Generate Report</span>
         </div>
         <hr />
-        <form method='POST' onSubmit={this.reportFormSubmit}>
+        <form method='POST' onSubmit={this.reportFormSubmit} id='reportForm'>
           <div className={classes.InputGroup}>
             <label htmlFor='teacher'>Teacher</label>
             <SelectInput
@@ -323,7 +336,11 @@ class Report extends Component {
             <label htmlFor='course'>Course - Batch</label>
             <SelectInput
               name='course'
-              placeholder='Course List'
+              placeholder={
+                this.state.teacherSelectLoading
+                  ? 'Course List ...'
+                  : 'Course List'
+              }
               onChange={this.onChangeCourse}
               disabled={this.state.selectTeacherId === '' ? true : false}
             >

@@ -94,8 +94,8 @@ const MainContent = (props) => {
             fallback={
               <div
                 style={{
-                  width: '100vw',
-                  height: '100vh',
+                  width: '100%',
+                  height: '100%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -209,7 +209,15 @@ const MainContent = (props) => {
         ) : (
           <Suspense
             fallback={
-              <div style={{ textAlign: 'center' }}>
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
                 <Spinner />
               </div>
             }

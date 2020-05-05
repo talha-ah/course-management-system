@@ -146,7 +146,6 @@ class Papers extends Component {
             session: courseSelect.session,
             paperLoading: false,
           });
-          this.props.notify(true, 'Success', resData.message);
         })
         .catch((err) => {
           if (err.name === 'AbortError') {
@@ -344,7 +343,7 @@ class Papers extends Component {
             ) : (
               this.state.papers.papers.map((row) => {
                 return (
-                  <tr key={row._id}>
+                  <tr key={row._id} className={classes.onRowHoverEffect}>
                     <td
                       className={classes.CourseTitle}
                       onClick={() => {
@@ -360,7 +359,7 @@ class Papers extends Component {
                         });
                       }}
                     >
-                      {row.title}
+                      <strong>{row.title}</strong>
                     </td>
                     <td>{row.marks}</td>
                     <td>{row.assessment}</td>

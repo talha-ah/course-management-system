@@ -196,7 +196,6 @@ class CoursesDescription extends Component {
             oralWritten: resData.courseDescription.data.oralWritten,
             descriptionLoading: false,
           });
-          this.props.notify(true, 'Success', resData.message);
         })
         .catch((err) => {
           this.setState({ descriptionLoading: false });
@@ -427,6 +426,7 @@ class CoursesDescription extends Component {
                               this.state.status === 'new' ? false : true
                             }
                             type='number'
+                            placeholder='Type here'
                             name='assignments'
                             value={this.state.assignments}
                             onChange={this.onChange}
@@ -442,6 +442,7 @@ class CoursesDescription extends Component {
                             }
                             type='number'
                             name='quizzes'
+                            placeholder='Type here'
                             value={this.state.quizzes}
                             onChange={this.onChange}
                             autoComplete='off'
@@ -457,6 +458,7 @@ class CoursesDescription extends Component {
                             }
                             type='number'
                             name='midTerm'
+                            placeholder='Type here'
                             value={this.state.midTerm}
                             onChange={this.onChange}
                           />
@@ -471,6 +473,7 @@ class CoursesDescription extends Component {
                             }
                             type='number'
                             name='finalTerm'
+                            placeholder='Type here'
                             value={this.state.finalTerm}
                             onChange={this.onChange}
                           />
@@ -529,6 +532,7 @@ class CoursesDescription extends Component {
                             }
                             type='number'
                             name='theory'
+                            placeholder='Type here'
                             value={this.state.theory}
                             onChange={this.onChange}
                             autoComplete='off'
@@ -544,6 +548,7 @@ class CoursesDescription extends Component {
                             }
                             type='number'
                             name='problem'
+                            placeholder='Type here'
                             value={this.state.problem}
                             onChange={this.onChange}
                             autoComplete='off'
@@ -559,6 +564,7 @@ class CoursesDescription extends Component {
                             }
                             type='number'
                             name='solution'
+                            placeholder='Type here'
                             value={this.state.solution}
                             onChange={this.onChange}
                           />
@@ -573,6 +579,7 @@ class CoursesDescription extends Component {
                             }
                             type='number'
                             name='social'
+                            placeholder='Type here'
                             value={this.state.social}
                             onChange={this.onChange}
                           />

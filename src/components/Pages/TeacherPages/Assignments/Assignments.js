@@ -146,7 +146,6 @@ class Assignments extends Component {
             session: courseSelect.session,
             assignmentLoading: false,
           });
-          this.props.notify(true, 'Success', resData.message);
         })
         .catch((err) => {
           if (err.name === 'AbortError') {
@@ -343,7 +342,7 @@ class Assignments extends Component {
             ) : (
               this.state.assignments.assignments.map((row) => {
                 return (
-                  <tr key={row._id}>
+                  <tr key={row._id} className={classes.onRowHoverEffect}>
                     <td
                       className={classes.CourseTitle}
                       onClick={() => {
@@ -359,7 +358,7 @@ class Assignments extends Component {
                         });
                       }}
                     >
-                      {row.title}
+                      <strong>{row.title}</strong>
                     </td>
                     <td>{row.marks}</td>
                     <td>{row.assessment}</td>
