@@ -1,0 +1,8 @@
+{
+  "env": {
+    "MONGO_URI_USERNAME": "betarid",
+    "MONGO_URI_PASSWORD": "xtHucKuf9wzRJ6An",
+    "MONGO_URI_DATABASE": "cms",
+    "JWT_SECRET_KEY": "isthissecretkeysecure"
+  }
+}
