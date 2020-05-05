@@ -2003,7 +2003,7 @@ exports.generateReport = async (req, res, next) => {
       error.code = 404;
       throw error;
     }
-
+    var totalQuizGrade = 0;
     quizDoc.quizzes.map((quiz) => {
       if (quiz.section.toString() === section.toString()) {
         if (quiz.resultAdded) {
@@ -2013,6 +2013,7 @@ exports.generateReport = async (req, res, next) => {
               grade = ele[1];
             }
           });
+          totalQuizGrade += +grade;
           var check = { ...data.quiz };
           Object.entries(quiz.result).map((ent) => {
             var num = (+ent[1] / +quiz.marks) * 100;
@@ -2028,6 +2029,7 @@ exports.generateReport = async (req, res, next) => {
         }
       }
     });
+    var totalAssignmentGrade = 0;
     assignmentDoc.assignments.map((assignment) => {
       if (assignment.section.toString() === section.toString()) {
         if (assignment.resultAdded) {
@@ -2039,6 +2041,7 @@ exports.generateReport = async (req, res, next) => {
               }
             }
           );
+          totalAssignmentGrade += +grade;
           var check = { ...data.assignment };
           Object.entries(assignment.result).map((ent) => {
             var num = (+ent[1] / +assignment.marks) * 100;
@@ -2048,12 +2051,15 @@ exports.generateReport = async (req, res, next) => {
           });
           data = { ...data, assignment: check };
         } else {
-          const error = new Error(`${quiz.title}'s result needs to be added.`);
+          const error = new Error(
+            `${assignment.title}'s result needs to be added.`
+          );
           error.status = 404;
           throw error;
         }
       }
     });
+
     paperDoc.papers.map((paper) => {
       if (paper.section.toString() === section.toString()) {
         if (paper.resultAdded) {
@@ -2134,7 +2140,14 @@ exports.generateReport = async (req, res, next) => {
           ) / 10,
       });
     });
-    res.status(200).json({ info: info, data: data2 });
+    res
+      .status(200)
+      .json({
+        info: info,
+        data: data2,
+        assignmentGrade: totalAssignmentGrade,
+        quizGrade: totalQuizGrade,
+      });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
