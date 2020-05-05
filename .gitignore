@@ -18,10 +18,10 @@ nodemon.json
 # *.zip
 
 # Data files
-# *.png
-# *.jpg
-# *.jpeg
-# *.pdf
+*.png
+*.jpg
+*.jpeg
+*.pdf
 
 # Logs and databases #
 ######################
