@@ -278,6 +278,12 @@ router.post(
 );
 
 router.get(
+  '/singlereportdata/:teacherCourseId/:section',
+  isAuth,
+  teacherController.singleReportData
+);
+
+router.get(
   '/generatereport/:teacherCourseId/:batch/:semester/:section',
   isAuth,
   teacherController.generateReport
