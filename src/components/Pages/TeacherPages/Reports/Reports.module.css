@@ -78,3 +78,25 @@
 .ButtonDiv button:nth-child(1) {
   margin-left: 0;
 }
+
+.TabsButtons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.TabsButtons .Button {
+  display: inline-block;
+  box-sizing: border-box;
+  color: #3b3e66;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 0.53rem 2rem;
+  width: 100%;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  cursor: pointer;
+}

@@ -137,7 +137,8 @@ class CMS extends Component {
         this.transitNotify(true, 'Success', resData.message);
         localStorage.setItem('userId', resData.userId);
         localStorage.setItem('token', resData.token);
-        const expiry = 3600000;
+        // const expiry = 3600000;
+        const expiry = 18000000;
         const expiryDate = new Date(new Date().getTime() + expiry);
         localStorage.setItem('expiry', expiryDate.toISOString());
         this.autoLogoutHandler(expiry);

@@ -115,6 +115,8 @@ class Report extends Component {
       this.setState({
         selectCourseId: '',
         selectCourseTitle: title,
+        selectSection: '',
+        selectSemester: '',
       });
     } else {
       this.setState({
