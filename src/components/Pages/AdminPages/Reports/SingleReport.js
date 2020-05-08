@@ -8,10 +8,18 @@ import SingleReportGenerate from '../../../../utils/report/SingleReport';
 class SingleReport extends Component {
   state = {
     reportLoading: false,
+    teacherSelectLoading: false,
+    coursesLoading: false,
     materialLoading: false,
+    coursesFetched: false,
     materialsFetched: false,
     sectionChange: false, // to reset section field
     // Data
+    courses: '',
+    coursesArray: [],
+    // Inputs
+    selectTeacherId: '',
+    selectTeacherTitle: '',
     materials: '',
     materialsArray: [],
     selectMaterialtitle: '',
@@ -28,6 +36,9 @@ class SingleReport extends Component {
   componentDidMount() {}
 
   componentDidUpdate(prevProps, prevState) {
+    if (this.state.selectTeacherTitle !== prevState.selectTeacherTitle) {
+      this.onSelectTeacher();
+    }
     if (this.state.selectCourseTitle !== prevState.selectCourseTitle) {
       this.onSelectCourse();
     }
@@ -39,6 +50,112 @@ class SingleReport extends Component {
   componentWillUnmount() {
     this.abortController.abort();
   }
+
+  onChangeteacher = (e) => {
+    const title = e.target.value;
+    if (title === 'Teacher List' || title === '') {
+      this.setState({
+        selectTeacherId: '',
+        selectTeacherTitle: title,
+        selectCourseId: '',
+        selectCourseTitle: '',
+        selectSection: '',
+        selectSemester: '',
+        materialsFetched: false,
+        materialLoading: false,
+      });
+      document.getElementById('reportForm').reset();
+    } else {
+      this.setState({
+        selectTeacherTitle: title,
+      });
+    }
+  };
+
+  onSelectTeacher = () => {
+    const teacherTitle = this.state.selectTeacherTitle;
+    var teacherId;
+    var selectedTeacher;
+
+    if (
+      teacherTitle &&
+      teacherTitle !== '' &&
+      teacherTitle !== 'Teacher List'
+    ) {
+      this.setState({ teacherSelectLoading: true });
+      this.props.teachers.some((teacher) => {
+        if (teacher.firstName + ' ' + teacher.lastName === teacherTitle) {
+          teacherId = teacher._id;
+          selectedTeacher = teacher;
+          return true;
+        }
+        return false;
+      });
+      fetch(`${process.env.REACT_APP_SERVER_URL}/admin/courses`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.props.token,
+        },
+        signal: this.abortController.signal,
+      })
+        .then((res) => {
+          if (!res.ok) throw res;
+          return res.json();
+        })
+        .then((resData) => {
+          const courses = [];
+          const arrayCourses = [];
+          resData.courses.map((adminCourse) => {
+            selectedTeacher.coursesAssigned.map((course) => {
+              if (course.courseId.toString() === adminCourse._id.toString()) {
+                arrayCourses.push(adminCourse.title + '::' + course.session);
+                courses.push({
+                  _id: course._id,
+                  courseId: adminCourse._id,
+                  title: adminCourse.title,
+                  code: adminCourse.code,
+                  credits: adminCourse.credits,
+                  type: adminCourse.type,
+                  sessionType: adminCourse.session,
+                  status: course.status,
+                  sections: course.sections,
+                  session: course.session,
+                });
+              }
+              return true;
+            });
+            return true;
+          });
+          this.setState({
+            selectTeacherId: teacherId,
+            courses: courses,
+            coursesArray: arrayCourses,
+            teacherSelectLoading: false,
+          });
+        })
+        .catch((err) => {
+          if (err.name === 'AbortError') {
+          } else {
+            try {
+              err.json().then((body) => {
+                this.props.notify(
+                  true,
+                  'Error',
+                  body.error.status + ' ' + body.message
+                );
+              });
+            } catch (e) {
+              this.props.notify(
+                true,
+                'Error',
+                err.message +
+                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+              );
+            }
+          }
+        });
+    }
+  };
 
   onChangeCourse = (e) => {
     const title = e.target.value;
@@ -54,6 +171,8 @@ class SingleReport extends Component {
     } else {
       this.setState({
         selectCourseTitle: title,
+        materialsFetched: false,
+        materialLoading: false,
         sectionChange: true,
       });
     }
@@ -67,7 +186,7 @@ class SingleReport extends Component {
     var courseSelect;
 
     if (courseTitle && courseTitle !== '' && courseTitle !== 'Course List') {
-      this.props.courses.some((course) => {
+      this.state.courses.some((course) => {
         if (course.title === courseTitle && course.session === batch) {
           courseId = course._id;
           courseSelect = course;
@@ -84,13 +203,19 @@ class SingleReport extends Component {
     }
   };
 
+  onChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    this.setState({ [name]: value });
+  };
+
   onSectionChange = async () => {
     const section = this.state.selectSection;
     const courseId = this.state.selectCourseId;
     if (section !== 'Section' && section !== '') {
       this.setState({ materialLoading: true });
       fetch(
-        `${process.env.REACT_APP_SERVER_URL}/teacher/singlereportdata/${courseId}/${section}`,
+        `${process.env.REACT_APP_SERVER_URL}/admin/singlereportdata/${this.state.selectTeacherId}/${courseId}/${section}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -138,18 +263,11 @@ class SingleReport extends Component {
     }
   };
 
-  onChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    this.setState({ [name]: value });
-  };
-
   reportFormSubmit = (e) => {
     e.preventDefault();
     const selectCourseSection = this.state.selectSection;
     const selectCourseSemester = this.state.selectSemester;
     const materialTitle = this.state.selectMaterialtitle;
-
     if (
       selectCourseSection &&
       selectCourseSection !== '' &&
@@ -162,7 +280,7 @@ class SingleReport extends Component {
       materialTitle !== 'Material'
     ) {
       this.setState({ reportLoading: true });
-      // var materialId;
+      //   var materialId;
       var selectMaterial;
       var found = false;
       Object.values(this.state.materials).map((material) => {
@@ -213,7 +331,6 @@ class SingleReport extends Component {
                 marks: selectMaterial.result[student.rollNumber],
               });
             });
-
             await SingleReportGenerate(info, data);
             this.setState({ reportLoading: false });
           })
@@ -253,15 +370,28 @@ class SingleReport extends Component {
 
   render() {
     return (
-      <form method='POST' onSubmit={this.reportFormSubmit}>
+      <form method='POST' onSubmit={this.reportFormSubmit} id='reportForm'>
+        <div className={classes.InputGroup}>
+          <label htmlFor='teacher'>Teacher</label>
+          <SelectInput
+            name='teacher'
+            placeholder='Teacher List'
+            onChange={this.onChangeteacher}
+          >
+            {this.props.teachersArray}
+          </SelectInput>
+        </div>
         <div className={classes.InputGroup}>
           <label htmlFor='course'>Course - Batch</label>
           <SelectInput
             name='course'
-            placeholder='Course List'
+            placeholder={
+              this.state.teacherSelectLoading ? '...' : 'Course List'
+            }
             onChange={this.onChangeCourse}
+            disabled={this.state.selectTeacherId === '' ? true : false}
           >
-            {this.props.coursesArray}
+            {this.state.coursesArray}
           </SelectInput>
         </div>
         <div className={classes.InputGroup}>
@@ -301,12 +431,10 @@ class SingleReport extends Component {
             {['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII']}
           </SelectInput>
         </div>
+
         <div className={classes.ButtonDiv}>
-          <Button
-            type='submit'
-            disabled={this.state.materialsArray.length === 0 ? true : false}
-          >
-            {this.state.reportLoading ? 'Generating...' : 'Generate Report'}
+          <Button type='submit'>
+            {this.state.reportLoading ? 'Generating...' : 'Generate'}
           </Button>
         </div>
       </form>

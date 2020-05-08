@@ -347,10 +347,10 @@ class CoursesList extends Component {
           </div>
           <div
             className={classes.Button}
-            onClick={() => this.setState({ tab: 'Completed' })}
+            onClick={() => this.setState({ tab: 'Complete' })}
             style={{
               borderBottom:
-                this.state.tab === 'Completed' ? '1px solid #3b3e66' : 'none',
+                this.state.tab === 'Complete' ? '1px solid #3b3e66' : 'none',
             }}
           >
             Completed Courses
@@ -393,7 +393,7 @@ class CoursesList extends Component {
                     inactiveCourses++;
                   }
                 } else {
-                  if (course.status !== 'Completed') {
+                  if (course.status !== 'Complete') {
                     return true;
                   } else {
                     completedCourses++;
@@ -414,7 +414,7 @@ class CoursesList extends Component {
                     <td>{course.status}</td>
                     <td>
                       <TableButton
-                        disabled={course.status === 'Active' ? '' : 'disabled'}
+                        disabled={course.status === 'Active' ? false : true}
                         buttonType='red'
                         onClick={() =>
                           this.disableModalHandler(course._id, course.title)

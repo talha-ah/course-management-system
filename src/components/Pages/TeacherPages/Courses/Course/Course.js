@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import classes from './Course.module.css';
+import Modal from '../../../../UI/Modal/Modal';
 import Spinner from '../../../../UI/Spinner/Spinner';
 import Input from '../../../../UI/Input/Input';
 import Button from '../../../../UI/Button/Button';
@@ -12,6 +13,10 @@ class Course extends Component {
     pageLoading: true,
     uploadLoading: false,
     deleteLoading: false,
+    completeLoading: false,
+    // Modals
+    deleteModal: false,
+    completeModal: false,
     // Data
     _id: '',
     courseId: '',
@@ -193,6 +198,50 @@ class Course extends Component {
         return res.json();
       })
       .then((resData) => {
+        this.setState({ deleteModal: false, deleteLoading: false });
+        this.props.history.push('/');
+      })
+      .catch((err) => {
+        if (err.name === 'AbortError') {
+        } else {
+          try {
+            err.json().then((body) => {
+              this.props.notify(
+                true,
+                'Error',
+                body.error.status + ' ' + body.message
+              );
+            });
+          } catch (e) {
+            this.props.notify(
+              true,
+              'Error',
+              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+            );
+          }
+        }
+      });
+  };
+
+  onCompleteHandler = () => {
+    this.setState({ completeLoading: true });
+
+    fetch(
+      `${process.env.REACT_APP_SERVER_URL}/teacher/completecourse/${this.state._id}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.props.token,
+        },
+        signal: this.abortController.signal,
+      }
+    )
+      .then((res) => {
+        if (!res.ok) throw res;
+        return res.json();
+      })
+      .then((resData) => {
+        this.setState({ completeModal: false, completeLoading: false });
         this.props.history.push('/');
       })
       .catch((err) => {
@@ -289,7 +338,7 @@ class Course extends Component {
                     id='A'
                     onChange={this.onChange}
                     disabled={
-                      this.state.courseStatus === 'Inactive' ? 'disabled' : ''
+                      this.state.courseStatus === 'Active' ? false : true
                     }
                     checked={this.state.courseSectionsObject.A}
                   />
@@ -303,7 +352,7 @@ class Course extends Component {
                     id='B'
                     onChange={this.onChange}
                     disabled={
-                      this.state.courseStatus === 'Inactive' ? 'disabled' : ''
+                      this.state.courseStatus === 'Active' ? false : true
                     }
                     checked={this.state.courseSectionsObject.B}
                   />
@@ -317,7 +366,7 @@ class Course extends Component {
                     id='C'
                     onChange={this.onChange}
                     disabled={
-                      this.state.courseStatus === 'Inactive' ? 'disabled' : ''
+                      this.state.courseStatus === 'Active' ? false : true
                     }
                     checked={this.state.courseSectionsObject.C}
                   />
@@ -331,7 +380,7 @@ class Course extends Component {
                     id='E1'
                     onChange={this.onChange}
                     disabled={
-                      this.state.courseStatus === 'Inactive' ? 'disabled' : ''
+                      this.state.courseStatus === 'Active' ? false : true
                     }
                     checked={this.state.courseSectionsObject.E1}
                   />
@@ -345,7 +394,7 @@ class Course extends Component {
                     id='E2'
                     onChange={this.onChange}
                     disabled={
-                      this.state.courseStatus === 'Inactive' ? 'disabled' : ''
+                      this.state.courseStatus === 'Active' ? false : true
                     }
                     checked={this.state.courseSectionsObject.E2}
                   />
@@ -356,16 +405,23 @@ class Course extends Component {
             <div className={classes.ButtonDiv}>
               <Button
                 type='button'
-                onClick={this.onDeleteHandler}
+                onClick={() => this.setState({ deleteModal: true })}
                 buttonType='red'
+                disabled={this.state.courseStatus === 'Complete' ? true : false}
               >
-                {this.state.deleteLoading ? 'Deleting...' : 'Delete'}
+                Delete
+              </Button>
+              <Button
+                type='button'
+                onClick={() => this.setState({ completeModal: true })}
+                buttonType='green'
+                disabled={this.state.courseStatus === 'Complete' ? true : false}
+              >
+                Complete
               </Button>
               <Button
                 type='submit'
-                disabled={
-                  this.state.courseStatus === 'Inactive' ? 'disabled' : ''
-                }
+                disabled={this.state.courseStatus === 'Active' ? false : true}
               >
                 {this.state.uploadLoading ? 'Updating...' : 'Update'}
               </Button>
@@ -383,7 +439,7 @@ class Course extends Component {
                 <th>Title</th>
                 <th>Marks</th>
                 <th>Assessment</th>
-                <th>Status</th>
+                <th>Section</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -398,13 +454,17 @@ class Course extends Component {
                 this.state.courseAssignments[0].assignments.map((row) => {
                   return (
                     <tr key={row._id} className={classes.onRowHoverEffect}>
-                      <td>{row.title}</td>
+                      <td>
+                        <strong>{row.title}</strong>
+                      </td>
                       <td>{row.marks}</td>
                       <td>{row.assessment}</td>
-                      <td>Status</td>
+                      <td>{row.section}</td>
                       <td>
                         <TableButton
-                          title='Add Result'
+                          disabled={
+                            this.state.courseStatus === 'Active' ? false : true
+                          }
                           onClick={() => {
                             this.props.history.push({
                               pathname: '/addresult',
@@ -419,7 +479,7 @@ class Course extends Component {
                             });
                           }}
                         >
-                          +
+                          {row.resultAdded ? 'Edit Result' : 'Add Result'}
                         </TableButton>
                       </td>
                     </tr>
@@ -439,7 +499,7 @@ class Course extends Component {
                 <th>Title</th>
                 <th>Marks</th>
                 <th>Assessment</th>
-                <th>Status</th>
+                <th>Section</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -454,13 +514,17 @@ class Course extends Component {
                 this.state.courseQuizzes[0].quizzes.map((row) => {
                   return (
                     <tr key={row._id} className={classes.onRowHoverEffect}>
-                      <td>{row.title}</td>
+                      <td>
+                        <strong>{row.title}</strong>
+                      </td>
                       <td>{row.marks}</td>
                       <td>{row.assessment}</td>
-                      <td>Status</td>
+                      <td>{row.section}</td>
                       <td>
                         <TableButton
-                          title='Add Result'
+                          disabled={
+                            this.state.courseStatus === 'Active' ? false : true
+                          }
                           onClick={() => {
                             this.props.history.push({
                               pathname: '/addresult',
@@ -475,7 +539,7 @@ class Course extends Component {
                             });
                           }}
                         >
-                          +
+                          {row.resultAdded ? 'Edit Result' : 'Add Result'}
                         </TableButton>
                       </td>
                     </tr>
@@ -495,7 +559,7 @@ class Course extends Component {
                 <th>Title</th>
                 <th>Marks</th>
                 <th>Assessment</th>
-                <th>Status</th>
+                <th>Section</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -510,13 +574,17 @@ class Course extends Component {
                 this.state.coursePapers[0].papers.map((row) => {
                   return (
                     <tr key={row._id} className={classes.onRowHoverEffect}>
-                      <td>{row.title}</td>
+                      <td>
+                        <strong>{row.title}</strong>
+                      </td>
                       <td>{row.marks}</td>
                       <td>{row.assessment}</td>
-                      <td>Status</td>
+                      <td>{row.section}</td>
                       <td>
                         <TableButton
-                          title='Add Result'
+                          disabled={
+                            this.state.courseStatus === 'Active' ? false : true
+                          }
                           onClick={() => {
                             this.props.history.push({
                               pathname: '/addresult',
@@ -531,7 +599,7 @@ class Course extends Component {
                             });
                           }}
                         >
-                          +
+                          {row.resultAdded ? 'Edit Result' : 'Add Result'}
                         </TableButton>
                       </td>
                     </tr>
@@ -548,7 +616,76 @@ class Course extends Component {
         </div>
       </div>
     );
-    return page;
+    return (
+      <>
+        {page}
+        {/* ======================================= Disable Course Modal Starts  =================================*/}
+        <Modal visible={this.state.deleteModal || this.state.completeModal}>
+          <div className={classes.Modal}>
+            <div className={classes.ModalBody}>
+              <div className={classes.ModalContent}>
+                <div className={classes.ModalContentTitle}>
+                  {this.state.completeModal ? 'Complete' : 'Delete'} Course!
+                </div>
+                <div className={classes.ModalContentBody}>
+                  {this.state.completeModal ? (
+                    <p>
+                      Are you sure, you want to mark{' '}
+                      <strong style={{ textDecoration: 'underline' }}>
+                        {this.state.courseTitle}
+                      </strong>{' '}
+                      as completed?
+                    </p>
+                  ) : (
+                    <p>
+                      Are you sure, you want to delete{' '}
+                      <strong style={{ textDecoration: 'underline' }}>
+                        {this.state.courseTitle}
+                      </strong>
+                      ?
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className={classes.ButtonDiv}>
+                <Button
+                  type='button'
+                  buttonType={this.state.completeModal ? 'red' : ''}
+                  onClick={() =>
+                    this.setState({
+                      deleteModal: false,
+                      completeModal: false,
+                      completeLoading: false,
+                      deleteLoading: false,
+                    })
+                  }
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type='button'
+                  buttonType={this.state.completeModal ? 'green' : 'red'}
+                  onClick={
+                    this.state.completeModal
+                      ? this.onCompleteHandler
+                      : this.onDeleteHandler
+                  }
+                >
+                  {this.state.completeModal
+                    ? this.state.completeLoading
+                      ? 'Loading...'
+                      : 'Complete'
+                    : this.state.deleteLoading
+                    ? 'Deleting...'
+                    : 'Delete'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Modal>
+        {/* ======================================= Disable Course Modal Ends  ====================================*/}
+      </>
+    );
   }
 }
 

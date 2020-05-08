@@ -2,9 +2,13 @@ import React from 'react';
 
 import classes from './Button.module.css';
 
-const Button = props => {
+const Button = (props) => {
   const styles =
-    props.buttonType === 'red' ? classes.buttonRed : classes.button;
+    props.buttonType === 'red'
+      ? classes.buttonRed
+      : props.buttonType === 'green'
+      ? classes.buttonGreen
+      : classes.button;
   return (
     <button
       className={styles}

@@ -159,3 +159,38 @@
   align-items: center;
   justify-content: space-evenly;
 }
+
+/* Modal Starts */
+
+.Modal {
+  background-color: #fff;
+  width: 600px;
+  color: #3b3e66;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 0.375rem;
+}
+
+.ModalBody {
+  padding: 50px 40px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ModalContent {
+  width: 100%;
+  text-align: center;
+}
+
+.ModalContentTitle {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.33;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
+}
