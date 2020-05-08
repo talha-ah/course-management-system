@@ -619,6 +619,70 @@ exports.deleteCourse = (req, res, next) => {
 
 // ================================================ Generate Report =================================================
 
+exports.singleReportData = async (req, res, next) => {
+  const teacherId = req.params.teacherId;
+  const courseId = req.params.teacherCourseId;
+  const section = req.params.section;
+  try {
+    const teacher = await Teacher.findById(teacherId);
+
+    if (!teacher) {
+      const err = new Error('Whoops, could not find the teacher!.');
+      err.status = 404;
+      throw err;
+    }
+    const courseIndex = teacher.coursesAssigned.findIndex((c) => {
+      return c._id.toString() === courseId.toString();
+    });
+
+    const course = teacher.coursesAssigned[courseIndex];
+
+    const quizDoc = await Quiz.findById(course.quizzes);
+    const assignmentDoc = await Assignment.findById(course.assignments);
+    const paperDoc = await Paper.findById(course.papers);
+
+    const materials = {
+      quizzes: [],
+      assignments: [],
+      papers: [],
+    };
+    const materialsArray = [];
+    quizDoc.quizzes.map((quiz) => {
+      if (quiz.section === section && quiz.resultAdded) {
+        materials.quizzes.push(quiz);
+        materialsArray.push(quiz.title);
+        return true;
+      }
+      return true;
+    });
+    assignmentDoc.assignments.map((assignment) => {
+      if (assignment.section === section && assignment.resultAdded) {
+        materials.assignments.push(assignment);
+        materialsArray.push(assignment.title);
+        return true;
+      }
+      return true;
+    });
+    paperDoc.papers.map((paper) => {
+      if (paper.section === section && paper.resultAdded) {
+        materials.papers.push(paper);
+        materialsArray.push(paper.title);
+        return true;
+      }
+      return true;
+    });
+
+    res.status(200).json({
+      message: 'Materials fetched',
+      materials: materials,
+      materialsArray: materialsArray,
+    });
+  } catch (err) {
+    if (!err.status) err.status === 500;
+    throw err;
+  }
+};
+
 exports.generateReport = async (req, res, next) => {
   const teacherId = req.params.teacherId;
   const courseId = req.params.teacherCourseId;
@@ -878,14 +942,12 @@ exports.generateReport = async (req, res, next) => {
           ) / 10,
       });
     });
-    res
-      .status(200)
-      .json({
-        info: info,
-        data: data2,
-        assignmentGrade: totalAssignmentGrade,
-        quizGrade: totalQuizGrade,
-      });
+    res.status(200).json({
+      info: info,
+      data: data2,
+      assignmentGrade: totalAssignmentGrade,
+      quizGrade: totalQuizGrade,
+    });
   } catch (err) {
     if (!err.status) {
       err.status = 500;

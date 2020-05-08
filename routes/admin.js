@@ -40,6 +40,12 @@ router.get(
 router.delete('/deletecourse', isAuth, adminController.deleteCourse);
 
 router.get(
+  '/singlereportdata/:teacherId/:teacherCourseId/:section',
+  isAuth,
+  adminController.singleReportData
+);
+
+router.get(
   '/generatereport/:teacherId/:teacherCourseId/:batch/:semester/:section',
   isAuth,
   adminController.generateReport
