@@ -10,10 +10,10 @@ class Report extends Component {
     reportLoading: false,
     // Data
     selectCourseId: '',
-    selectCourseTitle: '',
+    selectCourseTitle: 'Course Title',
     selectCourseSections: [],
-    selectSection: '',
-    selectSemester: '',
+    selectSection: 'Section',
+    selectSemester: 'Semester',
   };
 
   abortController = new AbortController();
@@ -32,16 +32,18 @@ class Report extends Component {
 
   onChangeCourse = (e) => {
     const title = e.target.value;
-    if (title === 'Course List' || title === '') {
+    if (title === 'Course Title' || title === '') {
       this.setState({
         selectCourseId: '',
         selectCourseTitle: title,
-        selectSection: '',
-        selectSemester: '',
+        selectSection: 'Section',
+        selectSemester: 'Semester',
       });
     } else {
       this.setState({
         selectCourseTitle: title,
+        selectSection: 'Section',
+        selectSemester: 'Semester',
       });
     }
   };
@@ -53,7 +55,7 @@ class Report extends Component {
     var courseId;
     var courseSelect;
 
-    if (courseTitle && courseTitle !== '' && courseTitle !== 'Course List') {
+    if (courseTitle && courseTitle !== '' && courseTitle !== 'Course Title') {
       this.props.courses.some((course) => {
         if (course.title === courseTitle && course.session === batch) {
           courseId = course._id;
@@ -150,7 +152,7 @@ class Report extends Component {
           <label htmlFor='course'>Course - Batch</label>
           <SelectInput
             name='course'
-            placeholder='Course List'
+            placeholder='Course Title'
             onChange={this.onChangeCourse}
           >
             {this.props.coursesArray}
@@ -163,8 +165,11 @@ class Report extends Component {
             placeholder='Semester'
             onChange={this.onChange}
             disabled={this.state.selectCourseId === '' ? true : false}
+            selected={this.state.selectSemester}
           >
-            {['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII']}
+            {this.state.selectCourseId === ''
+              ? []
+              : ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII']}
           </SelectInput>
         </div>
         <div className={classes.InputGroup}>
@@ -174,6 +179,7 @@ class Report extends Component {
             placeholder='Section'
             onChange={this.onChange}
             disabled={this.state.selectCourseId === '' ? true : false}
+            selected={this.state.selectSection}
           >
             {this.state.selectCourseId === ''
               ? []

@@ -93,7 +93,7 @@ const generatePdfReport = (info, dataRecieved) => {
         style: 'tableExample',
         headerRows: 1,
         table: {
-          widths: ['5%', '20%', '*', '20%'],
+          widths: ['5%', '15%', '*', '15%'],
           body: buildTableBody(
             dataRecieved,
             [

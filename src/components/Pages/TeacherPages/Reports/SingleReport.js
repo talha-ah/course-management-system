@@ -7,20 +7,20 @@ import SingleReportGenerate from '../../../../utils/report/SingleReport';
 
 class SingleReport extends Component {
   state = {
+    // Loadings
     reportLoading: false,
     materialLoading: false,
     materialsFetched: false,
-    sectionChange: false, // to reset section field
-    // Data
-    materials: '',
-    materialsArray: [],
-    selectMaterialtitle: '',
+    // Inputs
     selectCourse: '',
     selectCourseId: '',
-    selectCourseTitle: '',
+    selectCourseTitle: 'Course Title',
     selectCourseSections: [],
-    selectSection: '',
-    selectSemester: '',
+    selectSection: 'Section',
+    materials: '',
+    materialsArray: [],
+    selectMaterialtitle: 'Material',
+    selectSemester: 'Semester',
   };
 
   abortController = new AbortController();
@@ -42,19 +42,33 @@ class SingleReport extends Component {
 
   onChangeCourse = (e) => {
     const title = e.target.value;
-    if (title === 'Course List' || title === '') {
+    if (title === 'Course Title' || title === '') {
       this.setState({
+        selectCourse: '',
         selectCourseId: '',
-        selectCourseTitle: title,
-        selectSection: '',
-        selectSemester: '',
+        selectCourseTitle: 'Course Title',
+        selectCourseSections: [],
+        materials: '',
+        materialsArray: [],
+        selectMaterialtitle: 'Material',
+        selectSection: 'Section',
+        selectSemester: 'Semester',
         materialsFetched: false,
         materialLoading: false,
       });
     } else {
       this.setState({
+        selectCourse: '',
+        selectCourseId: '',
         selectCourseTitle: title,
-        sectionChange: true,
+        selectCourseSections: [],
+        materials: '',
+        materialsArray: [],
+        selectMaterialtitle: 'Material',
+        selectSection: 'Section',
+        selectSemester: 'Semester',
+        materialsFetched: false,
+        materialLoading: false,
       });
     }
   };
@@ -66,7 +80,7 @@ class SingleReport extends Component {
     var courseId;
     var courseSelect;
 
-    if (courseTitle && courseTitle !== '' && courseTitle !== 'Course List') {
+    if (courseTitle && courseTitle !== '' && courseTitle !== 'Course Title') {
       this.props.courses.some((course) => {
         if (course.title === courseTitle && course.session === batch) {
           courseId = course._id;
@@ -76,10 +90,34 @@ class SingleReport extends Component {
         return false;
       });
       this.setState({
-        selectCourse: courseSelect,
         selectCourseId: courseId,
+        selectCourse: courseSelect,
         selectCourseSections: courseSelect.sections,
-        sectionChange: false,
+      });
+    }
+  };
+
+  onChangeSection = (e) => {
+    const title = e.target.value;
+    if (title === 'Section' || title === '') {
+      this.setState({
+        selectSection: 'Section',
+        materials: '',
+        materialsArray: [],
+        selectMaterialtitle: 'Material',
+        selectSemester: 'Semester',
+        materialsFetched: false,
+        materialLoading: false,
+      });
+    } else {
+      this.setState({
+        selectSection: title,
+        materials: '',
+        materialsArray: [],
+        selectMaterialtitle: 'Material',
+        selectSemester: 'Semester',
+        materialsFetched: false,
+        materialLoading: false,
       });
     }
   };
@@ -141,7 +179,23 @@ class SingleReport extends Component {
   onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    this.setState({ [name]: value });
+    if (name === 'selectMaterialtitle') {
+      if (value === 'Material' || value === '') {
+        this.setState({
+          selectMaterialtitle: 'Material',
+          selectSemester: 'Semester',
+          materialsFetched: false,
+          materialLoading: false,
+        });
+      } else {
+        this.setState({
+          selectMaterialtitle: value,
+          selectSemester: 'Semester',
+        });
+      }
+    } else if (name === 'selectSemester') {
+      this.setState({ [name]: value });
+    }
   };
 
   reportFormSubmit = (e) => {
@@ -255,11 +309,12 @@ class SingleReport extends Component {
     return (
       <form method='POST' onSubmit={this.reportFormSubmit}>
         <div className={classes.InputGroup}>
-          <label htmlFor='course'>Course - Batch</label>
+          <label htmlFor='selectCourseTitle'>Course - Batch</label>
           <SelectInput
-            name='course'
-            placeholder='Course List'
+            name='selectCourseTitle'
+            placeholder='Course Title'
             onChange={this.onChangeCourse}
+            selected={this.state.selectCourseTitle}
           >
             {this.props.coursesArray}
           </SelectInput>
@@ -269,12 +324,12 @@ class SingleReport extends Component {
           <SelectInput
             name='selectSection'
             placeholder='Section'
-            onChange={this.onChange}
+            onChange={this.onChangeSection}
+            selected={this.state.selectSection}
             disabled={this.state.selectCourseId === '' ? true : false}
           >
-            {this.state.selectCourseId === ''
-              ? []
-              : this.state.sectionChange
+            {this.state.selectCourseTitle === 'Course Title' ||
+            this.state.selectMaterialtitle === ''
               ? []
               : this.state.selectCourseSections}
           </SelectInput>
@@ -285,9 +340,18 @@ class SingleReport extends Component {
             name='selectMaterialtitle'
             placeholder={this.state.materialLoading ? '...' : 'Material'}
             onChange={this.onChange}
-            disabled={this.state.materialsFetched ? false : true}
+            selected={this.state.selectMaterialtitle}
+            disabled={
+              this.state.materialsFetched &&
+              this.state.selectSection !== 'Section'
+                ? false
+                : true
+            }
           >
-            {this.state.materialsArray}
+            {this.state.selectSection === 'Section' ||
+            this.state.selectSection === ''
+              ? []
+              : this.state.materialsArray}
           </SelectInput>
         </div>
         <div className={classes.InputGroup}>
@@ -296,9 +360,17 @@ class SingleReport extends Component {
             name='selectSemester'
             placeholder={this.state.materialLoading ? '...' : 'Semester'}
             onChange={this.onChange}
-            disabled={this.state.materialsFetched ? false : true}
+            disabled={
+              this.state.materialsFetched &&
+              this.state.selectSection !== 'Section'
+                ? false
+                : true
+            }
+            selected={this.state.selectSemester}
           >
-            {['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII']}
+            {!this.state.materialsFetched
+              ? []
+              : ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII']}
           </SelectInput>
         </div>
         <div className={classes.ButtonDiv}>

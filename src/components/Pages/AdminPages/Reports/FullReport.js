@@ -15,11 +15,11 @@ class FullReport extends Component {
     selectCourseSections: [],
     // Inputs
     selectTeacherId: '',
-    selectTeacherTitle: '',
+    selectTeacherTitle: 'Teacher List',
     selectCourseId: '',
-    selectCourseTitle: '',
-    selectSection: '',
-    selectSemester: '',
+    selectCourseTitle: 'Course Title',
+    selectSection: 'Section',
+    selectSemester: 'Semester',
   };
 
   abortController = new AbortController();
@@ -46,30 +46,38 @@ class FullReport extends Component {
         selectTeacherId: '',
         selectTeacherTitle: title,
         selectCourseId: '',
-        selectCourseTitle: '',
-        selectSection: '',
-        selectSemester: '',
+        selectCourseTitle: 'Course Title',
+        selectSection: 'Section',
+        selectSemester: 'Semester',
       });
       document.getElementById('reportForm').reset();
     } else {
       this.setState({
+        selectTeacherId: '',
         selectTeacherTitle: title,
+        selectCourseId: '',
+        selectCourseTitle: 'Course Title',
+        selectSection: 'Section',
+        selectSemester: 'Semester',
       });
     }
   };
 
   onChangeCourse = (e) => {
     const title = e.target.value;
-    if (title === 'Course List' || title === '') {
+    if (title === 'Course Title' || title === '') {
       this.setState({
         selectCourseId: '',
         selectCourseTitle: title,
-        selectSection: '',
-        selectSemester: '',
+        selectSection: 'Section',
+        selectSemester: 'Semester',
       });
     } else {
       this.setState({
+        selectCourseId: '',
         selectCourseTitle: title,
+        selectSection: 'Section',
+        selectSemester: 'Semester',
       });
     }
   };
@@ -189,12 +197,6 @@ class FullReport extends Component {
     this.setState({ [name]: value });
   };
 
-  onSemesterChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    this.setState({ [name]: value });
-  };
-
   reportFormSubmit = (e) => {
     e.preventDefault();
     const selectCourseId = this.state.selectCourseId;
@@ -267,28 +269,28 @@ class FullReport extends Component {
     return (
       <form method='POST' onSubmit={this.reportFormSubmit} id='reportForm'>
         <div className={classes.InputGroup}>
-          <label htmlFor='teacher'>Teacher</label>
+          <label htmlFor='selectTeacherTitle'>Teacher</label>
           <SelectInput
-            name='teacher'
+            name='selectTeacherTitle'
             placeholder='Teacher List'
             onChange={this.onChangeteacher}
+            selected={this.state.selectTeacherTitle}
           >
             {this.props.teachersArray}
           </SelectInput>
         </div>
         <div className={classes.InputGroup}>
-          <label htmlFor='course'>Course - Batch</label>
+          <label htmlFor='selectCourseTitle'>Course - Batch</label>
           <SelectInput
-            name='course'
+            name='selectCourseTitle'
             placeholder={
-              this.state.teacherSelectLoading
-                ? 'Course List ...'
-                : 'Course List'
+              this.state.teacherSelectLoading ? '...' : 'Course Title'
             }
             onChange={this.onChangeCourse}
             disabled={this.state.selectTeacherId === '' ? true : false}
+            selected={this.state.selectCourseTitle}
           >
-            {this.state.coursesArray}
+            {this.state.selectTeacherId === '' ? [] : this.state.coursesArray}
           </SelectInput>
         </div>
         <div className={classes.InputGroup}>
@@ -296,10 +298,13 @@ class FullReport extends Component {
           <SelectInput
             name='selectSemester'
             placeholder='Semester'
-            onChange={this.onSemesterChange}
+            onChange={this.onChange}
             disabled={this.state.selectCourseId === '' ? true : false}
+            selected={this.state.selectSemester}
           >
-            {['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII']}
+            {this.state.selectCourseId === ''
+              ? []
+              : ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII']}
           </SelectInput>
         </div>
         <div className={classes.InputGroup}>
@@ -309,6 +314,7 @@ class FullReport extends Component {
             placeholder='Section'
             onChange={this.onChange}
             disabled={this.state.selectCourseId === '' ? true : false}
+            selected={this.state.selectSection}
           >
             {this.state.selectCourseId === ''
               ? []
