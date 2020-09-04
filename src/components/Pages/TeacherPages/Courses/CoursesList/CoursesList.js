@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import classes from './CoursesList.module.css';
-import Spinner from '../../../../UI/Spinner/Spinner';
-import Button from '../../../../UI/Button/Button';
-import TableButton from '../../../../UI/TableButton/TableButton';
-import SelectInput from '../../../../UI/SelectInput/SelectInput';
-import Modal from '../../.././../UI/Modal/Modal';
+import classes from "./CoursesList.module.css";
+import Spinner from "../../../../UI/Spinner/Spinner";
+import Button from "../../../../UI/Button/Button";
+import TableButton from "../../../../UI/TableButton/TableButton";
+import SelectInput from "../../../../UI/SelectInput/SelectInput";
+import Modal from "../../.././../UI/Modal/Modal";
 
 class CoursesList extends Component {
   state = {
@@ -16,14 +16,14 @@ class CoursesList extends Component {
     addCourseModal: false,
     isLoading: false,
     // Data
-    adminCourses: '',
+    adminCourses: "",
     adminCoursesArray: [],
-    courses: '',
+    courses: "",
     totalCourses: 0,
-    selectCourseId: '',
-    selectCourseTitle: '',
+    selectCourseId: "",
+    selectCourseTitle: "",
     // Inputs
-    courseTitle: '',
+    courseTitle: "",
     courseSession: new Date().toISOString().substr(0, 10),
     courseSectionsObject: {
       A: false,
@@ -33,7 +33,7 @@ class CoursesList extends Component {
       E2: false,
     },
     // Tabs
-    tab: 'Active',
+    tab: "Active",
   };
 
   abortController = new AbortController();
@@ -51,8 +51,8 @@ class CoursesList extends Component {
     this.setState({ contentLoading: true });
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token,
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.props.token,
       },
       signal: this.abortController.signal,
     })
@@ -69,21 +69,21 @@ class CoursesList extends Component {
         });
       })
       .catch((err) => {
-        if (err.name === 'AbortError') {
+        if (err.name === "AbortError") {
         } else {
           try {
             err.json().then((body) => {
               this.props.notify(
                 true,
-                'Error',
-                body.error.status + ' ' + body.message
+                "Error",
+                body.error.status + " " + body.message
               );
             });
           } catch (e) {
             this.props.notify(
               true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+              "Error",
+              err.message + " Error parsing promise\nSERVER_CONNECTION_REFUSED!"
             );
           }
         }
@@ -93,8 +93,8 @@ class CoursesList extends Component {
   fetchAdminCourses = () => {
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/listcourses`, {
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token,
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.props.token,
       },
       signal: this.abortController.signal,
     })
@@ -105,7 +105,7 @@ class CoursesList extends Component {
       .then((resData) => {
         const arrayCourses = [];
         resData.courses.map((course) => {
-          if (course.status === 'Active') {
+          if (course.status === "Active") {
             return arrayCourses.push(course.title);
           }
           return true;
@@ -116,21 +116,21 @@ class CoursesList extends Component {
         });
       })
       .catch((err) => {
-        if (err.name === 'AbortError') {
+        if (err.name === "AbortError") {
         } else {
           try {
             err.json().then((body) => {
               this.props.notify(
                 true,
-                'Error',
-                body.error.status + ' ' + body.message
+                "Error",
+                body.error.status + " " + body.message
               );
             });
           } catch (e) {
             this.props.notify(
               true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+              "Error",
+              err.message + " Error parsing promise\nSERVER_CONNECTION_REFUSED!"
             );
           }
         }
@@ -158,8 +158,8 @@ class CoursesList extends Component {
       `${process.env.REACT_APP_SERVER_URL}/teacher/disablecourse/${this.state.selectCourseId}`,
       {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + this.props.token,
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + this.props.token,
         },
         signal: this.abortController.signal,
       }
@@ -173,22 +173,22 @@ class CoursesList extends Component {
         this.fetchTeacherCourses();
       })
       .catch((err) => {
-        if (err.name === 'AbortError') {
+        if (err.name === "AbortError") {
         } else {
           this.setState({ isLoading: false });
           try {
             err.json().then((body) => {
               this.props.notify(
                 true,
-                'Error',
-                body.error.status + ' ' + body.message
+                "Error",
+                body.error.status + " " + body.message
               );
             });
           } catch (e) {
             this.props.notify(
               true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+              "Error",
+              err.message + " Error parsing promise\nSERVER_CONNECTION_REFUSED!"
             );
           }
         }
@@ -199,7 +199,7 @@ class CoursesList extends Component {
     const value = e.target.value;
     const name = e.target.name;
 
-    if (name === 'courseSession') {
+    if (name === "courseSession") {
       if (
         new Date(value).getFullYear() < 2014 ||
         new Date(value).getFullYear().toString().length !== 4
@@ -210,7 +210,7 @@ class CoursesList extends Component {
       } else {
         this.setState({ courseSession: value });
       }
-    } else if (e.target.type === 'checkbox') {
+    } else if (e.target.type === "checkbox") {
       this.setState((prevState) => ({
         ...prevState,
         courseSectionsObject: {
@@ -229,7 +229,7 @@ class CoursesList extends Component {
     const courseSections = [];
 
     Object.entries(this.state.courseSectionsObject).map((sec) =>
-      sec[1] ? courseSections.push(sec[0]) : ''
+      sec[1] ? courseSections.push(sec[0]) : ""
     );
 
     const courseTitle = this.state.courseTitle;
@@ -245,22 +245,22 @@ class CoursesList extends Component {
     });
 
     if (
-      courseTitle !== '' &&
-      courseTitle !== 'Course List' &&
-      courseSession !== '' &&
+      courseTitle !== "" &&
+      courseTitle !== "Course List" &&
+      courseSession !== "" &&
       courseSession >= 2010 &&
       courseSections.length > 0
     ) {
       fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/takecourse`, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({
           courseId: courseId,
           sections: courseSections,
           session: courseSession,
         }),
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + this.props.token,
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + this.props.token,
         },
         signal: this.abortController.signal,
       })
@@ -273,35 +273,35 @@ class CoursesList extends Component {
             addCourseModal: false,
             isLoading: false,
           });
-          document.getElementById('onAddCourseForm').reset();
-          this.props.notify(true, 'Success', resData.message);
+          document.getElementById("onAddCourseForm").reset();
+          this.props.notify(true, "Success", resData.message);
           this.fetchTeacherCourses();
         })
         .catch((err) => {
-          if (err.name === 'AbortError') {
+          if (err.name === "AbortError") {
           } else {
             this.setState({ isLoading: false });
             try {
               err.json().then((body) => {
                 this.props.notify(
                   true,
-                  'Error',
-                  body.error.status + ' ' + body.message
+                  "Error",
+                  body.error.status + " " + body.message
                 );
               });
             } catch (e) {
               this.props.notify(
                 true,
-                'Error',
+                "Error",
                 err.message +
-                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+                  " Error parsing promise\nSERVER_CONNECTION_REFUSED!"
               );
             }
           }
         });
     } else {
       this.setState({ isLoading: false });
-      this.props.notify(true, 'Error', 'Fields should not be empty!');
+      this.props.notify(true, "Error", "Fields should not be empty!");
     }
   };
 
@@ -327,30 +327,30 @@ class CoursesList extends Component {
         <div className={classes.TabsButtons}>
           <div
             className={classes.Button}
-            onClick={() => this.setState({ tab: 'Active' })}
+            onClick={() => this.setState({ tab: "Active" })}
             style={{
               borderBottom:
-                this.state.tab === 'Active' ? '1px solid #3b3e66' : '',
+                this.state.tab === "Active" ? "1px solid #3b3e66" : "",
             }}
           >
             Active Courses
           </div>
           <div
             className={classes.Button}
-            onClick={() => this.setState({ tab: 'Inactive' })}
+            onClick={() => this.setState({ tab: "Inactive" })}
             style={{
               borderBottom:
-                this.state.tab === 'Inactive' ? '1px solid #3b3e66' : 'none',
+                this.state.tab === "Inactive" ? "1px solid #3b3e66" : "none",
             }}
           >
             Inactive Courses
           </div>
           <div
             className={classes.Button}
-            onClick={() => this.setState({ tab: 'Complete' })}
+            onClick={() => this.setState({ tab: "Complete" })}
             style={{
               borderBottom:
-                this.state.tab === 'Complete' ? '1px solid #3b3e66' : 'none',
+                this.state.tab === "Complete" ? "1px solid #3b3e66" : "none",
             }}
           >
             Completed Courses
@@ -360,40 +360,40 @@ class CoursesList extends Component {
           <thead>
             <tr>
               <th>Code</th>
-              <th colSpan='2'>Title</th>
+              <th colSpan="2">Title</th>
               <th>Sections</th>
+              <th>Year</th>
               <th>Session</th>
-              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {this.state.contentLoading ? (
               <tr>
-                <td colSpan='7'>
+                <td colSpan="7">
                   <Spinner />
                 </td>
               </tr>
             ) : this.state.totalCourses <= 0 ? (
               <tr>
-                <td colSpan='7'>You don't have any courses.</td>
+                <td colSpan="7">You don't have any courses.</td>
               </tr>
             ) : (
               this.state.courses.map((course) => {
-                if (this.state.tab === 'Active') {
-                  if (course.status !== 'Active') {
+                if (this.state.tab === "Active") {
+                  if (course.status !== "Active") {
                     return true;
                   } else {
                     activeCourses++;
                   }
-                } else if (this.state.tab === 'Inactive') {
-                  if (course.status !== 'Inactive') {
+                } else if (this.state.tab === "Inactive") {
+                  if (course.status !== "Inactive") {
                     return true;
                   } else {
                     inactiveCourses++;
                   }
                 } else {
-                  if (course.status !== 'Complete') {
+                  if (course.status !== "Complete") {
                     return true;
                   } else {
                     completedCourses++;
@@ -403,19 +403,19 @@ class CoursesList extends Component {
                   <tr key={course._id} className={classes.onRowHoverEffect}>
                     <td>{course.code}</td>
                     <td
-                      colSpan='2'
+                      colSpan="2"
                       onClick={() => this.onCourseFetch(course._id)}
                       className={classes.CourseTitle}
                     >
                       <strong>{course.title}</strong>
                     </td>
-                    <td>{course.sections.map((section) => section + ' ')}</td>
+                    <td>{course.sections.map((section) => section + " ")}</td>
                     <td>{course.session}</td>
-                    <td>{course.status}</td>
+                    <td>{course.sessionType}</td>
                     <td>
                       <TableButton
-                        disabled={course.status === 'Active' ? false : true}
-                        buttonType='red'
+                        disabled={course.status === "Active" ? false : true}
+                        buttonType="red"
                         onClick={() =>
                           this.disableModalHandler(course._id, course.title)
                         }
@@ -430,17 +430,17 @@ class CoursesList extends Component {
           </tbody>
           <tfoot>
             <tr>
-              <th colSpan='4'>
-                {this.state.tab === 'Active'
-                  ? 'Active Courses'
-                  : this.state.tab === 'Inactive'
-                  ? 'Inactive Courses'
-                  : 'Completed Courses'}
+              <th colSpan="4">
+                {this.state.tab === "Active"
+                  ? "Active Courses"
+                  : this.state.tab === "Inactive"
+                  ? "Inactive Courses"
+                  : "Completed Courses"}
               </th>
-              <th colSpan='3'>
-                {this.state.tab === 'Active'
+              <th colSpan="3">
+                {this.state.tab === "Active"
                   ? activeCourses
-                  : this.state.tab === 'Inactive'
+                  : this.state.tab === "Inactive"
                   ? inactiveCourses
                   : completedCourses}
               </th>
@@ -449,7 +449,7 @@ class CoursesList extends Component {
         </table>
         <div className={classes.ButtonDiv}>
           <Button onClick={() => this.setState({ addCourseModal: true })}>
-            {this.state.addCourseModal ? 'Adding Course' : 'Add Course'}
+            {this.state.addCourseModal ? "Adding Course" : "Add Course"}
           </Button>
         </div>
       </div>
@@ -473,15 +473,15 @@ class CoursesList extends Component {
                 </div>
               </div>
               <div className={classes.ButtonDiv}>
-                <Button type='button' onClick={this.disableModalHandler}>
+                <Button type="button" onClick={this.disableModalHandler}>
                   Cancel
                 </Button>
                 <Button
-                  type='button'
-                  buttonType='red'
+                  type="button"
+                  buttonType="red"
                   onClick={this.onDisableCourse}
                 >
-                  {this.state.isLoading ? 'Disabling' : 'Disable'}
+                  {this.state.isLoading ? "Disabling" : "Disable"}
                 </Button>
               </div>
             </div>
@@ -496,100 +496,100 @@ class CoursesList extends Component {
                 <div className={classes.ModalContentTitle}>Add Course</div>
                 <form
                   onSubmit={this.onAddCourseFormSubmit}
-                  id='onAddCourseForm'
+                  id="onAddCourseForm"
                 >
                   <div className={classes.InputGroup}>
-                    <label htmlFor='courseTitle'>Title</label>
+                    <label htmlFor="courseTitle">Title</label>
                     <SelectInput
-                      name='courseTitle'
-                      placeholder='Course Title'
+                      name="courseTitle"
+                      placeholder="Course Title"
                       onChange={this.onChange}
                     >
                       {this.state.adminCoursesArray}
                     </SelectInput>
                   </div>
                   <div className={classes.InputGroup}>
-                    <label htmlFor='courseSession'>Session From</label>
+                    <label htmlFor="courseSession">Session From</label>
                     <input
-                      type='date'
-                      name='courseSession'
+                      type="date"
+                      name="courseSession"
                       className={classes.dataInput}
                       value={this.state.courseSession}
                       onChange={this.onChange}
-                      min='2010-12-31'
+                      min="2010-12-31"
                       // max='2999-12-31'
                     />
                   </div>
                   <div className={classes.InputGroup}>
-                    <label htmlFor='courseSection'>Sections</label>
-                    <div className={classes.CheckBoxes} name='courseSection'>
+                    <label htmlFor="courseSection">Sections</label>
+                    <div className={classes.CheckBoxes} name="courseSection">
                       <div>
                         <input
-                          type='checkbox'
-                          value='A'
-                          name='A'
-                          id='A'
+                          type="checkbox"
+                          value="A"
+                          name="A"
+                          id="A"
                           onChange={this.onChange}
                         />
-                        <label htmlFor='A'>A</label>
+                        <label htmlFor="A">A</label>
                       </div>
                       <div>
                         <input
-                          type='checkbox'
-                          value='B'
-                          name='B'
-                          id='B'
+                          type="checkbox"
+                          value="B"
+                          name="B"
+                          id="B"
                           onChange={this.onChange}
                         />
-                        <label htmlFor='B'>B</label>
+                        <label htmlFor="B">B</label>
                       </div>
                       <div>
                         <input
-                          type='checkbox'
-                          value='C'
-                          name='C'
-                          id='C'
+                          type="checkbox"
+                          value="C"
+                          name="C"
+                          id="C"
                           onChange={this.onChange}
                         />
-                        <label htmlFor='C'>C</label>
+                        <label htmlFor="C">C</label>
                       </div>
                       <div>
                         <input
-                          type='checkbox'
-                          value='E1'
-                          name='E1'
-                          id='E1'
+                          type="checkbox"
+                          value="E1"
+                          name="E1"
+                          id="E1"
                           onChange={this.onChange}
                         />
-                        <label htmlFor='E1'>E1</label>
+                        <label htmlFor="E1">E1</label>
                       </div>
                       <div>
                         <input
-                          type='checkbox'
-                          value='E2'
-                          name='E2'
-                          id='E2'
+                          type="checkbox"
+                          value="E2"
+                          name="E2"
+                          id="E2"
                           onChange={this.onChange}
                         />
-                        <label htmlFor='E2'>E2</label>
+                        <label htmlFor="E2">E2</label>
                       </div>
                     </div>
                   </div>
                   <div className={classes.ButtonDiv}>
                     <Button
-                      type='button'
-                      buttonType='red'
+                      type="button"
+                      buttonType="red"
                       onClick={() => {
                         this.setState({
                           addCourseModal: false,
                         });
-                        document.getElementById('onAddCourseForm').reset();
+                        document.getElementById("onAddCourseForm").reset();
                       }}
                     >
                       Cancel
                     </Button>
-                    <Button type='submit'>
-                      {this.state.isLoading ? 'Loading' : 'Add Course'}
+                    <Button type="submit">
+                      {this.state.isLoading ? "Loading" : "Add Course"}
                     </Button>
                   </div>
                 </form>

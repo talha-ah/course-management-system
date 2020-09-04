@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import classes from './CoursesMonitoring.module.css';
-import Spinner from '../../../UI/Spinner/Spinner';
-import Button from '../../../UI/Button/Button';
-import TextArea from '../../../UI/TextArea/TextArea';
-import SelectInput from '../../../UI/SelectInput/SelectInput';
+import classes from "./CoursesMonitoring.module.css";
+import Spinner from "../../../UI/Spinner/Spinner";
+import Button from "../../../UI/Button/Button";
+import TextArea from "../../../UI/TextArea/TextArea";
+import SelectInput from "../../../UI/SelectInput/SelectInput";
 
 class CoursesMonitoring extends Component {
   state = {
@@ -13,25 +13,25 @@ class CoursesMonitoring extends Component {
     monitoringLoading: false,
     isLoading: false,
     // Data
-    selectCourseId: '',
-    selectCourseTitle: '',
-    courses: '',
+    selectCourseId: "",
+    selectCourseTitle: "",
+    courses: "",
     coursesArray: [],
-    courseMonitoringId: '',
-    status: 'new',
+    courseMonitoringId: "",
+    status: "new",
     // Inputs
-    howFar: '',
-    fullCover: '',
-    relevantProblems: '',
-    assessStandard: '',
-    emergeApplication: '',
+    howFar: "",
+    fullCover: "",
+    relevantProblems: "",
+    assessStandard: "",
+    emergeApplication: "",
     // RederingObject
     data: {
-      howFar: 'How far objectives have been achieved?',
-      fullCover: 'Full Coverage of contents.',
-      relevantProblems: 'Relevant Problem Skills Development',
-      assessStandard: 'Assessment Standards',
-      emergeApplication: 'Application of emerging technologies',
+      howFar: "How far objectives have been achieved?",
+      fullCover: "Full Coverage of contents.",
+      relevantProblems: "Relevant Problem Skills Development",
+      assessStandard: "Assessment Standards",
+      emergeApplication: "Application of emerging technologies",
     },
   };
 
@@ -40,8 +40,8 @@ class CoursesMonitoring extends Component {
   componentDidMount() {
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token,
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.props.token,
       },
       signal: this.abortController.signal,
     })
@@ -52,8 +52,8 @@ class CoursesMonitoring extends Component {
       .then((resData) => {
         const arrayCourses = [];
         resData.courses.map((course) => {
-          if (course.status === 'Active') {
-            return arrayCourses.push(course.title + '-' + course.session);
+          if (course.status === "Complete") {
+            return arrayCourses.push(course.title + "-" + course.session);
           }
           return true;
         });
@@ -64,21 +64,21 @@ class CoursesMonitoring extends Component {
         });
       })
       .catch((err) => {
-        if (err.name === 'AbortError') {
+        if (err.name === "AbortError") {
         } else {
           try {
             err.json().then((body) => {
               this.props.notify(
                 true,
-                'Error',
-                body.error.status + ' ' + body.message
+                "Error",
+                body.error.status + " " + body.message
               );
             });
           } catch (e) {
             this.props.notify(
               true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+              "Error",
+              err.message + " Error parsing promise\nSERVER_CONNECTION_REFUSED!"
             );
           }
         }
@@ -97,9 +97,9 @@ class CoursesMonitoring extends Component {
 
   onChangeCourse = (e) => {
     const title = e.target.value;
-    if (title === 'Course List' || title === '') {
+    if (title === "Course List" || title === "") {
       this.setState({
-        selectCourseId: '',
+        selectCourseId: "",
         selectCourseTitle: title,
       });
     } else {
@@ -111,8 +111,8 @@ class CoursesMonitoring extends Component {
 
   onSelectCourse = () => {
     const courseTitle1 = this.state.selectCourseTitle;
-    const courseTitle = courseTitle1.split('-')[0];
-    const batch = courseTitle1.split('-')[1] + '-' + courseTitle1.split('-')[2];
+    const courseTitle = courseTitle1.split("-")[0];
+    const batch = courseTitle1.split("-")[1] + "-" + courseTitle1.split("-")[2];
     var courseId;
 
     this.state.courses.some((course) => {
@@ -123,14 +123,14 @@ class CoursesMonitoring extends Component {
       return false;
     });
 
-    if (courseTitle !== '' && courseTitle !== 'Course List') {
+    if (courseTitle !== "" && courseTitle !== "Course List") {
       this.setState({ monitoringLoading: true });
       fetch(
         `${process.env.REACT_APP_SERVER_URL}/teacher/getmonitoring/${courseId}`,
         {
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.props.token,
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + this.props.token,
           },
           signal: this.abortController.signal,
         }
@@ -154,22 +154,22 @@ class CoursesMonitoring extends Component {
         })
         .catch((err) => {
           this.setState({ monitoringLoading: false });
-          if (err.name === 'AbortError') {
+          if (err.name === "AbortError") {
           } else {
             try {
               err.json().then((body) => {
                 this.props.notify(
                   true,
-                  'Error',
-                  body.error.status + ' ' + body.message
+                  "Error",
+                  body.error.status + " " + body.message
                 );
               });
             } catch (e) {
               this.props.notify(
                 true,
-                'Error',
+                "Error",
                 err.message +
-                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+                  " Error parsing promise\nSERVER_CONNECTION_REFUSED!"
               );
             }
           }
@@ -191,22 +191,22 @@ class CoursesMonitoring extends Component {
     const assessStandard = this.state.assessStandard;
     const emergeApplication = this.state.emergeApplication;
     const monitorId = this.state.courseMonitoringId;
-    if (this.state.status === 'new') {
+    if (this.state.status === "new") {
       if (
-        howFar !== '' &&
-        fullCover !== '' &&
-        relevantProblems !== '' &&
-        assessStandard !== '' &&
-        emergeApplication !== ''
+        howFar !== "" &&
+        fullCover !== "" &&
+        relevantProblems !== "" &&
+        assessStandard !== "" &&
+        emergeApplication !== ""
       ) {
         this.setState({ isLoading: true });
         fetch(
           `${process.env.REACT_APP_SERVER_URL}/teacher/addmonitoring/${monitorId}`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + this.props.token,
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + this.props.token,
             },
             body: JSON.stringify({
               howFar: howFar,
@@ -223,36 +223,36 @@ class CoursesMonitoring extends Component {
             return res.json();
           })
           .then((resData) => {
-            this.props.history.push('/');
-            this.props.notify(true, 'Success', resData.message);
+            this.props.history.push("/");
+            this.props.notify(true, "Success", resData.message);
           })
           .catch((err) => {
             this.setState({ isLoading: false });
-            if (err.name === 'AbortError') {
+            if (err.name === "AbortError") {
             } else {
               try {
                 err.json().then((body) => {
                   this.props.notify(
                     true,
-                    'Error',
-                    body.error.status + ' ' + body.message
+                    "Error",
+                    body.error.status + " " + body.message
                   );
                 });
               } catch (e) {
                 this.props.notify(
                   true,
-                  'Error',
+                  "Error",
                   err.message +
-                    ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+                    " Error parsing promise\nSERVER_CONNECTION_REFUSED!"
                 );
               }
             }
           });
       } else {
-        this.props.notify(true, 'Error', 'Fields should not be empty!');
+        this.props.notify(true, "Error", "Fields should not be empty!");
       }
     } else {
-      this.props.notify(true, 'Error', 'You cannot edit it now!');
+      this.props.notify(true, "Error", "You cannot edit it now!");
     }
   };
 
@@ -263,8 +263,8 @@ class CoursesMonitoring extends Component {
       <div className={classes.CoursesMonitoring}>
         <div className={classes.Caption}>
           <span className={classes.CaptionSpan}>
-            {this.state.selectCourseId === '' ? (
-              ''
+            {this.state.selectCourseId === "" ? (
+              ""
             ) : (
               <>
                 Subject: &nbsp; <strong>{this.state.selectCourseTitle}</strong>
@@ -273,11 +273,11 @@ class CoursesMonitoring extends Component {
           </span>
           <span className={classes.CaptionSpan}>
             <SelectInput
-              name='courseTitle'
-              placeholder='Course List'
+              name="courseTitle"
+              placeholder="Course List"
               onChange={this.onChangeCourse}
-              disabled=''
-              defaultValue=''
+              disabled=""
+              defaultValue=""
             >
               {this.state.coursesArray}
             </SelectInput>
@@ -285,40 +285,40 @@ class CoursesMonitoring extends Component {
         </div>
         {this.state.monitoringLoading ? (
           <Spinner />
-        ) : this.state.selectCourseId === '' ? (
+        ) : this.state.selectCourseId === "" ? (
           <div className={classes.Centered}>Please select a course!</div>
         ) : (
           <form
-            method='POST'
+            method="POST"
             onSubmit={this.onMonitoringSubmit}
-            style={{ paddingTop: '25px' }}
+            style={{ paddingTop: "25px" }}
           >
             {Object.entries(this.state.data).map((row) => {
               return (
                 <div key={row[0]} className={classes.InputGroup}>
                   <label className={classes.Label}>{row[1]}</label>
                   <TextArea
-                    rows='2'
+                    rows="2"
                     onChange={this.onChange}
                     name={row[0]}
                     value={this.state[row[0]]}
                     style={{
-                      height: '52px',
-                      minHeight: '52px',
-                      maxHeight: '180px',
-                      padding: '2px 6px 2px 10px',
+                      height: "52px",
+                      minHeight: "52px",
+                      maxHeight: "180px",
+                      padding: "2px 6px 2px 10px",
                     }}
-                    disabled={this.state.status === 'new' ? false : true}
+                    disabled={this.state.status === "new" ? false : true}
                   />
                 </div>
               );
             })}
             <div className={classes.ButtonDiv}>
               <Button
-                type='submit'
+                type="submit"
                 disabled={this.state.isLoading ? true : false}
               >
-                {this.state.isLoading ? 'Submitting' : 'Submit Form'}
+                {this.state.isLoading ? "Submitting" : "Submit Form"}
               </Button>
             </div>
           </form>

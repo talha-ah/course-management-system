@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import classes from './CoursesLog.module.css';
-import Spinner from '../../../UI/Spinner/Spinner';
-import Button from '../../../UI/Button/Button';
-import TableButton from '../../../UI/TableButton/TableButton';
-import TableInput from '../../../UI/TableInput/TableInput';
-import TextArea from '../../../UI/TextArea/TextArea';
-import SelectInput from '../../../UI/SelectInput/SelectInput';
+import classes from "./CoursesLog.module.css";
+import Spinner from "../../../UI/Spinner/Spinner";
+import Button from "../../../UI/Button/Button";
+import TableButton from "../../../UI/TableButton/TableButton";
+import TableInput from "../../../UI/TableInput/TableInput";
+import TextArea from "../../../UI/TextArea/TextArea";
+import SelectInput from "../../../UI/SelectInput/SelectInput";
 
 class CoursesLog extends Component {
   state = {
@@ -15,17 +15,17 @@ class CoursesLog extends Component {
     logLoading: false,
     isLoading: false,
     // Data
-    selectCourseId: '',
-    selectCourseTitle: '',
-    courses: '',
+    selectCourseId: "",
+    selectCourseTitle: "",
+    courses: "",
     coursesArray: [],
-    courseLog: '',
+    courseLog: "",
     // Adding Log
     addingRow: false,
-    date: '',
-    duration: '01:30',
-    topics: '',
-    instruments: '',
+    date: "",
+    duration: "01:30",
+    topics: "",
+    instruments: "",
   };
 
   abortController = new AbortController();
@@ -33,8 +33,8 @@ class CoursesLog extends Component {
   componentDidMount() {
     fetch(`${process.env.REACT_APP_SERVER_URL}/teacher/courses`, {
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + this.props.token,
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.props.token,
       },
       signal: this.abortController.signal,
     })
@@ -45,8 +45,8 @@ class CoursesLog extends Component {
       .then((resData) => {
         const arrayCourses = [];
         resData.courses.map((course) => {
-          if (course.status === 'Active') {
-            return arrayCourses.push(course.title + '-' + course.session);
+          if (course.status === "Active") {
+            return arrayCourses.push(course.title + "-" + course.session);
           }
           return true;
         });
@@ -57,21 +57,21 @@ class CoursesLog extends Component {
         });
       })
       .catch((err) => {
-        if (err.name === 'AbortError') {
+        if (err.name === "AbortError") {
         } else {
           try {
             err.json().then((body) => {
               this.props.notify(
                 true,
-                'Error',
-                body.error.status + ' ' + body.message
+                "Error",
+                body.error.status + " " + body.message
               );
             });
           } catch (e) {
             this.props.notify(
               true,
-              'Error',
-              err.message + ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+              "Error",
+              err.message + " Error parsing promise\nSERVER_CONNECTION_REFUSED!"
             );
           }
         }
@@ -93,18 +93,18 @@ class CoursesLog extends Component {
     var now = new Date();
     var month = now.getMonth() + 1;
     var day = now.getDate();
-    if (month < 10) month = '0' + month;
-    if (day < 10) day = '0' + day;
+    if (month < 10) month = "0" + month;
+    if (day < 10) day = "0" + day;
 
-    var today = now.getFullYear() + '-' + month + '-' + day;
+    var today = now.getFullYear() + "-" + month + "-" + day;
     this.setState({ date: today });
   };
 
   onChangeCourse = (e) => {
     const title = e.target.value;
-    if (title === 'Course List' || title === '') {
+    if (title === "Course List" || title === "") {
       this.setState({
-        selectCourseId: '',
+        selectCourseId: "",
         selectCourseTitle: title,
         addingRow: false,
       });
@@ -117,8 +117,8 @@ class CoursesLog extends Component {
 
   onSelectCourse = () => {
     const courseTitle1 = this.state.selectCourseTitle;
-    const courseTitle = courseTitle1.split('-')[0];
-    const batch = courseTitle1.split('-')[1] + '-' + courseTitle1.split('-')[2];
+    const courseTitle = courseTitle1.split("-")[0];
+    const batch = courseTitle1.split("-")[1] + "-" + courseTitle1.split("-")[2];
     var courseId;
 
     this.state.courses.some((course) => {
@@ -128,14 +128,14 @@ class CoursesLog extends Component {
       }
       return false;
     });
-    if (courseTitle !== '' && courseTitle !== 'Course List') {
+    if (courseTitle !== "" && courseTitle !== "Course List") {
       this.setState({ logLoading: true });
       fetch(
         `${process.env.REACT_APP_SERVER_URL}/teacher/getcourselog/${courseId}`,
         {
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.props.token,
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + this.props.token,
           },
           signal: this.abortController.signal,
         }
@@ -152,22 +152,22 @@ class CoursesLog extends Component {
           });
         })
         .catch((err) => {
-          if (err.name === 'AbortError') {
+          if (err.name === "AbortError") {
           } else {
             try {
               err.json().then((body) => {
                 this.props.notify(
                   true,
-                  'Error',
-                  body.error.status + ' ' + body.message
+                  "Error",
+                  body.error.status + " " + body.message
                 );
               });
             } catch (e) {
               this.props.notify(
                 true,
-                'Error',
+                "Error",
                 err.message +
-                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+                  " Error parsing promise\nSERVER_CONNECTION_REFUSED!"
               );
             }
           }
@@ -185,12 +185,12 @@ class CoursesLog extends Component {
     e.preventDefault();
     const topics = this.state.topics;
     const instruments = this.state.instruments;
-    if (topics !== '' && instruments !== '') {
+    if (topics !== "" && instruments !== "") {
       this.setState({ isLoading: true });
       fetch(
         `${process.env.REACT_APP_SERVER_URL}/teacher/addcourselog/${this.state.courseLog._id}`,
         {
-          method: 'POST',
+          method: "POST",
           body: JSON.stringify({
             date: this.state.date,
             duration: this.state.duration,
@@ -198,8 +198,8 @@ class CoursesLog extends Component {
             instruments: instruments,
           }),
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.props.token,
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + this.props.token,
           },
           signal: this.abortController.signal,
         }
@@ -212,38 +212,86 @@ class CoursesLog extends Component {
           this.setState({
             isLoading: false,
             addingRow: false,
-            instruments: '',
-            topics: '',
+            instruments: "",
+            topics: "",
           });
           this.onSelectCourse();
-          this.props.notify(true, 'Success', resData.message);
+          this.props.notify(true, "Success", resData.message);
         })
         .catch((err) => {
           this.setState({
             isLoading: false,
           });
-          if (err.name === 'AbortError') {
+          if (err.name === "AbortError") {
           } else {
             try {
               err.json().then((body) => {
                 this.props.notify(
                   true,
-                  'Error',
-                  body.error.status + ' ' + body.message
+                  "Error",
+                  body.error.status + " " + body.message
                 );
               });
             } catch (e) {
               this.props.notify(
                 true,
-                'Error',
+                "Error",
                 err.message +
-                  ' Error parsing promise\nSERVER_CONNECTION_REFUSED!'
+                  " Error parsing promise\nSERVER_CONNECTION_REFUSED!"
               );
             }
           }
         });
     } else {
-      this.props.notify(true, 'Error', 'Field cannot be empty!');
+      this.props.notify(true, "Error", "Field cannot be empty!");
+    }
+  };
+
+  onLogDeleteHandler = async (itemId) => {
+    this.setState({
+      isLoading: true,
+    });
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/teacher/deletecourselog/${this.state.courseLog._id}/${itemId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + this.props.token,
+          },
+          signal: this.abortController.signal,
+        }
+      );
+      if (!res.ok) throw res;
+      const resData = await res.json();
+      this.setState({
+        isLoading: false,
+      });
+      this.onSelectCourse();
+      this.props.notify(true, "Success", resData.message);
+    } catch (err) {
+      this.setState({
+        isLoading: false,
+      });
+      if (err.name === "AbortError") {
+      } else {
+        try {
+          err.json().then((body) => {
+            this.props.notify(
+              true,
+              "Error",
+              body.error.status + " " + body.message
+            );
+          });
+        } catch (e) {
+          this.props.notify(
+            true,
+            "Error",
+            err.message + " Error parsing promise\nSERVER_CONNECTION_REFUSED!"
+          );
+        }
+      }
     }
   };
 
@@ -254,8 +302,8 @@ class CoursesLog extends Component {
       <div className={classes.CoursesLog}>
         <div className={classes.Caption}>
           <span className={classes.CaptionSpan}>
-            {this.state.selectCourseId === '' ? (
-              ''
+            {this.state.selectCourseId === "" ? (
+              ""
             ) : (
               <>
                 Subject: &nbsp; <strong>{this.state.selectCourseTitle}</strong>
@@ -264,11 +312,11 @@ class CoursesLog extends Component {
           </span>
           <span className={classes.CaptionSpan}>
             <SelectInput
-              name='courseTitle'
-              placeholder='Course List'
+              name="courseTitle"
+              placeholder="Course List"
               onChange={this.onChangeCourse}
-              disabled=''
-              defaultValue=''
+              disabled=""
+              defaultValue=""
             >
               {this.state.coursesArray}
             </SelectInput>
@@ -281,25 +329,25 @@ class CoursesLog extends Component {
               <th>Duration</th>
               <th>Topics Covered</th>
               <th>Evaluation Instruments</th>
-              <th></th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {this.state.logLoading ? (
               <tr>
-                <td colSpan='5'>
+                <td colSpan="5">
                   <Spinner />
                 </td>
               </tr>
-            ) : this.state.selectCourseId === '' ? (
+            ) : this.state.selectCourseId === "" ? (
               <tr key={1}>
-                <td style={{ padding: '20px' }} colSpan='5'>
+                <td style={{ padding: "20px" }} colSpan="5">
                   Please select a course!
                 </td>
               </tr>
             ) : this.state.courseLog.log.length <= 0 ? (
               <tr key={1}>
-                <td style={{ padding: '20px' }} colSpan='5'>
+                <td style={{ padding: "20px" }} colSpan="5">
                   You haven't added any courselog for this course yet!
                 </td>
               </tr>
@@ -313,64 +361,72 @@ class CoursesLog extends Component {
                       <TextArea
                         defaultValue={row.topics}
                         disabled={true}
-                        rows='1'
+                        rows="1"
                         style={{
-                          height: '22px',
-                          minHeight: '22px',
-                          maxHeight: '110px',
-                          border: '0',
+                          height: "22px",
+                          minHeight: "22px",
+                          maxHeight: "110px",
+                          border: "0",
                         }}
                       />
                     </td>
                     <td>{row.instruments}</td>
-                    <td>-</td>
+                    <td>
+                      <TableButton
+                        disabled={this.state.isLoading}
+                        buttonType="red"
+                        onClick={() => this.onLogDeleteHandler(row._id)}
+                      >
+                        Delete
+                      </TableButton>
+                    </td>
                   </tr>
                 );
               })
             )}
             {this.state.addingRow ? (
-              <tr style={{ backgroundColor: '#f4f5fd' }}>
+              <tr style={{ backgroundColor: "#f4f5fd" }}>
                 <td>
                   <TableInput
-                    style={{ backgroundColor: 'transparent' }}
-                    type='date'
-                    name='date'
+                    style={{ backgroundColor: "transparent" }}
+                    type="date"
+                    name="date"
                     value={this.state.date}
                     onChange={this.onChange}
                   />
                 </td>
                 <td>
                   <TableInput
-                    style={{ backgroundColor: 'transparent' }}
-                    type='time'
-                    name='duration'
+                    style={{ backgroundColor: "transparent" }}
+                    type="time"
+                    name="duration"
                     value={this.state.duration}
                     onChange={this.onChange}
                   />
                 </td>
                 <td>
                   <TextArea
-                    placeholder='Topics Covered'
-                    name='topics'
-                    rows='1'
+                    placeholder="Topics Covered"
+                    name="topics"
+                    rows="1"
                     onChange={this.onChange}
                     value={this.state.topics}
                     style={{
-                      height: '22px',
-                      minHeight: '22px',
-                      maxHeight: '66px',
-                      border: '0',
-                      textAlign: 'center',
-                      backgroundColor: 'transparent',
+                      height: "22px",
+                      minHeight: "22px",
+                      maxHeight: "66px",
+                      border: "0",
+                      textAlign: "center",
+                      backgroundColor: "transparent",
                     }}
                   />
                 </td>
                 <td>
                   <TableInput
-                    style={{ backgroundColor: 'transparent' }}
-                    type='text'
-                    placeholder='Evaluation Instruments'
-                    name='instruments'
+                    style={{ backgroundColor: "transparent" }}
+                    type="text"
+                    placeholder="Evaluation Instruments"
+                    name="instruments"
                     onChange={this.onChange}
                     value={this.state.instruments}
                   />
@@ -379,23 +435,23 @@ class CoursesLog extends Component {
                   <TableButton
                     className={classes.Button}
                     onClick={this.onLogAddHandler}
-                    type='button'
+                    type="button"
                   >
                     Add
                   </TableButton>
                   <TableButton
-                    style={{ marginLeft: '0.4em' }}
-                    buttonType='red'
+                    style={{ marginLeft: "0.4em" }}
+                    buttonType="red"
                     // title='Cancel'
                     className={classes.Button}
                     onClick={() =>
                       this.setState({
                         addingRow: false,
-                        instruments: '',
-                        topics: '',
+                        instruments: "",
+                        topics: "",
                       })
                     }
-                    type='button'
+                    type="button"
                   >
                     Cancel
                   </TableButton>
@@ -409,13 +465,13 @@ class CoursesLog extends Component {
             onClick={() => this.setState({ addingRow: true })}
             disabled={
               this.state.addingRow ||
-              this.state.selectCourseTitle === '' ||
-              this.state.selectCourseTitle === 'Course List'
+              this.state.selectCourseTitle === "" ||
+              this.state.selectCourseTitle === "Course List"
                 ? true
                 : false
             }
           >
-            {this.state.isLoading ? 'Loading' : 'Add Log Row'}
+            {this.state.isLoading ? "Loading" : "Add Log Row"}
           </Button>
         </div>
       </div>
