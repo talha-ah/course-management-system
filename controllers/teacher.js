@@ -1,18 +1,17 @@
-const { clearFile } = require('../utils/clearFile');
-const bcrypt = require('bcryptjs');
-const validator = require('validator');
-// const PDFDocument = require('pdfkit');
+const { clearFile } = require("../utils/clearFile");
+const bcrypt = require("bcryptjs");
+const validator = require("validator");
 
-const Teacher = require('../models/teacher');
-const Course = require('../models/course');
-const CourseLog = require('../models/nceac/courselog');
-const CourseMonitoring = require('../models/nceac/coursemonitoring');
-const CourseDescription = require('../models/nceac/coursedescription');
-const Assignment = require('../models/materials/assignments');
-const Quiz = require('../models/materials/quizzes');
-const Paper = require('../models/materials/papers');
+const Teacher = require("../models/teacher");
+const Course = require("../models/course");
+const CourseLog = require("../models/nceac/courselog");
+const CourseMonitoring = require("../models/nceac/coursemonitoring");
+const CourseDescription = require("../models/nceac/coursedescription");
+const Assignment = require("../models/materials/assignments");
+const Quiz = require("../models/materials/quizzes");
+const Paper = require("../models/materials/papers");
 
-const Class = require('../models/class');
+const Class = require("../models/class");
 
 // =========================================================== Profile ================================================
 
@@ -23,13 +22,13 @@ exports.getProfileStatus = async (req, res, next) => {
     const teacher = await Teacher.findById(teacherId);
 
     if (!teacher) {
-      const error = new Error('Unable to fetch the user.');
+      const error = new Error("Unable to fetch the user.");
       error.status = 404;
       throw error;
     }
 
     res.status(200).send({
-      message: 'Teacher fetched.',
+      message: "Teacher fetched.",
       teacher: {
         email: teacher.email,
         firstName: teacher.firstName,
@@ -52,13 +51,13 @@ exports.getTeacher = async (req, res, next) => {
     const teacher = await Teacher.findById(teacherId);
 
     if (!teacher) {
-      const error = new Error('Unable to fetch the user.');
+      const error = new Error("Unable to fetch the user.");
       error.status = 404;
       throw error;
     }
 
     res.status(200).send({
-      message: 'Teacher fetched.',
+      message: "Teacher fetched.",
       teacher: {
         firstName: teacher.firstName,
         lastName: teacher.lastName,
@@ -92,28 +91,28 @@ exports.editProfile = async (req, res, next) => {
   const errors = [];
   try {
     if (!validator.isAlphanumeric(firstName) || validator.isEmpty(firstName)) {
-      errors.push('Invalid First Name!');
+      errors.push("Invalid First Name!");
     }
     if (!validator.isAlphanumeric(lastName) || validator.isEmpty(lastName)) {
-      errors.push('Invalid Last Name!');
+      errors.push("Invalid Last Name!");
     }
     if (!validator.isEmail(email) || validator.isEmpty(email)) {
-      errors.push('Invalid Email!');
+      errors.push("Invalid Email!");
     }
     if (
       !validator.isNumeric(String(phone)) ||
       validator.isEmpty(String(phone))
     ) {
-      errors.push('Invalid Phone!');
+      errors.push("Invalid Phone!");
     }
     if (!validator.isAlpha(country) || validator.isEmpty(country)) {
-      errors.push('Invalid Country!');
+      errors.push("Invalid Country!");
     }
     if (!validator.isAlpha(city) || validator.isEmpty(city)) {
-      errors.push('Invalid City!');
+      errors.push("Invalid City!");
     }
     if (!validator.isAlphanumeric(zip) || validator.isEmpty(String(zip))) {
-      errors.push('Invalid Zip!');
+      errors.push("Invalid Zip!");
     }
     if (errors.length > 0) {
       var error = new Error(errors);
@@ -124,7 +123,7 @@ exports.editProfile = async (req, res, next) => {
     const teacher = await Teacher.findById(teacherId);
 
     if (!teacher) {
-      const err = new Error('Could not find teacher.');
+      const err = new Error("Could not find teacher.");
       err.status = 404;
       throw err;
     }
@@ -147,12 +146,12 @@ exports.editProfile = async (req, res, next) => {
     teacher.address.country = country;
     teacher.address.city = city;
     teacher.address.zip = zip;
-    teacher.status = 'Active';
+    teacher.status = "Active";
 
     const updatedTeacher = await teacher.save();
 
     res.status(201).send({
-      message: 'Profile Updated',
+      message: "Profile Updated",
       teacher: {
         firstName: updatedTeacher.firstName,
         lastName: updatedTeacher.lastName,
@@ -183,7 +182,7 @@ exports.editProfilePassword = async (req, res, next) => {
       !validator.isLength(newPassword, { min: 6 }) ||
       validator.isEmpty(newPassword)
     ) {
-      errors.push('Invalid New Password Length!');
+      errors.push("Invalid New Password Length!");
     }
     if (errors.length > 0) {
       var error = new Error(errors);
@@ -193,7 +192,7 @@ exports.editProfilePassword = async (req, res, next) => {
 
     const teacher = await Teacher.findById(teacherId);
     if (!teacher) {
-      const err = new Error('Could not find teacher.');
+      const err = new Error("Could not find teacher.");
       err.status = 404;
       throw err;
     }
@@ -203,7 +202,7 @@ exports.editProfilePassword = async (req, res, next) => {
       teacher.password
     );
     if (!passwordCheck) {
-      var error = new Error('Wrong password!');
+      var error = new Error("Wrong password!");
       error.status = 403;
       throw error;
     }
@@ -214,7 +213,7 @@ exports.editProfilePassword = async (req, res, next) => {
     const updatedTeacher = await teacher.save();
 
     res.status(201).json({
-      message: 'Password updated!',
+      message: "Password updated!",
       teacher: {
         firstName: updatedTeacher.firstName,
         lastName: updatedTeacher.lastName,
@@ -237,31 +236,31 @@ exports.editCV = async (req, res, next) => {
   const teacherId = req.userId;
 
   try {
-    if (req.file.mimetype !== 'application/pdf') {
-      var error = new Error('File type not PDF!.');
+    if (req.file.mimetype !== "application/pdf") {
+      var error = new Error("File type not PDF!.");
       error.status = 400;
       throw error;
     }
     var cvPath = req.file.path;
     if (!cvPath || !req.file) {
-      const err = new Error('No file provided!');
+      const err = new Error("No file provided!");
       err.status = 204;
       throw err;
     }
-    cvPath = cvPath.replace(/\\/g, '/');
+    cvPath = cvPath.replace(/\\/g, "/");
     const teacher = await Teacher.findById(teacherId);
     if (!teacher) {
-      const err = new Error('Could not find teacher.');
+      const err = new Error("Could not find teacher.");
       err.status = 404;
       throw err;
     }
-    if (teacher.cvUrl !== 'undefined' && teacher.cvUrl) {
+    if (teacher.cvUrl !== "undefined" && teacher.cvUrl) {
       clearFile(teacher.cvUrl);
     }
     teacher.cvUrl = cvPath;
     const updatedTeacher = await teacher.save();
     res.status(201).json({
-      message: 'CV Updated!',
+      message: "CV Updated!",
       teacher: {
         firstName: updatedTeacher.firstName,
         lastName: updatedTeacher.lastName,
@@ -284,19 +283,19 @@ exports.editCV = async (req, res, next) => {
 
 exports.getCourses = async (req, res, next) => {
   try {
-    const courses = await Course.find().select('title status');
+    const courses = await Course.find().select("title status");
     // const courses = await Course.find({ status: 'Active' }).select(
     //   'title -_id'
     // );
     // OR .find({}).select({ "name": 1, "_id": 0});
 
     if (!courses) {
-      var error = new Error('Unable to fetch the courses');
+      var error = new Error("Unable to fetch the courses");
       error.status = 400;
       throw error;
     }
 
-    res.status(200).json({ message: 'Courses fetched!', courses: courses });
+    res.status(200).json({ message: "Courses fetched!", courses: courses });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -349,7 +348,7 @@ exports.getCourse = async (req, res, next) => {
       papers: papers,
       quizzes: quizzes,
     };
-    res.status(200).json({ message: 'Course fetched!', course: updatedCourse });
+    res.status(200).json({ message: "Course fetched!", course: updatedCourse });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -363,11 +362,11 @@ exports.getTeacherCourses = async (req, res, next) => {
 
   try {
     const teacher = await Teacher.findById(teacherId)
-      .populate('coursesAssigned.courseId')
+      .populate("coursesAssigned.courseId")
       .exec();
 
     if (!teacher) {
-      const error = new Error('Error in fetching the teacher!');
+      const error = new Error("Error in fetching the teacher!");
       error.code = 404;
       throw new error();
     }
@@ -402,7 +401,7 @@ exports.getTeacherCourses = async (req, res, next) => {
     });
 
     res.status(200).json({
-      message: 'Courses fetched!',
+      message: "Courses fetched!",
       courses: updatedCourses,
       totalCourses: totalCourses,
     });
@@ -423,14 +422,14 @@ exports.takeCourse = async (req, res, next) => {
   const errors = [];
   try {
     if (sections.length <= 0) {
-      errors.push('Invalid sections!');
+      errors.push("Invalid sections!");
     }
     if (
       !validator.isNumeric(String(session2)) ||
       validator.isEmpty(String(session2)) ||
       session2 < 2010
     ) {
-      errors.push('Invalid session!');
+      errors.push("Invalid session!");
     }
     if (errors.length > 0) {
       var error = new Error(errors);
@@ -438,15 +437,15 @@ exports.takeCourse = async (req, res, next) => {
       throw error;
     }
 
-    const session = session2 + '-' + (session2 + 4);
+    const session = session2 + "-" + (session2 + 4);
     const course = await Teacher.find({
       _id: teacherId,
-      'coursesAssigned.courseId': courseId,
-      'coursesAssigned.session': session,
+      "coursesAssigned.courseId": courseId,
+      "coursesAssigned.session": session,
     });
 
     if (course.length > 0) {
-      const error = new Error('Course already exists!');
+      const error = new Error("Course already exists!");
       error.status = 400;
       throw error;
     }
@@ -472,7 +471,7 @@ exports.takeCourse = async (req, res, next) => {
     sections.map((section) => (grades[section] = {}));
 
     var grades = {};
-    sections.map((section) => (grades[section] = { '5e9fd911': '5' }));
+    sections.map((section) => (grades[section] = { "5e9fd911": "5" }));
 
     const assignment = new Assignment({
       courseId: courseId,
@@ -496,7 +495,7 @@ exports.takeCourse = async (req, res, next) => {
     const teacher = await Teacher.findById(teacherId);
 
     if (!teacher) {
-      const error = new Error('Error in fetching the teacher!');
+      const error = new Error("Error in fetching the teacher!");
       error.code = 404;
       throw error;
     }
@@ -505,7 +504,7 @@ exports.takeCourse = async (req, res, next) => {
       courseId: courseId,
       sections: sections,
       session: session,
-      status: 'Active',
+      status: "Active",
       courseLog: courseLogDoc._id,
       courseDescription: courseDescriptionDoc._id,
       courseMonitoring: courseMonitoringDoc._id,
@@ -516,11 +515,11 @@ exports.takeCourse = async (req, res, next) => {
     const teacherData = await teacher.save();
 
     if (!teacherData) {
-      const error = new Error('Error in saving the teacher!');
+      const error = new Error("Error in saving the teacher!");
       error.code = 404;
       throw new error();
     }
-    res.status(201).json({ message: 'Course added!', teacher: teacherData });
+    res.status(201).json({ message: "Course added!", teacher: teacherData });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -571,7 +570,7 @@ exports.editCourse = async (req, res, next) => {
     const updatedTeacher = await teacher.save();
 
     res.status(201).json({
-      message: 'Course Updated!',
+      message: "Course Updated!",
       course: getCourse,
       updatedTeacher: updatedTeacher,
     });
@@ -598,14 +597,14 @@ exports.disableCourse = async (req, res, next) => {
 
     var getCourse = courseArray[courseIndex];
 
-    getCourse.status = 'Inactive';
+    getCourse.status = "Inactive";
     courseArray[courseIndex] = getCourse;
     teacher.coursesAssigned = courseArray;
 
     const updatedTeacher = await teacher.save();
 
     res.status(201).json({
-      message: 'Course disabled!',
+      message: "Course disabled!",
       updatedTeacher: updatedTeacher,
     });
   } catch (err) {
@@ -629,7 +628,7 @@ exports.removeCourse = async (req, res, next) => {
       // { new: true }
     );
     if (!teacher) {
-      const error = new Error('Error in removing course from the teacher!');
+      const error = new Error("Error in removing course from the teacher!");
       error.code = 404;
       throw new error();
     }
@@ -648,7 +647,7 @@ exports.removeCourse = async (req, res, next) => {
     await Paper.findByIdAndDelete(course.papers);
 
     res.status(201).json({
-      message: 'Course deleted.',
+      message: "Course deleted.",
       teacher: teacher,
     });
   } catch (err) {
@@ -674,14 +673,14 @@ exports.completeCourse = async (req, res, next) => {
 
     var getCourse = courseArray[courseIndex];
 
-    getCourse.status = 'Complete';
+    getCourse.status = "Complete";
     courseArray[courseIndex] = getCourse;
     teacher.coursesAssigned = courseArray;
 
     await teacher.save();
 
     res.status(201).json({
-      message: 'Course completed!',
+      message: "Course completed!",
     });
   } catch (err) {
     if (!err.status) {
@@ -707,7 +706,7 @@ exports.getCourseLog = async (req, res, next) => {
     const course = teacher.coursesAssigned[courseIndex];
 
     if (!course) {
-      const error = new Error('Error in fetching course!');
+      const error = new Error("Error in fetching course!");
       error.code = 404;
       throw error;
     }
@@ -715,14 +714,14 @@ exports.getCourseLog = async (req, res, next) => {
     const courseLog = await CourseLog.findById(course.courseLog);
 
     if (!courseLog) {
-      const error = new Error('Error in fetching course log!');
+      const error = new Error("Error in fetching course log!");
       error.code = 404;
       throw error;
     }
 
     res
       .status(200)
-      .json({ message: 'CourseLog fetched!', courseLog: courseLog });
+      .json({ message: "CourseLog fetched!", courseLog: courseLog });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -732,8 +731,8 @@ exports.getCourseLog = async (req, res, next) => {
 };
 
 exports.addCourseLog = async (req, res, next) => {
-  const courseLogId = req.params.logId;
   const teacherId = req.userId;
+  const courseLogId = req.params.logId;
 
   const date = req.body.date;
   const duration = req.body.duration;
@@ -743,10 +742,10 @@ exports.addCourseLog = async (req, res, next) => {
   const errors = [];
   try {
     if (validator.isEmpty(topics)) {
-      errors.push('Invalid topics!');
+      errors.push("Invalid topics!");
     }
     if (validator.isEmpty(instruments)) {
-      errors.push('Invalid instruments!');
+      errors.push("Invalid instruments!");
     }
     if (errors.length > 0) {
       var error = new Error(errors);
@@ -757,13 +756,13 @@ exports.addCourseLog = async (req, res, next) => {
     const courseLog = await CourseLog.findById(courseLogId);
 
     if (courseLog.teacherId.toString() !== teacherId.toString()) {
-      const error = new Error('Teacher ID error in course log!');
+      const error = new Error("Teacher ID error in course log!");
       error.code = 404;
       throw error;
     }
 
     if (!courseLog) {
-      const error = new Error('Error in fetching course log!');
+      const error = new Error("Error in fetching course log!");
       error.code = 404;
       throw error;
     }
@@ -777,7 +776,41 @@ exports.addCourseLog = async (req, res, next) => {
 
     const courseLogDoc = await courseLog.save();
 
-    res.status(201).json({ message: 'Log created!', courseLog: courseLogDoc });
+    res.status(201).json({ message: "Log created!", courseLog: courseLogDoc });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+exports.deleteCourseLog = async (req, res, next) => {
+  const teacherId = req.userId;
+  const courseLogId = req.params.logDocId;
+  const elementId = req.params.logId;
+
+  try {
+    const courseLog = await CourseLog.findById(courseLogId);
+    if (!courseLog) {
+      const error = new Error("Error in fetching course log!");
+      error.code = 404;
+      throw error;
+    }
+    if (courseLog.teacherId.toString() !== teacherId.toString()) {
+      const error = new Error("Teacher ID error in course log!");
+      error.code = 404;
+      throw error;
+    }
+
+    const newItems = courseLog.log.filter(
+      (item) => String(item._id) !== String(elementId)
+    );
+
+    courseLog.log = newItems;
+
+    const courseLogDoc = await courseLog.save();
+
+    res.status(201).json({ message: "Log deleted!", courseLog: courseLogDoc });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -800,7 +833,7 @@ exports.getCourseMonitoring = async (req, res, next) => {
     const course = teacher.coursesAssigned[courseIndex];
 
     if (!course) {
-      const error = new Error('Error in fetching course!');
+      const error = new Error("Error in fetching course!");
       error.code = 404;
       throw error;
     }
@@ -810,13 +843,13 @@ exports.getCourseMonitoring = async (req, res, next) => {
     );
 
     if (!courseMonitor) {
-      const error = new Error('Error in fetching course monitoring!');
+      const error = new Error("Error in fetching course monitoring!");
       error.code = 404;
       throw error;
     }
 
     res.status(200).json({
-      message: 'Course Monitoring fetched!',
+      message: "Course Monitoring fetched!",
       courseMonitoring: courseMonitor,
     });
   } catch (err) {
@@ -845,7 +878,7 @@ exports.addCourseMonitoring = async (req, res, next) => {
       validator.isEmpty(assessStandard) ||
       validator.isEmpty(emergeApplication)
     ) {
-      errors.push('Invalid fields!');
+      errors.push("Invalid fields!");
     }
 
     if (errors.length > 0) {
@@ -857,14 +890,14 @@ exports.addCourseMonitoring = async (req, res, next) => {
     const courseMonitoring = await CourseMonitoring.findById(monitorId);
 
     if (!courseMonitoring) {
-      const error = new Error('Error in fetching courseMonitoring!');
+      const error = new Error("Error in fetching courseMonitoring!");
       error.code = 404;
       throw error;
     }
 
     if (courseMonitoring.teacherId.toString() !== teacherId.toString()) {
       const error = new Error(
-        'Error in validating teacher Id in courseMonitoring!'
+        "Error in validating teacher Id in courseMonitoring!"
       );
       error.code = 404;
       throw error;
@@ -875,12 +908,12 @@ exports.addCourseMonitoring = async (req, res, next) => {
     courseMonitoring.data.relevantProblems = relevantProblems;
     courseMonitoring.data.assessStandard = assessStandard;
     courseMonitoring.data.emergeApplication = emergeApplication;
-    courseMonitoring.status = 'Old';
+    courseMonitoring.status = "Old";
 
     const courseMonitoringDoc = await courseMonitoring.save();
 
     res.status(201).json({
-      message: 'Course monitoring saved!',
+      message: "Course monitoring saved!",
       courseMonitoring: courseMonitoringDoc,
     });
   } catch (err) {
@@ -905,7 +938,7 @@ exports.getCourseDescription = async (req, res, next) => {
     const course = teacher.coursesAssigned[courseIndex];
 
     if (!course) {
-      const error = new Error('Error in fetching course!');
+      const error = new Error("Error in fetching course!");
       error.code = 404;
       throw error;
     }
@@ -915,13 +948,13 @@ exports.getCourseDescription = async (req, res, next) => {
     );
 
     if (!courseDescription) {
-      const error = new Error('Error in fetching course description!');
+      const error = new Error("Error in fetching course description!");
       error.code = 404;
       throw error;
     }
 
     res.status(200).json({
-      message: 'Course Description fetched!',
+      message: "Course Description fetched!",
       courseDescription: courseDescription,
     });
   } catch (err) {
@@ -937,7 +970,7 @@ exports.addCourseDescription = async (req, res, next) => {
   const descriptionId = req.params.descriptionId;
   const phase = req.body.phase;
 
-  if (phase === 'phase1') {
+  if (phase === "phase1") {
     const prerequisites = req.body.prerequisites;
     const assignments = req.body.assignments;
     const quizzes = req.body.quizzes;
@@ -963,7 +996,7 @@ exports.addCourseDescription = async (req, res, next) => {
         validator.isEmpty(reference) ||
         validator.isEmpty(goals)
       ) {
-        errors.push('Invalid fields!');
+        errors.push("Invalid fields!");
       }
 
       if (errors.length > 0) {
@@ -975,14 +1008,14 @@ exports.addCourseDescription = async (req, res, next) => {
       const courseDescription = await CourseDescription.findById(descriptionId);
 
       if (!courseDescription) {
-        const error = new Error('Error in fetching courseDescription!');
+        const error = new Error("Error in fetching courseDescription!");
         error.code = 404;
         throw error;
       }
 
       if (courseDescription.teacherId.toString() !== teacherId.toString()) {
         const error = new Error(
-          'Error in validating teacher Id in courseDescription!'
+          "Error in validating teacher Id in courseDescription!"
         );
         error.code = 404;
         throw error;
@@ -999,12 +1032,12 @@ exports.addCourseDescription = async (req, res, next) => {
       courseDescription.data.textbook = textbook;
       courseDescription.data.reference = reference;
       courseDescription.data.goals = goals;
-      courseDescription.status = 'pending';
+      courseDescription.status = "pending";
 
       const courseDescriptionDoc = await courseDescription.save();
 
       res.status(201).json({
-        message: 'Course description phase 1 saved!',
+        message: "Course description phase 1 saved!",
         courseDescription: courseDescriptionDoc,
       });
     } catch (err) {
@@ -1034,7 +1067,7 @@ exports.addCourseDescription = async (req, res, next) => {
         validator.isEmpty(String(socialAndEthicalIssues)) ||
         validator.isEmpty(oralWritten)
       ) {
-        errors.push('Invalid fields!');
+        errors.push("Invalid fields!");
       }
 
       if (errors.length > 0) {
@@ -1046,14 +1079,14 @@ exports.addCourseDescription = async (req, res, next) => {
       const courseDescription = await CourseDescription.findById(descriptionId);
 
       if (!courseDescription) {
-        const error = new Error('Error in fetching courseDescription!');
+        const error = new Error("Error in fetching courseDescription!");
         error.code = 404;
         throw error;
       }
 
       if (courseDescription.teacherId.toString() !== teacherId.toString()) {
         const error = new Error(
-          'Error in validating teacher Id in courseDescription!'
+          "Error in validating teacher Id in courseDescription!"
         );
         error.code = 404;
         throw error;
@@ -1067,12 +1100,12 @@ exports.addCourseDescription = async (req, res, next) => {
       courseDescription.data.classTime.solutionDesign = solutionDesign;
       courseDescription.data.classTime.socialAndEthicalIssues = socialAndEthicalIssues;
       courseDescription.data.oralWritten = oralWritten;
-      courseDescription.status = 'complete';
+      courseDescription.status = "complete";
 
       const courseDescriptionDoc = await courseDescription.save();
 
       res.status(201).json({
-        message: 'Course description phase 2 saved!',
+        message: "Course description phase 2 saved!",
         courseDescription: courseDescriptionDoc,
       });
     } catch (err) {
@@ -1100,7 +1133,7 @@ exports.getAssignments = async (req, res, next) => {
     const course = teacher.coursesAssigned[courseIndex];
 
     if (!course) {
-      const error = new Error('Error in fetching course!');
+      const error = new Error("Error in fetching course!");
       error.code = 404;
       throw error;
     }
@@ -1108,13 +1141,13 @@ exports.getAssignments = async (req, res, next) => {
     const assignments = await Assignment.findById(course.assignments);
 
     if (!assignments) {
-      const error = new Error('Error in fetching course assignments!');
+      const error = new Error("Error in fetching course assignments!");
       error.code = 404;
       throw error;
     }
 
     res.status(200).json({
-      message: 'Course Assignments fetched!',
+      message: "Course Assignments fetched!",
       assignments: assignments,
     });
   } catch (err) {
@@ -1133,7 +1166,7 @@ exports.getAssignment = async (req, res, next) => {
     const assignmentDoc = await Assignment.findById(assignmentDocId);
     if (!assignmentDoc) {
       const error = new Error(
-        'Whoops, there was an error fetching assignment doc!'
+        "Whoops, there was an error fetching assignment doc!"
       );
       error.code = 404;
       throw error;
@@ -1146,8 +1179,55 @@ exports.getAssignment = async (req, res, next) => {
     const assignment = assignmentDoc.assignments[assignmentIndex];
 
     res.status(200).json({
-      message: 'Material fetched!',
+      message: "Material fetched!",
       material: assignment,
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.deleteAssignment = async (req, res, next) => {
+  const teacherId = req.userId;
+  const assignmentDocId = req.params.assignmentDocId;
+  const assignmentId = req.params.assignmentId;
+
+  try {
+    const assignmentDoc = await Assignment.findById(assignmentDocId);
+    if (!assignmentDoc) {
+      const error = new Error(
+        "Whoops, there was an error fetching assignment doc!"
+      );
+      error.code = 404;
+      throw error;
+    }
+    if (assignmentDoc.teacherId.toString() !== teacherId.toString()) {
+      const error = new Error("Teacher ID error in assignment doc!");
+      error.code = 404;
+      throw error;
+    }
+
+    const assignmentToDeleteIndex = assignmentDoc.assignments.findIndex(
+      (item) => String(item._id) === String(assignmentId)
+    );
+    const assignmentToDelete =
+      assignmentDoc.assignments[assignmentToDeleteIndex];
+    clearFile(assignmentToDelete.assignment.path);
+    clearFile(assignmentToDelete.solution.path);
+
+    const newItems = assignmentDoc.assignments.filter(
+      (item) => String(item._id) !== String(assignmentId)
+    );
+
+    assignmentDoc.assignments = newItems;
+    const assignmentUpdated = await assignmentDoc.save();
+
+    res.status(200).json({
+      message: "Material deleted!",
+      material: assignmentUpdated,
     });
   } catch (err) {
     if (!err.status) {
@@ -1166,61 +1246,61 @@ exports.addAssignment = async (req, res, next) => {
   const batch = req.body.batch;
   const section = req.body.section;
   const assessment = req.body.prePost;
-  var assignmentPath = req.files['assignment'][0].path;
-  const assignmentFileName = req.files['assignment'][0].originalname;
-  var solutionPath = req.files['solution'][0].path;
-  const solutionFileName = req.files['solution'][0].originalname;
+  var assignmentPath = req.files["assignment"][0].path;
+  const assignmentFileName = req.files["assignment"][0].originalname;
+  var solutionPath = req.files["solution"][0].path;
+  const solutionFileName = req.files["solution"][0].originalname;
 
   const errors = [];
   try {
     if (validator.isEmpty(title)) {
-      errors.push('Invalid title!');
+      errors.push("Invalid title!");
     }
     if (validator.isEmpty(batch)) {
-      errors.push('Invalid session!');
+      errors.push("Invalid session!");
     }
     if (!validator.isAlphanumeric(section) || validator.isEmpty(section)) {
-      errors.push('Invalid section!');
+      errors.push("Invalid section!");
     }
     if (
       !validator.isNumeric(String(marks)) ||
       validator.isEmpty(String(marks))
     ) {
-      errors.push('Invalid marks!');
+      errors.push("Invalid marks!");
     }
-    if (assessment !== 'Pre-Mid' && assessment !== 'Post-Mid') {
-      errors.push('Invalid assessment field!');
+    if (assessment !== "Pre-Mid" && assessment !== "Post-Mid") {
+      errors.push("Invalid assessment field!");
     }
     if (errors.length > 0) {
       var error = new Error(errors);
       error.status = 400;
       throw error;
     }
-    if (!assignmentPath && !req.files['assignment'][0]) {
-      const err = new Error('Assignment file required!');
+    if (!assignmentPath && !req.files["assignment"][0]) {
+      const err = new Error("Assignment file required!");
       err.status = 204;
       throw err;
     }
 
-    if (!solutionPath && !req.files['solution'][0]) {
-      const err = new Error('Solution file required!');
+    if (!solutionPath && !req.files["solution"][0]) {
+      const err = new Error("Solution file required!");
       err.status = 204;
       throw err;
     }
 
-    assignmentPath = assignmentPath.replace(/\\/g, '/');
-    solutionPath = solutionPath.replace(/\\/g, '/');
+    assignmentPath = assignmentPath.replace(/\\/g, "/");
+    solutionPath = solutionPath.replace(/\\/g, "/");
 
     const assignment = await Assignment.findById(assignmentId);
 
     if (!assignment) {
-      const err = new Error('Could not find assignment doc.');
+      const err = new Error("Could not find assignment doc.");
       err.status = 404;
       throw err;
     }
 
     if (assignment.teacherId.toString() !== teacherId.toString()) {
-      const error = new Error('Teacher ID error in assignment doc!');
+      const error = new Error("Teacher ID error in assignment doc!");
       error.code = 404;
       throw error;
     }
@@ -1228,7 +1308,7 @@ exports.addAssignment = async (req, res, next) => {
     assignment.assignments.map((ele) => {
       if (ele.title === title && ele.section === section) {
         const error = new Error(
-          'Assignment with this title and section already exists!'
+          "Assignment with this title and section already exists!"
         );
         error.code = 404;
         throw error;
@@ -1249,7 +1329,7 @@ exports.addAssignment = async (req, res, next) => {
 
     res
       .status(201)
-      .json({ message: 'Assignment saved.', assignments: assignmentDoc });
+      .json({ message: "Assignment saved.", assignments: assignmentDoc });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -1266,13 +1346,13 @@ exports.getAssignmentResult = async (req, res, next) => {
     const assignmentDoc = await Assignment.findById(assignmentDocId);
 
     if (!assignmentDoc) {
-      const error = new Error('Whoops, could not find the assignment.');
+      const error = new Error("Whoops, could not find the assignment.");
       error.status = 404;
       throw error;
     }
 
     if (assignmentDoc.teacherId.toString() !== teacherId.toString()) {
-      const error = new Error('Whoops, this is not your assignment!');
+      const error = new Error("Whoops, this is not your assignment!");
       error.status = 404;
       throw error;
     }
@@ -1284,14 +1364,14 @@ exports.getAssignmentResult = async (req, res, next) => {
     const assignment = assignmentDoc.assignments[assignmentIndex];
 
     if (!assignment) {
-      const error = new Error('Whoops, error in fetching assignment!');
+      const error = new Error("Whoops, error in fetching assignment!");
       error.code = 404;
       throw error;
     }
 
     res
       .status(200)
-      .json({ message: 'Assignment fetched.', material: assignment });
+      .json({ message: "Assignment fetched.", material: assignment });
   } catch (err) {
     if (!err.status) err.status = 500;
     next(err);
@@ -1308,13 +1388,13 @@ exports.addAssignmentResult = async (req, res, next) => {
     const assignmentDoc = await Assignment.findById(assignmentDocId);
 
     if (!assignmentDoc) {
-      const error = new Error('Whoops, could not find the assignment.');
+      const error = new Error("Whoops, could not find the assignment.");
       error.status = 404;
       throw error;
     }
 
     if (assignmentDoc.teacherId.toString() !== teacherId.toString()) {
-      const error = new Error('Whoops, this is not your assignment!');
+      const error = new Error("Whoops, this is not your assignment!");
       error.status = 404;
       throw error;
     }
@@ -1326,7 +1406,7 @@ exports.addAssignmentResult = async (req, res, next) => {
     const assignment = assignmentDoc.assignments[assignmentIndex];
 
     if (!assignment) {
-      const error = new Error('Whoops, error in fetching assignment!');
+      const error = new Error("Whoops, error in fetching assignment!");
       error.code = 404;
       throw error;
     }
@@ -1336,7 +1416,7 @@ exports.addAssignmentResult = async (req, res, next) => {
     const savedAssignmentDoc = await assignmentDoc.save();
     const result = savedAssignmentDoc.assignments[assignmentIndex];
     res.status(200).json({
-      message: 'Marks saved.',
+      message: "Marks saved.",
       savedMaterial: result,
     });
   } catch (err) {
@@ -1359,7 +1439,7 @@ exports.getQuizzes = async (req, res, next) => {
     const course = teacher.coursesAssigned[courseIndex];
 
     if (!course) {
-      const error = new Error('Error in fetching course!');
+      const error = new Error("Error in fetching course!");
       error.code = 404;
       throw error;
     }
@@ -1367,13 +1447,13 @@ exports.getQuizzes = async (req, res, next) => {
     const quizzes = await Quiz.findById(course.quizzes);
 
     if (!quizzes) {
-      const error = new Error('Error in fetching course quizzes!');
+      const error = new Error("Error in fetching course quizzes!");
       error.code = 404;
       throw error;
     }
 
     res.status(200).json({
-      message: 'Course quizzes fetched!',
+      message: "Course quizzes fetched!",
       quizzes: quizzes,
     });
   } catch (err) {
@@ -1391,7 +1471,7 @@ exports.getQuiz = async (req, res, next) => {
   try {
     const quizDoc = await Quiz.findById(quizDocId);
     if (!quizDoc) {
-      const error = new Error('Whoops, there was an error fetching quiz doc!');
+      const error = new Error("Whoops, there was an error fetching quiz doc!");
       error.code = 404;
       throw error;
     }
@@ -1403,8 +1483,52 @@ exports.getQuiz = async (req, res, next) => {
     const quiz = quizDoc.quizzes[quizIndex];
 
     res.status(200).json({
-      message: 'Material fetched!',
+      message: "Material fetched!",
       material: quiz,
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.deleteQuiz = async (req, res, next) => {
+  const teacherId = req.userId;
+  const quizDocId = req.params.quizDocId;
+  const quizId = req.params.quizId;
+
+  try {
+    const quizDoc = await Quiz.findById(quizDocId);
+    if (!quizDoc) {
+      const error = new Error("Whoops, there was an error fetching quiz doc!");
+      error.code = 404;
+      throw error;
+    }
+    if (quizDoc.teacherId.toString() !== teacherId.toString()) {
+      const error = new Error("Teacher ID error in quiz doc!");
+      error.code = 404;
+      throw error;
+    }
+
+    const quizToDeleteIndex = quizDoc.quizzes.findIndex(
+      (item) => String(item._id) === String(quizId)
+    );
+    const quizToDelete = quizDoc.quizzes[quizToDeleteIndex];
+    clearFile(quizToDelete.quiz.path);
+    clearFile(quizToDelete.solution.path);
+
+    const newItems = quizDoc.quizzes.filter(
+      (item) => String(item._id) !== String(quizId)
+    );
+
+    quizDoc.quizzes = newItems;
+    const quizUpdated = await quizDoc.save();
+
+    res.status(200).json({
+      message: "Material deleted!",
+      material: quizUpdated,
     });
   } catch (err) {
     if (!err.status) {
@@ -1423,61 +1547,61 @@ exports.addQuiz = async (req, res, next) => {
   const batch = req.body.batch;
   const section = req.body.section;
   const assessment = req.body.prePost;
-  var quizPath = req.files['quiz'][0].path;
-  const quizFileName = req.files['quiz'][0].originalname;
-  var solutionPath = req.files['solution'][0].path;
-  const solutionFileName = req.files['solution'][0].originalname;
+  var quizPath = req.files["quiz"][0].path;
+  const quizFileName = req.files["quiz"][0].originalname;
+  var solutionPath = req.files["solution"][0].path;
+  const solutionFileName = req.files["solution"][0].originalname;
 
   const errors = [];
   try {
     if (validator.isEmpty(title)) {
-      errors.push('Invalid title!');
+      errors.push("Invalid title!");
     }
     if (validator.isEmpty(batch)) {
-      errors.push('Invalid session!');
+      errors.push("Invalid session!");
     }
     if (!validator.isAlphanumeric(section) || validator.isEmpty(section)) {
-      errors.push('Invalid section!');
+      errors.push("Invalid section!");
     }
     if (
       !validator.isNumeric(String(marks)) ||
       validator.isEmpty(String(marks))
     ) {
-      errors.push('Invalid markss!');
+      errors.push("Invalid markss!");
     }
-    if (assessment !== 'Pre-Mid' && assessment !== 'Post-Mid') {
-      errors.push('Invalid assessment field!');
+    if (assessment !== "Pre-Mid" && assessment !== "Post-Mid") {
+      errors.push("Invalid assessment field!");
     }
     if (errors.length > 0) {
       var error = new Error(errors);
       error.status = 400;
       throw error;
     }
-    if (!quizPath && !req.files['quiz'][0]) {
-      const err = new Error('Quiz file required!');
+    if (!quizPath && !req.files["quiz"][0]) {
+      const err = new Error("Quiz file required!");
       err.status = 204;
       throw err;
     }
 
-    if (!solutionPath && !req.files['solution'][0]) {
-      const err = new Error('Solution file required!');
+    if (!solutionPath && !req.files["solution"][0]) {
+      const err = new Error("Solution file required!");
       err.status = 204;
       throw err;
     }
 
-    quizPath = quizPath.replace(/\\/g, '/');
-    solutionPath = solutionPath.replace(/\\/g, '/');
+    quizPath = quizPath.replace(/\\/g, "/");
+    solutionPath = solutionPath.replace(/\\/g, "/");
 
     const quiz = await Quiz.findById(quizId);
 
     if (!quiz) {
-      const err = new Error('Could not find quiz doc.');
+      const err = new Error("Could not find quiz doc.");
       err.status = 404;
       throw err;
     }
 
     if (quiz.teacherId.toString() !== teacherId.toString()) {
-      const error = new Error('Teacher ID error in quiz doc!');
+      const error = new Error("Teacher ID error in quiz doc!");
       error.code = 404;
       throw error;
     }
@@ -1485,7 +1609,7 @@ exports.addQuiz = async (req, res, next) => {
     quiz.quizzes.map((ele) => {
       if (ele.title === title && ele.section === section) {
         const error = new Error(
-          'Quiz with this title and section already exists!'
+          "Quiz with this title and section already exists!"
         );
         error.code = 404;
         throw error;
@@ -1504,7 +1628,7 @@ exports.addQuiz = async (req, res, next) => {
 
     const quizDoc = await quiz.save();
 
-    res.status(201).json({ message: 'Quiz saved.', quizzes: quizDoc });
+    res.status(201).json({ message: "Quiz saved.", quizzes: quizDoc });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -1521,13 +1645,13 @@ exports.getQuizResult = async (req, res, next) => {
     const quizDoc = await Quiz.findById(quizDocId);
 
     if (!quizDoc) {
-      const error = new Error('Whoops, could not find the quiz.');
+      const error = new Error("Whoops, could not find the quiz.");
       error.status = 404;
       throw error;
     }
 
     if (quizDoc.teacherId.toString() !== teacherId.toString()) {
-      const error = new Error('Whoops, this is not your quiz!');
+      const error = new Error("Whoops, this is not your quiz!");
       error.status = 404;
       throw error;
     }
@@ -1539,12 +1663,12 @@ exports.getQuizResult = async (req, res, next) => {
     const quiz = quizDoc.quizzes[quizIndex];
 
     if (!quiz) {
-      const error = new Error('Whoops, error in fetching quiz!');
+      const error = new Error("Whoops, error in fetching quiz!");
       error.code = 404;
       throw error;
     }
 
-    res.status(200).json({ message: 'Quiz fetched.', material: quiz });
+    res.status(200).json({ message: "Quiz fetched.", material: quiz });
   } catch (err) {
     if (!err.status) err.status = 500;
     next(err);
@@ -1560,13 +1684,13 @@ exports.addQuizResult = async (req, res, next) => {
     const quizDoc = await Quiz.findById(quizDocId);
 
     if (!quizDoc) {
-      const error = new Error('Whoops, could not find the quiz.');
+      const error = new Error("Whoops, could not find the quiz.");
       error.status = 404;
       throw error;
     }
 
     if (quizDoc.teacherId.toString() !== teacherId.toString()) {
-      const error = new Error('Whoops, this is not your quiz!');
+      const error = new Error("Whoops, this is not your quiz!");
       error.status = 404;
       throw error;
     }
@@ -1578,7 +1702,7 @@ exports.addQuizResult = async (req, res, next) => {
     const quiz = quizDoc.quizzes[quizIndex];
 
     if (!quiz) {
-      const error = new Error('Whoops, error in fetching quiz!');
+      const error = new Error("Whoops, error in fetching quiz!");
       error.code = 404;
       throw error;
     }
@@ -1588,7 +1712,7 @@ exports.addQuizResult = async (req, res, next) => {
     const savedQuizDoc = await quizDoc.save();
     const result = savedQuizDoc.quizzes[quizIndex];
     res.status(200).json({
-      message: 'Marks saved.',
+      message: "Marks saved.",
       savedMaterial: result,
     });
   } catch (err) {
@@ -1611,7 +1735,7 @@ exports.getPapers = async (req, res, next) => {
     const course = teacher.coursesAssigned[courseIndex];
 
     if (!course) {
-      const error = new Error('Error in fetching course!');
+      const error = new Error("Error in fetching course!");
       error.code = 404;
       throw error;
     }
@@ -1619,13 +1743,13 @@ exports.getPapers = async (req, res, next) => {
     const papers = await Paper.findById(course.papers);
 
     if (!papers) {
-      const error = new Error('Error in fetching course papers!');
+      const error = new Error("Error in fetching course papers!");
       error.code = 404;
       throw error;
     }
 
     res.status(200).json({
-      message: 'Course papers fetched!',
+      message: "Course papers fetched!",
       papers: papers,
     });
   } catch (err) {
@@ -1643,7 +1767,7 @@ exports.getPaper = async (req, res, next) => {
   try {
     const paperDoc = await Paper.findById(paperDocId);
     if (!paperDoc) {
-      const error = new Error('Whoops, there was an error fetching paper doc!');
+      const error = new Error("Whoops, there was an error fetching paper doc!");
       error.code = 404;
       throw error;
     }
@@ -1655,8 +1779,52 @@ exports.getPaper = async (req, res, next) => {
     const paper = paperDoc.papers[paperIndex];
 
     res.status(200).json({
-      message: 'Material fetched!',
+      message: "Material fetched!",
       material: paper,
+    });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
+exports.deletePaper = async (req, res, next) => {
+  const teacherId = req.userId;
+  const paperDocId = req.params.paperDocId;
+  const paperId = req.params.paperId;
+
+  try {
+    const paperDoc = await Paper.findById(paperDocId);
+    if (!paperDoc) {
+      const error = new Error("Whoops, there was an error fetching paper doc!");
+      error.code = 404;
+      throw error;
+    }
+    if (paperDoc.teacherId.toString() !== teacherId.toString()) {
+      const error = new Error("Teacher ID error in paper doc!");
+      error.code = 404;
+      throw error;
+    }
+
+    const paperToDeleteIndex = paperDoc.papers.findIndex(
+      (item) => String(item._id) === String(paperId)
+    );
+    const paperToDelete = paperDoc.papers[paperToDeleteIndex];
+    clearFile(paperToDelete.paper.path);
+    clearFile(paperToDelete.solution.path);
+
+    const newItems = paperDoc.papers.filter(
+      (item) => String(item._id) !== String(paperId)
+    );
+
+    paperDoc.papers = newItems;
+    const paperUpdated = await paperDoc.save();
+
+    res.status(200).json({
+      message: "Material deleted!",
+      material: paperUpdated,
     });
   } catch (err) {
     if (!err.status) {
@@ -1672,25 +1840,25 @@ exports.addPaper = async (req, res, next) => {
 
   const title = req.body.title;
   // var marks = req.body.marks;
-  var marks = '0';
+  var marks = "0";
   const batch = req.body.batch;
   const section = req.body.section;
   const assessment = req.body.prePost;
-  var paperPath = req.files['paper'][0].path;
-  const paperFileName = req.files['paper'][0].originalname;
-  var solutionPath = req.files['solution'][0].path;
-  const solutionFileName = req.files['solution'][0].originalname;
+  var paperPath = req.files["paper"][0].path;
+  const paperFileName = req.files["paper"][0].originalname;
+  var solutionPath = req.files["solution"][0].path;
+  const solutionFileName = req.files["solution"][0].originalname;
 
   const errors = [];
   try {
     if (validator.isEmpty(title)) {
-      errors.push('Invalid title!');
+      errors.push("Invalid title!");
     }
     if (validator.isEmpty(batch)) {
-      errors.push('Invalid session!');
+      errors.push("Invalid session!");
     }
     if (!validator.isAlphanumeric(section) || validator.isEmpty(batch)) {
-      errors.push('Invalid section!');
+      errors.push("Invalid section!");
     }
     // if (
     //   !validator.isNumeric(String(marks)) ||
@@ -1698,39 +1866,39 @@ exports.addPaper = async (req, res, next) => {
     // ) {
     //   errors.push('Invalid marks!');
     // }
-    if (assessment !== 'Mid-Term' && assessment !== 'Final-Term') {
-      errors.push('Invalid assessment field!');
+    if (assessment !== "Mid-Term" && assessment !== "Final-Term") {
+      errors.push("Invalid assessment field!");
     }
     if (errors.length > 0) {
       var error = new Error(errors);
       error.status = 400;
       throw error;
     }
-    if (!paperPath && !req.files['paper'][0]) {
-      const err = new Error('Paper file required!');
+    if (!paperPath && !req.files["paper"][0]) {
+      const err = new Error("Paper file required!");
       err.status = 204;
       throw err;
     }
 
-    if (!solutionPath && !req.files['solution'][0]) {
-      const err = new Error('Solution file required!');
+    if (!solutionPath && !req.files["solution"][0]) {
+      const err = new Error("Solution file required!");
       err.status = 204;
       throw err;
     }
 
-    paperPath = paperPath.replace(/\\/g, '/');
-    solutionPath = solutionPath.replace(/\\/g, '/');
+    paperPath = paperPath.replace(/\\/g, "/");
+    solutionPath = solutionPath.replace(/\\/g, "/");
 
     const paper = await Paper.findById(paperId);
 
     if (!paper) {
-      const err = new Error('Could not find paper doc.');
+      const err = new Error("Could not find paper doc.");
       err.status = 404;
       throw err;
     }
 
     if (paper.teacherId.toString() !== teacherId.toString()) {
-      const error = new Error('Teacher ID error in paper doc!');
+      const error = new Error("Teacher ID error in paper doc!");
       error.code = 404;
       throw error;
     }
@@ -1738,7 +1906,7 @@ exports.addPaper = async (req, res, next) => {
     paper.papers.map((ele) => {
       if (ele.title === title && ele.section === section) {
         const error = new Error(
-          'Paper with this title and section already exists!'
+          "Paper with this title and section already exists!"
         );
         error.code = 404;
         throw error;
@@ -1757,11 +1925,11 @@ exports.addPaper = async (req, res, next) => {
       }
     });
 
-    if (assessment === 'Mid-Term') {
-      marks = '20';
+    if (assessment === "Mid-Term") {
+      marks = "20";
     }
-    if (assessment === 'Final-Term') {
-      marks = '60';
+    if (assessment === "Final-Term") {
+      marks = "60";
     }
 
     paper.papers.push({
@@ -1776,7 +1944,7 @@ exports.addPaper = async (req, res, next) => {
 
     const paperDoc = await paper.save();
 
-    res.status(201).json({ message: 'Paper saved.', papers: paperDoc });
+    res.status(201).json({ message: "Paper saved.", papers: paperDoc });
   } catch (err) {
     if (!err.status) {
       err.status = 500;
@@ -1793,13 +1961,13 @@ exports.getPaperResult = async (req, res, next) => {
     const paperDoc = await Paper.findById(paperDocId);
 
     if (!paperDoc) {
-      const error = new Error('Whoops, could not find the paper.');
+      const error = new Error("Whoops, could not find the paper.");
       error.status = 404;
       throw error;
     }
 
     if (paperDoc.teacherId.toString() !== teacherId.toString()) {
-      const error = new Error('Whoops, this is not your paper!');
+      const error = new Error("Whoops, this is not your paper!");
       error.status = 404;
       throw error;
     }
@@ -1811,12 +1979,12 @@ exports.getPaperResult = async (req, res, next) => {
     const paper = paperDoc.papers[paperIndex];
 
     if (!paper) {
-      const error = new Error('Whoops, error in fetching paper!');
+      const error = new Error("Whoops, error in fetching paper!");
       error.code = 404;
       throw error;
     }
 
-    res.status(200).json({ message: 'paper fetched.', material: paper });
+    res.status(200).json({ message: "paper fetched.", material: paper });
   } catch (err) {
     if (!err.status) err.status = 500;
     next(err);
@@ -1832,13 +2000,13 @@ exports.addPaperResult = async (req, res, next) => {
     const paperDoc = await Paper.findById(paperDocId);
 
     if (!paperDoc) {
-      const error = new Error('Whoops, could not find the paper.');
+      const error = new Error("Whoops, could not find the paper.");
       error.status = 404;
       throw error;
     }
 
     if (paperDoc.teacherId.toString() !== teacherId.toString()) {
-      const error = new Error('Whoops, this is not your paper!');
+      const error = new Error("Whoops, this is not your paper!");
       error.status = 404;
       throw error;
     }
@@ -1850,7 +2018,7 @@ exports.addPaperResult = async (req, res, next) => {
     const paper = paperDoc.papers[paperIndex];
 
     if (!paper) {
-      const error = new Error('Whoops, error in fetching paper!');
+      const error = new Error("Whoops, error in fetching paper!");
       error.code = 404;
       throw error;
     }
@@ -1860,7 +2028,7 @@ exports.addPaperResult = async (req, res, next) => {
     const savedPaperDoc = await paperDoc.save();
     const result = savedPaperDoc.papers[paperIndex];
     res.status(200).json({
-      message: 'Marks saved.',
+      message: "Marks saved.",
       savedMaterial: result,
     });
   } catch (err) {
@@ -1880,12 +2048,12 @@ exports.addAssignmentGrades = async (req, res, next) => {
     const assignment = await Assignment.findById(assignmentDocId);
 
     if (!assignment) {
-      const err = new Error('Could not find assignment doc.');
+      const err = new Error("Could not find assignment doc.");
       err.status = 404;
       throw err;
     }
     if (assignment.teacherId.toString() !== teacherId.toString()) {
-      const err = new Error('Whoops, not authorized to add grades.');
+      const err = new Error("Whoops, not authorized to add grades.");
       err.status = 404;
       throw err;
     }
@@ -1897,7 +2065,7 @@ exports.addAssignmentGrades = async (req, res, next) => {
     const assignmentUpdated = await assignment.save();
 
     res.status(201).json({
-      message: 'Assignment grades submitted.',
+      message: "Assignment grades submitted.",
       assignment: assignmentUpdated,
     });
   } catch (err) {
@@ -1916,12 +2084,12 @@ exports.addQuizGrades = async (req, res, next) => {
   try {
     const quiz = await Quiz.findById(quizDocId);
     if (!quiz) {
-      const err = new Error('Could not find quiz doc.');
+      const err = new Error("Could not find quiz doc.");
       err.status = 404;
       throw err;
     }
     if (quiz.teacherId.toString() !== teacherId.toString()) {
-      const err = new Error('Whoops, not authorized to add grades.');
+      const err = new Error("Whoops, not authorized to add grades.");
       err.status = 404;
       throw err;
     }
@@ -1933,7 +2101,7 @@ exports.addQuizGrades = async (req, res, next) => {
     const quizUpdated = await quiz.save();
 
     res.status(201).json({
-      message: 'Quiz grades submitted.',
+      message: "Quiz grades submitted.",
       quiz: quizUpdated,
     });
   } catch (err) {
@@ -1952,7 +2120,7 @@ exports.singleReportData = async (req, res, next) => {
     const teacher = await Teacher.findById(teacherId);
 
     if (!teacher) {
-      const err = new Error('Whoops, could not find the teacher!.');
+      const err = new Error("Whoops, could not find the teacher!.");
       err.status = 404;
       throw err;
     }
@@ -1998,7 +2166,7 @@ exports.singleReportData = async (req, res, next) => {
     });
 
     res.status(200).json({
-      message: 'Materials fetched',
+      message: "Materials fetched",
       materials: materials,
       materialsArray: materialsArray,
     });
@@ -2017,7 +2185,7 @@ exports.generateReport = async (req, res, next) => {
 
   const teacher = await Teacher.findById(teacherId);
   if (!teacher) {
-    const err = new Error('Whoops, could not find the teacher!.');
+    const err = new Error("Whoops, could not find the teacher!.");
     err.status = 404;
     throw err;
   }
@@ -2028,7 +2196,7 @@ exports.generateReport = async (req, res, next) => {
   const course = teacher.coursesAssigned[courseIndex];
 
   if (!course) {
-    const error = new Error('Error in fetching course!');
+    const error = new Error("Error in fetching course!");
     error.code = 404;
     throw error;
   }
@@ -2041,25 +2209,25 @@ exports.generateReport = async (req, res, next) => {
   try {
     const adminCourse = await Course.findById(adminCourseId);
     if (!adminCourse) {
-      const error = new Error('Error in fetching base course!');
+      const error = new Error("Error in fetching base course!");
       error.code = 404;
       throw error;
     }
     const assignmentDoc = await Assignment.findById(assignmentDocId);
     if (!assignmentDoc) {
-      const error = new Error('Error in fetching assignment!');
+      const error = new Error("Error in fetching assignment!");
       error.code = 404;
       throw error;
     }
     const quizDoc = await Quiz.findById(quizDocId);
     if (!quizDoc) {
-      const error = new Error('Error in fetching base quiz!');
+      const error = new Error("Error in fetching base quiz!");
       error.code = 404;
       throw error;
     }
     const paperDoc = await Paper.findById(paperDocId);
     if (!paperDoc) {
-      const error = new Error('Error in fetching base paper!');
+      const error = new Error("Error in fetching base paper!");
       error.code = 404;
       throw error;
     }
@@ -2085,7 +2253,7 @@ exports.generateReport = async (req, res, next) => {
       !quizDoc.grades[section.toString()] ||
       Object.keys(quizDoc.grades[section.toString()]).length !== quizCount
     ) {
-      const error = new Error('Please grade every quiz first.');
+      const error = new Error("Please grade every quiz first.");
       error.code = 404;
       throw error;
     }
@@ -2100,7 +2268,7 @@ exports.generateReport = async (req, res, next) => {
       Object.keys(assignmentDoc.grades[section.toString()]).length !==
         assignmentCount
     ) {
-      const error = new Error('Please grade every assignment first.');
+      const error = new Error("Please grade every assignment first.");
       error.code = 404;
       throw error;
     }
@@ -2164,7 +2332,7 @@ exports.generateReport = async (req, res, next) => {
     paperDoc.papers.map((paper) => {
       if (paper.section.toString() === section.toString()) {
         if (paper.resultAdded) {
-          if (paper.assessment === 'Mid-Term') {
+          if (paper.assessment === "Mid-Term") {
             var check = { ...data.midTerm };
             Object.entries(paper.result).map((ent) => {
               check[ent[0]] = check[ent[0]]
@@ -2172,7 +2340,7 @@ exports.generateReport = async (req, res, next) => {
                 : +ent[1];
             });
             data = { ...data, midTerm: check };
-          } else if (paper.assessment === 'Final-Term') {
+          } else if (paper.assessment === "Final-Term") {
             var check = { ...data.finalTerm };
             Object.entries(paper.result).map((ent) => {
               check[ent[0]] = check[ent[0]]
@@ -2201,7 +2369,7 @@ exports.generateReport = async (req, res, next) => {
     });
 
     if (!fetchClass) {
-      const error = new Error('Whoops, could not find the class.');
+      const error = new Error("Whoops, could not find the class.");
       error.status = 404;
       throw error;
     }
